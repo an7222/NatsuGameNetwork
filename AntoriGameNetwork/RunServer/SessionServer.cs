@@ -4,8 +4,8 @@ using System.Net.Sockets;
 using System.Net;
 using System.Text;
 
-class SessionServer : Singleton<SessionServer>{
-    Dictionary<string, Socket> connectedSocketPool;
+class SessionServer : Singleton<SessionServer> {
+    Dictionary<string, Socket> connectedSocketPool = new Dictionary<string, Socket>();
     public void Start() {
         IPEndPoint endPoint = new IPEndPoint(IPAddress.Any, 8001);
 
@@ -14,23 +14,16 @@ class SessionServer : Singleton<SessionServer>{
 
         try {
             listenSocket.Bind(endPoint);
-            listenSocket.Listen(100);
+            listenSocket.Listen(10);
 
-            while (true) {
-
-                Console.WriteLine("Waiting for a connection...");
-                listenSocket.BeginAccept(
-                    new AsyncCallback(OnAceept),
-                    listenSocket);
-            }
-
+            listenSocket.BeginAccept(new AsyncCallback(OnAccept), listenSocket);
         } catch (Exception e) {
             Console.WriteLine(e.ToString());
         }
 
     }
 
-    void OnAceept(IAsyncResult ar) {
+    void OnAccept(IAsyncResult ar) {
         Socket listenSocket = (Socket)ar.AsyncState;
         Socket workSocket = listenSocket.EndAccept(ar);
 
@@ -39,6 +32,8 @@ class SessionServer : Singleton<SessionServer>{
         state.WorkSocket = workSocket;
         workSocket.BeginReceive(state.Buffer, 0, StateObject.BufferSize, 0,
             new AsyncCallback(OnRead), state);
+
+        listenSocket.BeginAccept(new AsyncCallback(OnAccept), listenSocket);
     }
 
     void OnRead(IAsyncResult ar) {
@@ -56,7 +51,7 @@ class SessionServer : Singleton<SessionServer>{
                 string content = state.sb.ToString();
                 Console.WriteLine($"Read {content.Length} bytes from socket.\n Data : {content}");
 
-                if(connectedSocketPool.TryAdd(content, workSocket)) {
+                if (connectedSocketPool.TryAdd(content, workSocket)) {
                     //Success
                 } else {
                     //Already Exist
