@@ -1,6 +1,10 @@
 ﻿using System;
 class Program {
     static void Main(string[] args) {
-        Console.WriteLine("Hello World!");
+        ThreadManager.GetInstance().RegisterWork(() => {
+            Console.WriteLine("Test");
+        });
+
+        
     }
 }
