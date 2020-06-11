@@ -109,10 +109,11 @@ public class AsynchronousClient {
 
             // Read data from the remote device.  
             int bytesRead = client.EndReceive(ar);
+
             if (bytesRead > 0) {
                 // There might be more data, so store the data received so far.  
                 state.sb.Append(Encoding.ASCII.GetString(state.buffer, 0, bytesRead));
-            } else {
+
                 // All the data has arrived; put it in response.  
                 if (state.sb.Length > 1) {
                     response = state.sb.ToString();

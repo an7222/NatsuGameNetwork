@@ -4,9 +4,11 @@ using System.Net.Sockets;
 using System.Net;
 using System.Text;
 using System.IO;
+using System.Threading;
 
 class SessionServer : Singleton<SessionServer> {
-    Dictionary<string, Socket> connectedSocketPool = new Dictionary<string, Socket>(); // key 
+    int socketId = 1;
+    Dictionary<int, Socket> connectedSocketPool = new Dictionary<int, Socket>();
     public void Start() {
         IPEndPoint endPoint = new IPEndPoint(IPAddress.Any, 8001);
 
@@ -38,6 +40,18 @@ class SessionServer : Singleton<SessionServer> {
             new AsyncCallback(OnRead), state);
 
         listenSocket.BeginAccept(new AsyncCallback(OnAccept), listenSocket);
+
+        if (connectedSocketPool.TryAdd(socketId, workSocket)) {
+            //Success
+            Interlocked.Increment(ref socketId);
+        } else {
+            Console.WriteLine("Already Exist");
+        }
+
+        foreach (var connectedSocket in connectedSocketPool.Values) {
+            // Echo the data back to the client.  
+            Send(connectedSocket, "Socket Connected");
+        }
     }
 
     void OnRead(IAsyncResult ar) {
@@ -61,16 +75,12 @@ class SessionServer : Singleton<SessionServer> {
                 Console.WriteLine("Read {0} bytes from socket. \n Data : {1}",
                     content.Length, content);
 
-                if (connectedSocketPool.TryAdd(content, workSocket)) {
-                    //Success
-                } else {
-                    //Already Exist
-                }
 
-                foreach(var connectedSocket in connectedSocketPool.Values) {
+                foreach (var connectedSocket in connectedSocketPool.Values) {
                     // Echo the data back to the client.  
                     Send(connectedSocket, content);
                 }
+
             } else {
                 // Not all data received. Get more.  
                 workSocket.BeginReceive(state.Buffer, 0, StateObject.BufferSize, 0,
@@ -99,9 +109,6 @@ class SessionServer : Singleton<SessionServer> {
             // Complete sending the data to the remote device.  
             int bytesSent = workSocket.EndSend(ar);
             Console.WriteLine("Sent {0} bytes to client.", bytesSent);
-
-            workSocket.Shutdown(SocketShutdown.Both);
-            //workSocket.Close();
 
         } catch (Exception e) {
             Console.WriteLine(e.ToString());
