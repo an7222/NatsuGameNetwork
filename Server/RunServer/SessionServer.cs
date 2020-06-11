@@ -5,6 +5,7 @@ using System.Net;
 using System.Text;
 using System.IO;
 using System.Threading;
+using System.Linq;
 
 class SessionServer : Singleton<SessionServer> {
     int socketId = 1;
@@ -37,8 +38,12 @@ class SessionServer : Singleton<SessionServer> {
         // Create the state object.  
         StateObject state = new StateObject();
         state.WorkSocket = workSocket;
-        workSocket.BeginReceive(state.Buffer, 0, StateObject.BufferSize, 0,
-            new AsyncCallback(OnRead), state);
+        try {
+            workSocket.BeginReceive(state.Buffer, 0, StateObject.BufferSize, 0,
+                new AsyncCallback(OnRead), state);
+        } catch(Exception e) {
+            NetworkUtil.OnSocketNotFindException(workSocket, e, connectedSocketPool);
+        }
 
         listenSocket.BeginAccept(new AsyncCallback(OnAccept), listenSocket);
 
@@ -60,7 +65,13 @@ class SessionServer : Singleton<SessionServer> {
         StateObject state = (StateObject)ar.AsyncState;
         Socket workSocket = state.WorkSocket;
 
-        int bytesRead = workSocket.EndReceive(ar);
+        int bytesRead = 0;
+        try {
+            bytesRead = workSocket.EndReceive(ar);
+        } catch(Exception e) {
+            NetworkUtil.OnSocketNotFindException(workSocket, e, connectedSocketPool);
+        }
+        
 
         if (bytesRead > 0) {
             // There  might be more data, so store the data received so far.  
@@ -82,31 +93,38 @@ class SessionServer : Singleton<SessionServer> {
             state.Buffer = new byte[StateObject.BufferSize];
             state.sb.Clear();
         }
-        // Not all data received. Get more.  
-        workSocket.BeginReceive(state.Buffer, 0, StateObject.BufferSize, 0,
-        new AsyncCallback(OnRead), state);
+        try {
+            workSocket.BeginReceive(state.Buffer, 0, StateObject.BufferSize, 0,
+new AsyncCallback(OnRead), state);
+        } catch(Exception e) {
+            NetworkUtil.OnSocketNotFindException(workSocket, e, connectedSocketPool);
+        }
+
     }
 
-    private static void Send(Socket workSocket, String data) {
+    void Send(Socket workSocket, String data) {
         // Convert the string data to byte data using ASCII encoding.  
         byte[] byteData = Encoding.ASCII.GetBytes(data);
 
-        // Begin sending the data to the remote device.  
-        workSocket.BeginSend(byteData, 0, byteData.Length, 0,
-            new AsyncCallback(SendCallback), workSocket);
+        // Begin sending the data to the remote device.
+        try {
+            workSocket.BeginSend(byteData, 0, byteData.Length, 0,
+    new AsyncCallback(OnSend), workSocket);
+        } catch(Exception e){
+            NetworkUtil.OnSocketNotFindException(workSocket, e, connectedSocketPool);
+        }
     }
 
-    private static void SendCallback(IAsyncResult ar) {
+    void OnSend(IAsyncResult ar) {
+        // Retrieve the socket from the state object.  
+        Socket workSocket = (Socket)ar.AsyncState;
         try {
-            // Retrieve the socket from the state object.  
-            Socket workSocket = (Socket)ar.AsyncState;
-
             // Complete sending the data to the remote device.  
             int bytesSent = workSocket.EndSend(ar);
             Console.WriteLine("Sent {0} bytes to client.", bytesSent);
 
         } catch (Exception e) {
-            Console.WriteLine(e.ToString());
+            NetworkUtil.OnSocketNotFindException(workSocket, e, connectedSocketPool);
         }
     }
 
