@@ -11,6 +11,7 @@ class SessionServer : Singleton<SessionServer> {
     int socketId = 1;
     int PORT = 8001;
     Dictionary<int, Socket> connectedSocketPool = new Dictionary<int, Socket>();
+    //TODO : Protocol Register
     public void Start() {
         IPEndPoint endPoint = new IPEndPoint(IPAddress.Any, PORT);
 
