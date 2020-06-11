@@ -4,10 +4,9 @@ class Program {
         SessionServer.GetInstance().Start();
 
         bool gameLoop = false;
-        ThreadManager.GetInstance().RegisterWork(() => {
-            Console.WriteLine("Test");
-            gameLoop = true;
-        });
+        //ThreadManager.GetInstance().RegisterWork(() => {
+        //    Console.WriteLine("Test");
+        //});
 
         while (!gameLoop) {
 
