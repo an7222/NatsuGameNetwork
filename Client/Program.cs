@@ -19,14 +19,10 @@ public class StateObject {
 
 public class AsynchronousClient {
     // The port number for the remote device.  
-    private const int port = 11000;
+    private const int SESSION_SERVER_PORT = 8001;
 
     // ManualResetEvent instances signal completion.  
     private static ManualResetEvent connectDone =
-        new ManualResetEvent(false);
-    private static ManualResetEvent sendDone =
-        new ManualResetEvent(false);
-    private static ManualResetEvent receiveDone =
         new ManualResetEvent(false);
 
     // The response from the remote device.  
@@ -36,7 +32,7 @@ public class AsynchronousClient {
         // Connect to a remote device.  
         try {
             // Establish the remote endpoint for the socket.  
-            IPEndPoint remoteEP = new IPEndPoint(IPAddress.Parse("127.0.0.1"), 8001);
+            IPEndPoint remoteEP = new IPEndPoint(IPAddress.Parse("127.0.0.1"), SESSION_SERVER_PORT);
 
             // Create a TCP/IP socket.  
             Socket client = new Socket(remoteEP.AddressFamily,
@@ -51,7 +47,7 @@ public class AsynchronousClient {
                 while (true) {
                     var chat = Console.ReadKey();
                     if (chat.Key == ConsoleKey.UpArrow) {
-                        Send(client, "This is a test<EOF>");
+                        Send(client, "This is a test");
                     }
                 }
             });
@@ -117,8 +113,6 @@ public class AsynchronousClient {
                 // All the data has arrived; put it in response.  
                 if (state.sb.Length > 1) {
                     response = state.sb.ToString();
-                    // Signal that all bytes have been received.  
-                    receiveDone.Set();
 
                     // Write the response to the console.  
                     Console.WriteLine("Response received : {0}", response);
@@ -152,9 +146,6 @@ new AsyncCallback(ReceiveCallback), state);
             // Complete sending the data to the remote device.  
             int bytesSent = client.EndSend(ar);
             Console.WriteLine("Sent {0} bytes to server.", bytesSent);
-
-            // Signal that all bytes have been sent.  
-            sendDone.Set();
         } catch (Exception e) {
             Console.WriteLine(e.ToString());
         }

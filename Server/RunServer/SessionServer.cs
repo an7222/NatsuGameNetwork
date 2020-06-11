@@ -8,9 +8,10 @@ using System.Threading;
 
 class SessionServer : Singleton<SessionServer> {
     int socketId = 1;
+    int PORT = 8001;
     Dictionary<int, Socket> connectedSocketPool = new Dictionary<int, Socket>();
     public void Start() {
-        IPEndPoint endPoint = new IPEndPoint(IPAddress.Any, 8001);
+        IPEndPoint endPoint = new IPEndPoint(IPAddress.Any, PORT);
 
         Socket listenSocket = new Socket(endPoint.AddressFamily,
             SocketType.Stream, ProtocolType.Tcp);
@@ -69,27 +70,21 @@ class SessionServer : Singleton<SessionServer> {
             // Check for end-of-file tag. If it is not there, read
             // more data.  
             content = state.sb.ToString();
-            if (content.IndexOf("<EOF>") > -1) {
-                // All the data has been read from the
-                // client. Display it on the console.  
-                Console.WriteLine("Read {0} bytes from socket. \n Data : {1}",
-                    content.Length, content);
+            Console.WriteLine("Read {0} bytes from socket. \n Data : {1}",
+                content.Length, content);
 
 
-                foreach (var connectedSocket in connectedSocketPool.Values) {
-                    // Echo the data back to the client.  
-                    Send(connectedSocket, content);
-                }
-
-            } else {
-                // Not all data received. Get more.  
-                workSocket.BeginReceive(state.Buffer, 0, StateObject.BufferSize, 0,
-                new AsyncCallback(OnRead), state);
+            foreach (var connectedSocket in connectedSocketPool.Values) {
+                // Echo the data back to the client.  
+                Send(connectedSocket, content);
             }
+
+            state.Buffer = new byte[StateObject.BufferSize];
+            state.sb.Clear();
         }
-
-
-
+        // Not all data received. Get more.  
+        workSocket.BeginReceive(state.Buffer, 0, StateObject.BufferSize, 0,
+        new AsyncCallback(OnRead), state);
     }
 
     private static void Send(Socket workSocket, String data) {
