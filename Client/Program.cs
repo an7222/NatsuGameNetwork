@@ -47,7 +47,7 @@ public class AsynchronousClient {
                 while (true) {
                     var chat = Console.ReadKey();
                     if (chat.Key == ConsoleKey.UpArrow) {
-                        Send(client, "This is a test");
+                        Send(client, 1);
                     }
                 }
             });
@@ -129,9 +129,9 @@ new AsyncCallback(ReceiveCallback), state);
         }
     }
 
-    private static void Send(Socket client, String data) {
+    private static void Send(Socket client, int data) {
         // Convert the string data to byte data using ASCII encoding.  
-        byte[] byteData = Encoding.ASCII.GetBytes(data);
+        byte[] byteData = BitConverter.GetBytes(data);
 
         // Begin sending the data to the remote device.  
         client.BeginSend(byteData, 0, byteData.Length, 0,
