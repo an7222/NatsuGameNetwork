@@ -2,5 +2,5 @@
 using System.Collections.Generic;
 using System.Text;
 
-class APIServer {
+class RestAPIServer {
 }

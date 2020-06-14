@@ -6,12 +6,14 @@ using System.Text;
 using System.IO;
 using System.Threading;
 using System.Linq;
+using System.Reflection;
 
 class SessionServer : Singleton<SessionServer> {
     int socketId = 1;
     int PORT = 8001;
     Dictionary<int, Socket> connectedSocketPool = new Dictionary<int, Socket>();
-    //TODO : Protocol Register
+    Dictionary<int, Action> protocolHandlerPool = new Dictionary<int, Action>();
+    
     public void Start() {
         IPEndPoint endPoint = new IPEndPoint(IPAddress.Any, PORT);
 
@@ -27,6 +29,11 @@ class SessionServer : Singleton<SessionServer> {
             Console.WriteLine(e.ToString());
         }
 
+        var baseType = typeof(IProtocol);
+        var a = Assembly.GetAssembly(baseType).GetTypes().Where(t => baseType != t && baseType.IsAssignableFrom(t));
+        foreach(var b in a) {
+            Console.WriteLine(b.Name);
+        }
 
         Console.WriteLine("Session Server Start");
     }
