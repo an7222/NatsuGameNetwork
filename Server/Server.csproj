@@ -8,8 +8,8 @@
   <ItemGroup>
     <Folder Include="Contents\" />
     <Folder Include="Controller\" />
+    <Folder Include="Handler\" />
     <Folder Include="Platform\" />
-    <Folder Include="Protocol\ClientBattle\" />
   </ItemGroup>
 
 </Project>
