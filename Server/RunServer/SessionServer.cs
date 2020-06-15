@@ -9,9 +9,9 @@ using System.Linq;
 using System.Reflection;
 
 class SessionServer : Singleton<SessionServer> {
-    int socketId = 1;
+    int session_id = 1;
     int PORT = 8001;
-    Dictionary<int, Socket> connectedSocketPool = new Dictionary<int, Socket>();
+    Dictionary<int, TcpClientHandler> connectedTcpClientPool = new Dictionary<int, TcpClientHandler>();
     
     public void Start() {
         IPEndPoint endPoint = new IPEndPoint(IPAddress.Any, PORT);
@@ -34,5 +34,15 @@ class SessionServer : Singleton<SessionServer> {
         TcpClient tcpClient = listener.EndAcceptTcpClient(ar);
 
         TcpClientHandler handler = new TcpClientHandler(tcpClient);
+
+        if(connectedTcpClientPool.TryAdd(session_id, handler)) {
+            session_id = Interlocked.Increment(ref session_id);
+        }
+    }
+
+    public void SendPacketAll(IProtocol protocol) {
+        foreach(var handler in connectedTcpClientPool.Values) {
+            handler.SendPacket(protocol);
+        }
     }
 }

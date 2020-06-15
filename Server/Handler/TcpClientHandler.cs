@@ -29,7 +29,7 @@ class TcpClientHandler {
             Console.WriteLine(packetLength);
         }
 
-        stream.Flush();
+        Flush();
 
         ReceivePacket(packetLength);
 
@@ -42,7 +42,7 @@ class TcpClientHandler {
             ProtocolHandler.GetInstance().ProtocolHandle(protocol, this);
         }
 
-        stream.Flush();
+        Flush();
 
 
         Start();
@@ -62,5 +62,11 @@ class TcpClientHandler {
         }
 
         stream.WriteAsync(sendBuffer);
+
+        Flush();
+    }
+
+    public void Flush() {
+        stream.Flush();
     }
 }

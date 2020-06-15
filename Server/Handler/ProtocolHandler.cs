@@ -33,7 +33,7 @@ class ProtocolHandler : Singleton<ProtocolHandler>{
         if(protocol is Login) {
             action = (TcpClientHandler handler) => {
                 Console.WriteLine("Is Login Protocol!");
-                handler.SendPacket(protocol);
+                SessionServer.GetInstance().SendPacketAll(protocol);
             };
         }
 
