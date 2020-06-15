@@ -17,15 +17,8 @@ class SessionServer : Singleton<SessionServer> {
         IPEndPoint endPoint = new IPEndPoint(IPAddress.Any, PORT);
 
         TcpListener listener = new TcpListener(IPAddress.Any, PORT);
-        //Socket listenSocket = new Socket(endPoint.AddressFamily,
-        //    SocketType.Stream, ProtocolType.Tcp);
 
         try {
-            //listenSocket.Bind(endPoint);
-            //listenSocket.Listen(10);
-
-            //listenSocket.BeginAccept(new AsyncCallback(OnAccept), listenSocket);
-
             listener.Start();
             listener.BeginAcceptTcpClient(OnAccept, listener);
         } catch (Exception e) {
