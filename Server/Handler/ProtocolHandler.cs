@@ -2,13 +2,14 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http.Headers;
+using System.Net.Sockets;
 using System.Reflection;
 using System.Reflection.Metadata;
 using System.Text;
 using System.Threading;
 
 class ProtocolHandler : Singleton<ProtocolHandler>{
-    Dictionary<IProtocol, Action> HandlePool = new Dictionary<IProtocol, Action>();
+    Dictionary<IProtocol, Action<TcpClientHandler>> HandlePool = new Dictionary<IProtocol, Action<TcpClientHandler>>();
     
     public void Register() {
         var baseType = typeof(IProtocol);
@@ -19,19 +20,20 @@ class ProtocolHandler : Singleton<ProtocolHandler>{
         }
     }
 
-    public void ProtocolHandle(IProtocol protocol) {
-        Action action;
+    public void ProtocolHandle(IProtocol protocol, TcpClientHandler handler) {
+        Action<TcpClientHandler> action;
         if (HandlePool.TryGetValue(protocol, out action)) {
-            action();
+            action(handler);
         }
     }
 
-    Action createAction(IProtocol protocol) {
-        Action action = null;
+    Action<TcpClientHandler> createAction(IProtocol protocol) {
+        Action<TcpClientHandler> action = null;
                     
         if(protocol is Login) {
-            action = () => {
+            action = (TcpClientHandler handler) => {
                 Console.WriteLine("Is Login Protocol!");
+                handler.SendPacket(protocol);
             };
         }
 
