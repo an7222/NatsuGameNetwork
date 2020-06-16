@@ -140,27 +140,9 @@ new AsyncCallback(ReceiveCallback), state);
             using (BinaryWriter bw = new BinaryWriter(ns)) {
                 protocol.Write(bw);
 
-                Console.WriteLine(protocol.GetPacketLength());
                 byte[] temp = new byte[protocol.GetPacketLength()];
                 ns.Write(temp);
-
-                foreach(var a in temp) {
-                    Console.WriteLine(a);
-                }
             }
-        }
-    }
-
-    private static void SendCallback(IAsyncResult ar) {
-        try {
-            // Retrieve the socket from the state object.  
-            Socket client = (Socket)ar.AsyncState;
-
-            // Complete sending the data to the remote device.  
-            int bytesSent = client.EndSend(ar);
-            Console.WriteLine("Sent {0} bytes to server.", bytesSent);
-        } catch (Exception e) {
-            Console.WriteLine(e.ToString());
         }
     }
 

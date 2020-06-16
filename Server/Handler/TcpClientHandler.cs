@@ -24,40 +24,42 @@ class TcpClientHandler {
 
     async void ReceiveProcess() {
         while (true) {
-            {
-                int bytesReceived = await networkStream.ReadAsync(receiveBuffer, 0, Const.PACKET_LENGTH_HEADER_SIZE).ConfigureAwait(false);
 
-                Console.WriteLine("{0}, {1}", bytesReceived, Const.PACKET_LENGTH_HEADER_SIZE);
-                while (bytesReceived > Const.PACKET_LENGTH_HEADER_SIZE) {
-                    bytesReceived += await networkStream.ReadAsync(receiveBuffer, bytesReceived, Const.PACKET_LENGTH_HEADER_SIZE - bytesReceived).ConfigureAwait(false);
-                }
+            int bytesReceived = await networkStream.ReadAsync(receiveBuffer, 0, receiveBuffer.Length).ConfigureAwait(false);
+
+            while (bytesReceived <= Const.PACKET_LENGTH_HEADER_SIZE) {
+                bytesReceived += await networkStream.ReadAsync(receiveBuffer, bytesReceived, receiveBuffer.Length - bytesReceived).ConfigureAwait(false);
             }
+
 
             int packetLength = BitConverter.ToInt32(receiveBuffer);
             Console.WriteLine("packet Length : " + packetLength);
 
-            {
-                int bytesReceived = await networkStream.ReadAsync(receiveBuffer, 0, packetLength).ConfigureAwait(false);
+            if (packetLength <= 0) {
+                Console.WriteLine("No Packet");
+                continue;
+            }
 
-                while (bytesReceived > packetLength) {
-                    bytesReceived += await networkStream.ReadAsync(receiveBuffer, bytesReceived, packetLength - bytesReceived).ConfigureAwait(false);
+            while (bytesReceived <= packetLength) {
+                bytesReceived += await networkStream.ReadAsync(receiveBuffer, bytesReceived, receiveBuffer.Length - bytesReceived).ConfigureAwait(false);
+            }
+
+            int bodyLength = packetLength - Const.PACKET_LENGTH_HEADER_SIZE;
+            byte[] optimizeBuffer = new byte[bodyLength];
+            Array.Copy(receiveBuffer, Const.PACKET_LENGTH_HEADER_SIZE, optimizeBuffer, 0, bodyLength);
+
+            using (MemoryStream ms = new MemoryStream(optimizeBuffer))
+            using (BinaryReader br = new BinaryReader(ms)) {
+                int protocol_id = br.ReadInt32();
+                Console.WriteLine("Protocol ID : " + protocol_id);
+
+                var protocol = ProtocolManager.GetInstance().GetProtocol(protocol_id);
+                if (protocol != null) {
+                    protocol.Read(br);
+                    ProtocolHandler.GetInstance().Protocol_Logic(protocol, this);
                 }
             }
 
-            byte[] optimizeBuffer = new byte[packetLength];
-            Array.Copy(receiveBuffer, optimizeBuffer, packetLength);
-            using (MemoryStream ms = new MemoryStream(optimizeBuffer)) {
-                using (BinaryReader br = new BinaryReader(ms)) {
-                    int protocol_id = br.ReadInt32();
-                    Console.WriteLine("Protocol ID : " + protocol_id);
-
-                    var protocol = ProtocolManager.GetInstance().GetProtocol(protocol_id);
-                    if(protocol != null) {
-                        protocol.Read(br);
-                        ProtocolHandler.GetInstance().ProtocolAction(protocol, this);
-                    }
-                }
-            }
 
             Array.Clear(receiveBuffer, 0, receiveBuffer.Length);
         }
