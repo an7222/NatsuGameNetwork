@@ -33,16 +33,8 @@ class TcpClientHandler {
                 }
             }
 
-            int packetLength = 0;
-            using (MemoryStream ms = new MemoryStream(receiveBuffer)) {
-                using (BinaryReader br = new BinaryReader(ms)) {
-                    packetLength = br.ReadInt32();
-                    Console.WriteLine("packet Length : " + packetLength);
-                }
-            }
-
-            Array.Clear(receiveBuffer, 0, receiveBuffer.Length);
-
+            int packetLength = BitConverter.ToInt32(receiveBuffer);
+            Console.WriteLine("packet Length : " + packetLength);
 
             {
                 int bytesReceived = await networkStream.ReadAsync(receiveBuffer, 0, packetLength).ConfigureAwait(false);
@@ -52,8 +44,9 @@ class TcpClientHandler {
                 }
             }
 
-
-            using (MemoryStream ms = new MemoryStream(receiveBuffer)) {
+            byte[] optimizeBuffer = new byte[packetLength];
+            Array.Copy(receiveBuffer, optimizeBuffer, packetLength);
+            using (MemoryStream ms = new MemoryStream(optimizeBuffer)) {
                 using (BinaryReader br = new BinaryReader(ms)) {
                     int protocol_id = br.ReadInt32();
                     Console.WriteLine("Protocol ID : " + protocol_id);

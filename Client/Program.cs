@@ -141,7 +141,12 @@ new AsyncCallback(ReceiveCallback), state);
                 protocol.Write(bw);
 
                 Console.WriteLine(protocol.GetPacketLength());
-                ns.Write(new byte[protocol.GetPacketLength()]);
+                byte[] temp = new byte[protocol.GetPacketLength()];
+                ns.Write(temp);
+
+                foreach(var a in temp) {
+                    Console.WriteLine(a);
+                }
             }
         }
     }

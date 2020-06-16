@@ -14,7 +14,7 @@ class Login : IProtocol {
     public long LoginAt;
 
     public void SetPacketLength() {
-        PACKET_LENGTH = sizeof(int) + sizeof(int) + Encoding.Default.GetByteCount(PID) + sizeof(long);
+        PACKET_LENGTH = sizeof(int) + 1 + Encoding.Default.GetByteCount(PID) + sizeof(long);
     }
 
     public int GetPacketLength() {
