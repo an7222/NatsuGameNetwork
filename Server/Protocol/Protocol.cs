@@ -28,7 +28,9 @@ class Login : IProtocol {
 
     public void Read(BinaryReader br) {
         PID = br.ReadString();
+        Console.WriteLine("PID : " + PID);
         LoginAt = br.ReadInt64();
+        Console.WriteLine("LoginAt : " + LoginAt);
     }
 
     public void Write(BinaryWriter bw) {

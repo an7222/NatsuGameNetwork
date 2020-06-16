@@ -31,9 +31,9 @@ class ProtocolManager : Singleton<ProtocolManager> {
         IProtocol ret;
         if (false == protocolPool.TryGetValue(protocol_id, out ret)) {
             Console.WriteLine("No Protocol");
+        } else {
+            ret = (IProtocol)Activator.CreateInstance(ret.GetType());
         }
-
-        ret = (IProtocol)Activator.CreateInstance(ret.GetType());
 
         return ret;
     }

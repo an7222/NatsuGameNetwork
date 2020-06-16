@@ -140,14 +140,9 @@ new AsyncCallback(ReceiveCallback), state);
             using (BinaryWriter bw = new BinaryWriter(ns)) {
                 protocol.Write(bw);
 
-                ns.Write(new byte[1024]);
-
-                using (BinaryReader br = new BinaryReader(ns)) {
-                    Console.WriteLine(br.ReadInt32());
-                }
+                Console.WriteLine(protocol.GetPacketLength());
+                ns.Write(new byte[protocol.GetPacketLength()]);
             }
-
-
         }
     }
 

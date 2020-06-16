@@ -37,7 +37,5 @@ class Login : IProtocol {
         bw.Write(PROTOCOL_ID);
         bw.Write(PID);
         bw.Write(LoginAt);
-
-        Console.WriteLine("{0}, {1}, {2}, {3}", PACKET_LENGTH, PROTOCOL_ID, PID, LoginAt);
     }
 }
