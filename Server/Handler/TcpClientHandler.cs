@@ -13,9 +13,6 @@ class TcpClientHandler {
     TcpClient tcpClient = null;
     NetworkStream networkStream = null;
 
-    private static AutoResetEvent receiveDone =
-    new AutoResetEvent(false);
-
     public TcpClientHandler(TcpClient tcpClient) {
         this.tcpClient = tcpClient;
         this.networkStream = tcpClient.GetStream();
@@ -25,38 +22,50 @@ class TcpClientHandler {
         ReceiveProcess();
     }
 
-    void ReceiveProcess() {
-        using (BinaryReader br = new BinaryReader(networkStream)) {
-            receiveDone.Reset();
-            ReceivePacket(Const.PACKET_LENGTH_HEADER_SIZE);
-            receiveDone.WaitOne();
-            int packetLength = br.ReadInt32();
-            Console.WriteLine("packet Length : " + packetLength);
+    async void ReceiveProcess() {
+        {
+            int bytesReceived = await networkStream.ReadAsync(receiveBuffer, 0, Const.PACKET_LENGTH_HEADER_SIZE);
 
-            networkStream.Flush();
-            receiveDone.Reset();
-            ReceivePacket(packetLength);
-            receiveDone.WaitOne();
-            int protocol_id = br.ReadInt32();
-            Console.WriteLine("Protocol ID : " + protocol_id);
+            Console.WriteLine("{0}, {1}", bytesReceived, Const.PACKET_LENGTH_HEADER_SIZE);
+            while (bytesReceived > Const.PACKET_LENGTH_HEADER_SIZE) {
+                Console.WriteLine("?!");
+                bytesReceived += await networkStream.ReadAsync(receiveBuffer, bytesReceived, Const.PACKET_LENGTH_HEADER_SIZE - bytesReceived);
+            }
+        }
 
-            var protocol = ProtocolManager.GetInstance().GetProtocol(protocol_id);
-            protocol.Read(br);
-            ProtocolHandler.GetInstance().ProtocolHandle(protocol, this);
+        int packetLength = 0;
+        using (MemoryStream ms = new MemoryStream(receiveBuffer)) {
+            using (BinaryReader br = new BinaryReader(ms)) {
+                packetLength = br.ReadInt32();
+                Console.WriteLine("packet Length : " + packetLength);
+            }
+        }
+
+        Array.Clear(receiveBuffer, 0, receiveBuffer.Length);
+
+
+        {
+            int bytesReceived = await networkStream.ReadAsync(receiveBuffer, 0, packetLength);
+
+            while (bytesReceived > packetLength) {
+                bytesReceived += await networkStream.ReadAsync(receiveBuffer, bytesReceived, packetLength - bytesReceived);
+            }
         }
 
 
+        using (MemoryStream ms = new MemoryStream(receiveBuffer)) {
+            using (BinaryReader br = new BinaryReader(ms)) {
+                int protocol_id = br.ReadInt32();
+                Console.WriteLine("Protocol ID : " + protocol_id);
+
+                var protocol = ProtocolManager.GetInstance().GetProtocol(protocol_id);
+                protocol.Read(br);
+                ProtocolHandler.GetInstance().ProtocolHandle(protocol, this);
+            }
+        }
+
+        networkStream.Flush();
         ReceiveProcess();
-    }
-
-    async void ReceivePacket(int packet_size) {
-        int bytesReceived = await networkStream.ReadAsync(receiveBuffer, 0, packet_size);
-
-        while (bytesReceived > packet_size) {
-            bytesReceived += await networkStream.ReadAsync(receiveBuffer, bytesReceived, packet_size - bytesReceived);
-        }
-
-        receiveDone.Set();
     }
 
     public void SendPacket(IProtocol protocol) {

@@ -134,15 +134,20 @@ new AsyncCallback(ReceiveCallback), state);
         }
     }
 
-    private static async void Send(Socket client, IProtocol protocol) {
+    private static void Send(Socket client, IProtocol protocol) {
         // Convert the string data to byte data using ASCII encoding.  
         using (NetworkStream ns = new NetworkStream(client)) {
             using (BinaryWriter bw = new BinaryWriter(ns)) {
                 protocol.Write(bw);
 
-                await ns.WriteAsync(new byte[1024]);
-                ns.Flush();
+                ns.Write(new byte[1024]);
+
+                using (BinaryReader br = new BinaryReader(ns)) {
+                    Console.WriteLine(br.ReadInt32());
+                }
             }
+
+
         }
     }
 
