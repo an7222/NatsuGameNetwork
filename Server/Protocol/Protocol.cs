@@ -33,6 +33,8 @@ class Login : IProtocol {
 
     public void Write(BinaryWriter bw) {
         SetPacketLength();
+        bw.Write(PACKET_LENGTH);
+        bw.Write(PROTOCOL_ID);
         bw.Write(PID);
         bw.Write(LoginAt);
     }

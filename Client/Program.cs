@@ -4,6 +4,7 @@ using System.Net.Sockets;
 using System.Threading;
 using System.Text;
 using System.Threading.Tasks;
+using System.IO;
 
 // State object for receiving data from remote device.  
 public class StateObject {
@@ -47,7 +48,11 @@ public class AsynchronousClient {
                 while (true) {
                     var chat = Console.ReadKey();
                     if (chat.Key == ConsoleKey.UpArrow) {
-                        Send(client, 1);
+                        Send(client, new Login {
+                            PID = "antori",
+                            LoginAt = 1234,
+                        });
+                        ;
                     }
                 }
             });
@@ -129,13 +134,16 @@ new AsyncCallback(ReceiveCallback), state);
         }
     }
 
-    private static void Send(Socket client, int data) {
+    private static async void Send(Socket client, IProtocol protocol) {
         // Convert the string data to byte data using ASCII encoding.  
-        byte[] byteData = BitConverter.GetBytes(data);
+        using (NetworkStream ns = new NetworkStream(client)) {
+            using (BinaryWriter bw = new BinaryWriter(ns)) {
+                protocol.Write(bw);
 
-        // Begin sending the data to the remote device.  
-        client.BeginSend(byteData, 0, byteData.Length, 0,
-            new AsyncCallback(SendCallback), client);
+                await ns.WriteAsync(new byte[1024]);
+                ns.Flush();
+            }
+        }
     }
 
     private static void SendCallback(IAsyncResult ar) {

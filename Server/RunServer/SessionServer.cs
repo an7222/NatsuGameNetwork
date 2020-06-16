@@ -38,6 +38,8 @@ class SessionServer : Singleton<SessionServer> {
         if(connectedTcpClientPool.TryAdd(session_id, handler)) {
             session_id = Interlocked.Increment(ref session_id);
         }
+
+        listener.BeginAcceptTcpClient(OnAccept, listener);
     }
 
     public void SendPacketAll(IProtocol protocol) {
