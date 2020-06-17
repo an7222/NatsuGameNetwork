@@ -12,11 +12,9 @@ class ProtocolGenerator {
 
         string readFilePath = Path.Combine(rootFolder, "ProtocolGenerator");
         readFilePath = Path.Combine(readFilePath, "IDL");
-        Console.WriteLine(readFilePath);
 
         string writeFilePath = Path.Combine(rootFolder, "Server");
         writeFilePath = Path.Combine(writeFilePath, "Protocol");
-        Console.WriteLine(writeFilePath);
 
         string[] readFilePaths = Directory.GetFiles(readFilePath, "*.idl");
 
@@ -46,29 +44,39 @@ class ProtocolGenerator {
     }
 
     static void processReadLine(string one_line, StreamWriter sw) {
-        var temp = one_line.Split(" ");
-        for(int i = 0; i < temp.Length; ++i) {
-            switch (temp[i]) {
+        var keyword = one_line.Split(TextConst.SPACE);
+        for(int i = 0; i < keyword.Length; ++i) {
+            switch (keyword[i].Trim()) {
                 case "PACKET":
                     sw.Write("class");
-
                     sw.Write(TextConst.SPACE);
 
                     i++;
-
-                    sw.Write(temp[i]); //class Name
-
+                    sw.Write(keyword[i]); //Class Name
                     sw.Write(TextConst.SPACE);
-
                     sw.Write(TextConst.COLON);
-
                     sw.Write(TextConst.SPACE);
 
                     sw.Write(TextConst.I_PROTOCOL);
+                    sw.Write(TextConst.SPACE);
+                    sw.WriteLine(TextConst.BRACE_START);
+                    break;
+                case "END":
+                    sw.WriteLine(TextConst.BRACE_END);
+                    break;
+                case "int":
+                case "long":
+                case "string":
+                    sw.Write(TextConst.TAB);
+                    sw.Write(TextConst.PUBLIC);
 
                     sw.Write(TextConst.SPACE);
+                    sw.Write(keyword[i]);
+                    sw.Write(TextConst.SPACE);
 
-                    sw.Write(TextConst.BRACE_START);
+                    i++;
+                    sw.Write(keyword[i]); //Member Name
+                    sw.WriteLine(TextConst.SEMI_COLON);
                     break;
             }
         }
