@@ -11,15 +11,14 @@ class ProtocolGenerator {
 
 
         string readFilePath = Path.Combine(rootFolder, "ProtocolGenerator");
-        readFilePath = Path.Combine(rootFolder, "IDL");
+        readFilePath = Path.Combine(readFilePath, "IDL");
         Console.WriteLine(readFilePath);
 
         string writeFilePath = Path.Combine(rootFolder, "Server");
-        writeFilePath = Path.Combine(rootFolder, "Protocol");
+        writeFilePath = Path.Combine(writeFilePath, "Protocol");
         Console.WriteLine(writeFilePath);
 
-        string[] readFilePaths = Directory.GetFiles(readFilePath, "*.idl",
-                                         SearchOption.TopDirectoryOnly);
+        string[] readFilePaths = Directory.GetFiles(readFilePath, "*.idl");
 
         for (int i = 0; i < readFilePaths.Length; ++i) {
             using (var readFile = new FileStream(readFilePaths[i], FileMode.Open)) {
@@ -27,12 +26,18 @@ class ProtocolGenerator {
                 if (temp.Length == 0)
                     continue;
 
-                string fileName = temp[temp.Length - 1];
+                string fileNameWithExt = temp[temp.Length - 1];
+                string fileName = fileNameWithExt.Split(".")[0] + "_TEST"; //TODO : remove _TEST
 
-                //using (var writeFile = new FileStream(writeFilePaths[i], FileMode.OpenOrCreate))
-                using (var sr = new StreamReader(readFile, Encoding.UTF8)) {
-                    while (false == sr.EndOfStream) {
-                        processReadLine(sr.ReadLine());
+                using (var writeFile = new FileStream(Path.Combine(writeFilePath, string.Concat(fileName, ".cs")), FileMode.OpenOrCreate))
+                using (var sw = new StreamWriter(writeFile)) {
+                    sw.WriteLine(TextConst.SYSTEM_IO);
+                    sw.WriteLine(TextConst.SYSTEM_TEXT);
+                    sw.WriteLine();
+                    using (var sr = new StreamReader(readFile)) {
+                        while (false == sr.EndOfStream) {
+                            processReadLine(sr.ReadLine(), sw);
+                        }
                     }
                 }
             }
@@ -40,20 +45,33 @@ class ProtocolGenerator {
         }
     }
 
-    static void processReadLine(string one_line) {
+    static void processReadLine(string one_line, StreamWriter sw) {
         var temp = one_line.Split(" ");
         for(int i = 0; i < temp.Length; ++i) {
             switch (temp[i]) {
                 case "PACKET":
+                    sw.Write("class");
+
+                    sw.Write(TextConst.SPACE);
+
                     i++;
-                    writeClass(temp[i]);
+
+                    sw.Write(temp[i]); //class Name
+
+                    sw.Write(TextConst.SPACE);
+
+                    sw.Write(TextConst.COLON);
+
+                    sw.Write(TextConst.SPACE);
+
+                    sw.Write(TextConst.I_PROTOCOL);
+
+                    sw.Write(TextConst.SPACE);
+
+                    sw.Write(TextConst.BRACE_START);
                     break;
             }
         }
-
-    }
-
-    static void writeClass(string class_name) {
 
     }
 }

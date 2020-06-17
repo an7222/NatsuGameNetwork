@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Reflection;
+﻿using System.IO;
 using System.Text;
 
 class Login : IProtocol {
@@ -29,8 +26,6 @@ class Login : IProtocol {
     public void Read(BinaryReader br) {
         PID = br.ReadString();
         LoginAt = br.ReadInt64();
-
-        Console.WriteLine("[Login Packet] PID : {0}, LoginAt : {1}", PID, LoginAt);
     }
 
     public void Write(BinaryWriter bw) {
