@@ -53,8 +53,8 @@ class Program {
             byte[] optimizeBuffer = new byte[bodyLength];
             Array.Copy(receiveBuffer, PACKET_LENGTH_HEADER_SIZE, optimizeBuffer, 0, bodyLength);
 
-            using (MemoryStream ms = new MemoryStream(optimizeBuffer))
-            using (BinaryReader br = new BinaryReader(ms)) {
+            using (var ms = new MemoryStream(optimizeBuffer))
+            using (var br = new BinaryReader(ms)) {
                 int protocol_id = br.ReadInt32();
                 Console.WriteLine("Protocol ID : " + protocol_id);
 
@@ -70,7 +70,7 @@ class Program {
     }
 
     private static void Send(IProtocol protocol) {
-        using (BinaryWriter bw = new BinaryWriter(networkStream, Encoding.Default, true)) {
+        using (var bw = new BinaryWriter(networkStream, Encoding.Default, true)) {
             protocol.Write(bw);
 
             byte[] writeBuffer = new byte[protocol.GetPacketLength()];

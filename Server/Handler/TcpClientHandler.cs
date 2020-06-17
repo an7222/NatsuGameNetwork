@@ -63,8 +63,8 @@ class TcpClientHandler {
             byte[] optimizeBuffer = new byte[bodyLength];
             Array.Copy(receiveBuffer, Const.PACKET_LENGTH_HEADER_SIZE, optimizeBuffer, 0, bodyLength);
 
-            using (MemoryStream ms = new MemoryStream(optimizeBuffer))
-            using (BinaryReader br = new BinaryReader(ms)) {
+            using (var ms = new MemoryStream(optimizeBuffer))
+            using (var br = new BinaryReader(ms)) {
                 int protocol_id = br.ReadInt32();
                 Console.WriteLine("Protocol ID : " + protocol_id);
 
@@ -81,7 +81,7 @@ class TcpClientHandler {
     }
 
     public void SendPacket(IProtocol protocol) {
-        using (BinaryWriter bw = new BinaryWriter(networkStream, Encoding.Default, true)) {
+        using (var bw = new BinaryWriter(networkStream, Encoding.Default, true)) {
             protocol.Write(bw);
         }
 
