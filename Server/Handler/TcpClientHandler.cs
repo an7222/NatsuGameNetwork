@@ -11,21 +11,32 @@ class TcpClientHandler {
     byte[] receiveBuffer;
     TcpClient tcpClient = null;
     NetworkStream networkStream = null;
+    int session_id;
+    IRunServer connectedServer;
 
-    public TcpClientHandler(TcpClient tcpClient) {
+    public TcpClientHandler(TcpClient tcpClient, int session_id, IRunServer connectedServer) {
         this.tcpClient = tcpClient;
         this.networkStream = tcpClient.GetStream();
+        this.session_id = session_id;
+        this.connectedServer = connectedServer;
         receiveBuffer = new byte[Const.RECEIVE_BUFFER_SIZE];
-
+        
         ReceiveProcess();
     }
 
     async void ReceiveProcess() {
         while (true) {
-            int bytesReceived = await networkStream.ReadAsync(receiveBuffer, 0, receiveBuffer.Length).ConfigureAwait(false);
+            int bytesReceived = 0;
+            try {
+                bytesReceived  = await networkStream.ReadAsync(receiveBuffer, 0, receiveBuffer.Length).ConfigureAwait(false);
 
-            while (bytesReceived <= Const.PACKET_LENGTH_HEADER_SIZE) {
-                bytesReceived += await networkStream.ReadAsync(receiveBuffer, bytesReceived, receiveBuffer.Length - bytesReceived).ConfigureAwait(false);
+                while (bytesReceived <= Const.PACKET_LENGTH_HEADER_SIZE) {
+                    bytesReceived += await networkStream.ReadAsync(receiveBuffer, bytesReceived, receiveBuffer.Length - bytesReceived).ConfigureAwait(false);
+                }
+            } catch (Exception e) {
+                Console.WriteLine(e);
+                connectedServer.OnClientLeave(session_id);
+                return;
             }
 
 
@@ -37,9 +48,16 @@ class TcpClientHandler {
                 continue;
             }
 
-            while (bytesReceived <= packetLength) {
-                bytesReceived += await networkStream.ReadAsync(receiveBuffer, bytesReceived, receiveBuffer.Length - bytesReceived).ConfigureAwait(false);
+            try {
+                while (bytesReceived <= packetLength) {
+                    bytesReceived += await networkStream.ReadAsync(receiveBuffer, bytesReceived, receiveBuffer.Length - bytesReceived).ConfigureAwait(false);
+                }
+            } catch (Exception e) {
+                Console.WriteLine(e);
+                connectedServer.OnClientLeave(session_id);
+                return;
             }
+
 
             int bodyLength = packetLength - Const.PACKET_LENGTH_HEADER_SIZE;
             byte[] optimizeBuffer = new byte[bodyLength];
@@ -67,8 +85,16 @@ class TcpClientHandler {
             protocol.Write(bw);
         }
 
+        
         byte[] writeBuffer = new byte[protocol.GetPacketLength()];
-        networkStream.Write(writeBuffer);
+
+        try {
+            networkStream.Write(writeBuffer);
+        } catch (Exception e) {
+            Console.WriteLine(e);
+            connectedServer.OnClientLeave(session_id);
+            return;
+        }
     }
 
     //TODO : need flush?

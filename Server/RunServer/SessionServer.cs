@@ -8,7 +8,7 @@ using System.Threading;
 using System.Linq;
 using System.Reflection;
 
-class SessionServer : Singleton<SessionServer> {
+class SessionServer : Singleton<SessionServer>, IRunServer {
     int session_id = 1;
     const int PORT = 8001;
     Dictionary<int, TcpClientHandler> connectedTcpClientPool = new Dictionary<int, TcpClientHandler>();
@@ -31,7 +31,7 @@ class SessionServer : Singleton<SessionServer> {
         TcpListener listener = (TcpListener)ar.AsyncState;
         TcpClient tcpClient = listener.EndAcceptTcpClient(ar);
 
-        TcpClientHandler handler = new TcpClientHandler(tcpClient);
+        TcpClientHandler handler = new TcpClientHandler(tcpClient, session_id, this);
 
         if(connectedTcpClientPool.TryAdd(session_id, handler)) {
             session_id = Interlocked.Increment(ref session_id);
@@ -44,5 +44,9 @@ class SessionServer : Singleton<SessionServer> {
         foreach(var handler in connectedTcpClientPool.Values) {
             handler.SendPacket(protocol);
         }
+    }
+
+    public void OnClientLeave(int session_id) {
+        connectedTcpClientPool.Remove(session_id);
     }
 }
