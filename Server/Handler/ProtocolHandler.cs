@@ -32,10 +32,8 @@ class ProtocolHandler : Singleton<ProtocolHandler>{
                     
         if(dummyProtocol is Login) {
             action = (IProtocol protocol, TcpClientHandler handler) => {
-                Console.WriteLine("Is Login Protocol!");
                 var temp = protocol as Login;
-                Console.WriteLine("{0}, {1}, {2}, {3}", temp.PACKET_LENGTH, temp.PROTOCOL_ID, temp.PID, temp.LoginAt);
-                //SessionServer.GetInstance().SendPacketAll(protocol);
+                SessionServer.GetInstance().SendPacketAll(protocol);
             };
         }
 

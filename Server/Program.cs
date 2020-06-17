@@ -5,12 +5,12 @@ class Program {
         ProtocolHandler.GetInstance().Register();
         SessionServer.GetInstance().Start();
 
-        bool gameLoop = false;
+        bool gameRunning = true;
         //ThreadManager.GetInstance().RegisterWork(() => {
         //    Console.WriteLine("Test");
         //});
 
-        while (!gameLoop) {
+        while (gameRunning) {
 
         }
     }

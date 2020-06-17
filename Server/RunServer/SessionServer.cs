@@ -10,12 +10,10 @@ using System.Reflection;
 
 class SessionServer : Singleton<SessionServer> {
     int session_id = 1;
-    int PORT = 8001;
+    const int PORT = 8001;
     Dictionary<int, TcpClientHandler> connectedTcpClientPool = new Dictionary<int, TcpClientHandler>();
     
     public void Start() {
-        IPEndPoint endPoint = new IPEndPoint(IPAddress.Any, PORT);
-
         TcpListener listener = new TcpListener(IPAddress.Any, PORT);
 
         try {
@@ -29,7 +27,7 @@ class SessionServer : Singleton<SessionServer> {
     }
 
     void OnAccept(IAsyncResult ar) {
-        Console.WriteLine("Socket Connected");
+        Console.WriteLine("Client Connected");
         TcpListener listener = (TcpListener)ar.AsyncState;
         TcpClient tcpClient = listener.EndAcceptTcpClient(ar);
 

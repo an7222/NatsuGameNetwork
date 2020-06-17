@@ -9,7 +9,6 @@ using System.Threading;
 
 class TcpClientHandler {
     byte[] receiveBuffer;
-    byte[] sendBuffer;
     TcpClient tcpClient = null;
     NetworkStream networkStream = null;
 
@@ -17,14 +16,12 @@ class TcpClientHandler {
         this.tcpClient = tcpClient;
         this.networkStream = tcpClient.GetStream();
         receiveBuffer = new byte[Const.RECEIVE_BUFFER_SIZE];
-        sendBuffer = new byte[Const.SEND_BUFFER_SIZE];
 
         ReceiveProcess();
     }
 
     async void ReceiveProcess() {
         while (true) {
-
             int bytesReceived = await networkStream.ReadAsync(receiveBuffer, 0, receiveBuffer.Length).ConfigureAwait(false);
 
             while (bytesReceived <= Const.PACKET_LENGTH_HEADER_SIZE) {
@@ -66,15 +63,15 @@ class TcpClientHandler {
     }
 
     public void SendPacket(IProtocol protocol) {
-        using (BinaryWriter bw = new BinaryWriter(networkStream)) {
+        using (BinaryWriter bw = new BinaryWriter(networkStream, Encoding.Default, true)) {
             protocol.Write(bw);
         }
 
-        networkStream.WriteAsync(sendBuffer);
-
-        flush();
+        byte[] writeBuffer = new byte[protocol.GetPacketLength()];
+        networkStream.Write(writeBuffer);
     }
 
+    //TODO : need flush?
     void flush() {
         networkStream.Flush();
     }

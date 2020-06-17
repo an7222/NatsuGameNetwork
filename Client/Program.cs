@@ -6,148 +6,84 @@ using System.Text;
 using System.Threading.Tasks;
 using System.IO;
 
-// State object for receiving data from remote device.  
-public class StateObject {
-    // Client socket.  
-    public Socket workSocket = null;
-    // Size of receive buffer.  
-    public const int BufferSize = 256;
-    // Receive buffer.  
-    public byte[] buffer = new byte[BufferSize];
-    // Received data string.  
-    public StringBuilder sb = new StringBuilder();
-}
+class Program {
+    const int SESSION_SERVER_PORT = 8001;
+    const int RECEIVE_BUFFER_SIZE = 256;
+    const int PACKET_LENGTH_HEADER_SIZE = 4;
+    static byte[] receiveBuffer;
+    static NetworkStream networkStream;
 
-public class AsynchronousClient {
-    // The port number for the remote device.  
-    private const int SESSION_SERVER_PORT = 8001;
+    async static void StartClient() {
+        TcpClient tcpClient = new TcpClient("127.0.0.1", SESSION_SERVER_PORT);
 
-    // ManualResetEvent instances signal completion.  
-    private static ManualResetEvent connectDone =
-        new ManualResetEvent(false);
+        Console.WriteLine("Session Server Connected!");
 
-    // The response from the remote device.  
-    private static String response = String.Empty;
-
-    private static void StartClient() {
-        // Connect to a remote device.  
-        try {
-            // Establish the remote endpoint for the socket.  
-            IPEndPoint remoteEP = new IPEndPoint(IPAddress.Parse("127.0.0.1"), SESSION_SERVER_PORT);
-
-            // Create a TCP/IP socket.  
-            Socket client = new Socket(remoteEP.AddressFamily,
-                SocketType.Stream, ProtocolType.Tcp);
-
-            // Connect to the remote endpoint.  
-            client.BeginConnect(remoteEP,
-                new AsyncCallback(ConnectCallback), client);
-            connectDone.WaitOne();
-
-            Task readTask = new Task(() => {
-                while (true) {
-                    var chat = Console.ReadKey();
-                    if (chat.Key == ConsoleKey.UpArrow) {
-                        Send(client, new Login {
-                            PID = "antori",
-                            LoginAt = 1234,
-                        });
-                        ;
-                    }
-                }
-            });
-            readTask.Start();
-
-            // Receive the response from the remote device.  
-            Receive(client);
-
+        Task consoleReadTask = new Task(() => {
             while (true) {
+                var chat = Console.ReadKey();
+                if (chat.Key == ConsoleKey.UpArrow) {
+                    Send(new Login {
+                        PID = "antori",
+                        LoginAt = 1234,
+                    });
+                }
             }
-        } catch (Exception e) {
-            Console.WriteLine(e.ToString());
-        }
-    }
+        });
+        consoleReadTask.Start();
 
+        networkStream = tcpClient.GetStream();
+        receiveBuffer = new byte[RECEIVE_BUFFER_SIZE];
 
-    private static void ConnectCallback(IAsyncResult ar) {
-        try {
-            // Retrieve the socket from the state object.  
-            Socket client = (Socket)ar.AsyncState;
+        while (true) {
+            int bytesReceived = await networkStream.ReadAsync(receiveBuffer, 0, RECEIVE_BUFFER_SIZE).ConfigureAwait(false);
 
-            // Complete the connection.  
-            client.EndConnect(ar);
+            int packetLength = BitConverter.ToInt32(receiveBuffer);
+            Console.WriteLine("packet Length : " + packetLength);
 
-            Console.WriteLine("Socket connected to {0}",
-                client.RemoteEndPoint.ToString());
+            if (packetLength <= 0) {
+                Console.WriteLine("No Packet");
+                continue;
+            }
 
-            // Signal that the connection has been made.  
-            connectDone.Set();
-        } catch (Exception e) {
-            Console.WriteLine(e.ToString());
-        }
-    }
+            while (bytesReceived <= packetLength) {
+                bytesReceived += await networkStream.ReadAsync(receiveBuffer, bytesReceived, receiveBuffer.Length - bytesReceived).ConfigureAwait(false);
+            }
 
-    private static void Receive(Socket client) {
-        try {
-            // Create the state object.  
-            StateObject state = new StateObject();
-            state.workSocket = client;
+            int bodyLength = packetLength - PACKET_LENGTH_HEADER_SIZE;
+            byte[] optimizeBuffer = new byte[bodyLength];
+            Array.Copy(receiveBuffer, PACKET_LENGTH_HEADER_SIZE, optimizeBuffer, 0, bodyLength);
 
-            // Begin receiving the data from the remote device.  
-            client.BeginReceive(state.buffer, 0, StateObject.BufferSize, 0,
-                new AsyncCallback(ReceiveCallback), state);
-        } catch (Exception e) {
-            Console.WriteLine(e.ToString());
-        }
-    }
+            using (MemoryStream ms = new MemoryStream(optimizeBuffer))
+            using (BinaryReader br = new BinaryReader(ms)) {
+                int protocol_id = br.ReadInt32();
+                Console.WriteLine("Protocol ID : " + protocol_id);
 
-    private static void ReceiveCallback(IAsyncResult ar) {
-        try {
-            // Retrieve the state object and the client socket
-            // from the asynchronous state object.  
-            StateObject state = (StateObject)ar.AsyncState;
-            Socket client = state.workSocket;
-
-            // Read data from the remote device.  
-            int bytesRead = client.EndReceive(ar);
-
-            if (bytesRead > 0) {
-                // There might be more data, so store the data received so far.  
-                state.sb.Append(Encoding.ASCII.GetString(state.buffer, 0, bytesRead));
-
-                // All the data has arrived; put it in response.  
-                if (state.sb.Length > 1) {
-                    response = state.sb.ToString();
-
-                    // Write the response to the console.  
-                    Console.WriteLine("Response received : {0}", response);
-
-                    state.buffer = new byte[StateObject.BufferSize];
-                    state.sb.Clear();
+                var protocol = ProtocolManager.GetInstance().GetProtocol(protocol_id);
+                if (protocol != null) {
+                    protocol.Read(br);
                 }
             }
 
-            client.BeginReceive(state.buffer, 0, StateObject.BufferSize, 0,
-new AsyncCallback(ReceiveCallback), state);
-        } catch (Exception e) {
-            Console.WriteLine(e.ToString());
+
+            Array.Clear(receiveBuffer, 0, receiveBuffer.Length);
         }
     }
 
-    private static void Send(Socket client, IProtocol protocol) {
-        // Convert the string data to byte data using ASCII encoding.  
-        using (NetworkStream ns = new NetworkStream(client)) {
-            using (BinaryWriter bw = new BinaryWriter(ns)) {
-                protocol.Write(bw);
+    private static void Send(IProtocol protocol) {
+        using (BinaryWriter bw = new BinaryWriter(networkStream, Encoding.Default, true)) {
+            protocol.Write(bw);
 
-                byte[] temp = new byte[protocol.GetPacketLength()];
-                ns.Write(temp);
-            }
+            byte[] writeBuffer = new byte[protocol.GetPacketLength()];
+            networkStream.Write(writeBuffer);
         }
     }
 
-    public static int Main(String[] args) {
+    static void Main(String[] args) {
+        ProtocolManager.GetInstance().Register();
         StartClient();
-        return 0;
+        bool gameRunning = true;
+        while (gameRunning) {
+
+        }
     }
 }
