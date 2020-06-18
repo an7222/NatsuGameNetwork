@@ -11,7 +11,7 @@ class Program {
     const int RECEIVE_BUFFER_SIZE = 256;
     const int PACKET_LENGTH_HEADER_SIZE = 4;
 
-    static void StartClient() {
+    static void StartGame() {
         TcpClient tcpClient = new TcpClient("127.0.0.1", SESSION_SERVER_PORT);
 
         Console.WriteLine("Session Server Connected!");
@@ -31,7 +31,7 @@ class Program {
     static void Main(String[] args) {
         ProtocolManager.GetInstance().Register();
         ProtocolHandler.GetInstance().Register();
-        StartClient();
+        StartGame();
         bool gameRunning = true;
         while (gameRunning) {
 

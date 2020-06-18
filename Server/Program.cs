@@ -4,6 +4,8 @@ class Program {
         ProtocolManager.GetInstance().Register();
         ProtocolHandler.GetInstance().Register();
         SessionServer.GetInstance().Start();
+        BattleServer.GetInstance().Start();
+        RestAPIServer.GetInstance().Start();
 
         bool gameRunning = true;
         //ThreadManager.GetInstance().RegisterWork(() => {

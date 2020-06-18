@@ -12,9 +12,9 @@ class TcpClientHandler {
     TcpClient tcpClient = null;
     NetworkStream networkStream = null;
     int session_id;
-    IRunServer connectedServer;
+    IRealTimeServer connectedServer;
 
-    public TcpClientHandler(TcpClient tcpClient, int session_id, IRunServer connectedServer) {
+    public TcpClientHandler(TcpClient tcpClient, int session_id, IRealTimeServer connectedServer) {
         this.tcpClient = tcpClient;
         this.networkStream = tcpClient.GetStream();
         this.session_id = session_id;

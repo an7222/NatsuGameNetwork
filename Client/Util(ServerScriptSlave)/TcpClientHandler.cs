@@ -18,7 +18,7 @@ class TcpClientHandler {
         receiveBuffer = new byte[Const.RECEIVE_BUFFER_SIZE];
 
         SendPacket(new Login_C2S {
-            PID = "antori",
+            PID = DateTime.Now.Ticks.ToString(),
         });
 
         ReceiveProcess();

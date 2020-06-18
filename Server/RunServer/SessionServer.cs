@@ -8,8 +8,9 @@ using System.Threading;
 using System.Linq;
 using System.Reflection;
 
-class SessionServer : Singleton<SessionServer>, IRunServer {
+class SessionServer : Singleton<SessionServer>, IRealTimeServer {
     int session_id = 1;
+    long user_id = 10000;
     const int PORT = 8001;
     Dictionary<int, TcpClientHandler> connectedTcpClientPool = new Dictionary<int, TcpClientHandler>();
     
@@ -50,5 +51,9 @@ class SessionServer : Singleton<SessionServer>, IRunServer {
         if (connectedTcpClientPool.TryAdd(session_id, handler)) {
             session_id = Interlocked.Increment(ref session_id);
         }
+    }
+
+    public long GetUserID() {
+        return user_id = Interlocked.Increment(ref user_id);
     }
 }

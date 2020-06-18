@@ -35,7 +35,7 @@ class ProtocolHandler : Singleton<ProtocolHandler>{
         if(dummyProtocol is Login_ACK_S2C) {
             action = (IProtocol protocol, TcpClientHandler handler) => {
                 var temp = protocol as Login_ACK_S2C;
-                Console.WriteLine("[Login_ACK_S2C] ServerTimeUnix : {0}, SessionToken : {1}, UserID : {2}", temp.ServerTimeUnix, temp.SessionToken, temp.UserID);
+                Console.WriteLine("Receive! [Login_ACK_S2C]\nUserID : {0}, ServerTimeUnix : {1}, SessionToken : {2}", temp.UserID, temp.ServerTimeUnix, temp.SessionToken);
                 handler.SendPacket(new Login_FIN_C2S());
             };
         }
