@@ -40,7 +40,6 @@ class TcpClientHandler {
 
 
             int packetLength = BitConverter.ToInt32(receiveBuffer);
-            Console.WriteLine("packet Length : " + packetLength);
 
             if (packetLength <= 0) {
                 Console.WriteLine("No Packet");
@@ -64,7 +63,6 @@ class TcpClientHandler {
             using (var ms = new MemoryStream(optimizeBuffer))
             using (var br = new BinaryReader(ms)) {
                 int protocol_id = br.ReadInt32();
-                Console.WriteLine("Protocol ID : " + protocol_id);
 
                 var protocol = ProtocolManager.GetInstance().GetProtocol(protocol_id);
                 if (protocol != null) {

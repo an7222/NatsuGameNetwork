@@ -24,6 +24,8 @@ class ProtocolHandler : Singleton<ProtocolHandler>{
         Action<IProtocol, TcpClientHandler> action;
         if (HandlePool.TryGetValue(protocol.GetProtocol_ID(), out action)) {
             action(protocol, handler);
+        } else {
+            Console.WriteLine("No Protocol ID");
         }
     }
 
@@ -33,6 +35,7 @@ class ProtocolHandler : Singleton<ProtocolHandler>{
         if(dummyProtocol is Login_ACK_S2C) {
             action = (IProtocol protocol, TcpClientHandler handler) => {
                 var temp = protocol as Login_ACK_S2C;
+                Console.WriteLine("[Login_ACK_S2C] ServerTimeUnix : {0}, SessionToken : {1}, UserID : {2}", temp.ServerTimeUnix, temp.SessionToken, temp.UserID);
                 handler.SendPacket(new Login_FIN_C2S());
             };
         }
