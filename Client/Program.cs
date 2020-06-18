@@ -34,6 +34,10 @@ class Program {
         networkStream = tcpClient.GetStream();
         receiveBuffer = new byte[RECEIVE_BUFFER_SIZE];
 
+        Send(new Login {
+            PID = "antori",
+            LoginAt = 1234,
+        });
         while (true) {
             int bytesReceived = await networkStream.ReadAsync(receiveBuffer, 0, RECEIVE_BUFFER_SIZE).ConfigureAwait(false);
 

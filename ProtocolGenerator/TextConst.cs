@@ -20,7 +20,7 @@ class TextConst {
     public const string IMPLEMENT_I_PROTOCOL = SPACE + COLON + SPACE + "IProtocol" + SPACE + BRACE_START;
 
     public const string PACKET_LENGTH_DEFINE = TAB + PUBLIC + SPACE + "int PACKET_LENGTH = 0;";
-    public const string PROTOCOL_ID_DEFINE = TAB + PUBLIC + SPACE + "int PROTOCOL_ID = 1;";
+    public const string PROTOCOL_ID_DEFINE = TAB + PUBLIC + SPACE + "int PROTOCOL_ID";
 
     public const string SET_PACKET_LENGTH_DEFINE = TAB + PUBLIC + SPACE + "void SetPacketLength()" + SPACE + BRACE_START;
     public const string SET_PACKET_LENGTH_INNER_START = DOUBLE_TAB + "PACKET_LENGTH =";

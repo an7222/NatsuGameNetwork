@@ -4,6 +4,7 @@ using System.IO;
 using System.Text;
 
 class ProtocolGenerator {
+    static int protocol_id = 1;
     public static void Generate() {
         string rootFolder = Directory.GetCurrentDirectory();
         rootFolder = rootFolder.Substring(0,
@@ -33,7 +34,7 @@ class ProtocolGenerator {
                 using (var writeFile_Server = new FileStream(Path.Combine(writeFilePath_Server, string.Concat(fileName, ".cs")), FileMode.Create))
                 using (var writeFile_Client = new FileStream(Path.Combine(writeFilePath_Client, string.Concat(fileName, ".cs")), FileMode.Create))
                 using (var sw_Server = new StreamWriter(writeFile_Server))
-                using (var sw_Client = new StreamWriter(writeFile_Client)){
+                using (var sw_Client = new StreamWriter(writeFile_Client)) {
                     sw_Server.WriteLine(TextConst.SYSTEM_IO);
                     sw_Server.WriteLine(TextConst.SYSTEM_TEXT);
                     sw_Server.WriteLine();
@@ -50,6 +51,12 @@ class ProtocolGenerator {
                             processReadLine(oneLine, sw_Server, member_type_field_list_server);
 
                             processReadLine(oneLine, sw_Client, member_type_field_list_client);
+
+                            var keyword = oneLine.Split(TextConst.SPACE);
+                            foreach (var a in keyword) {
+                                if (a.Trim() == "END")
+                                    protocol_id++;
+                            }
                         }
                     }
                 }
@@ -72,7 +79,10 @@ class ProtocolGenerator {
 
                     sw.WriteLine("\t//COMMON");
                     sw.WriteLine(TextConst.PACKET_LENGTH_DEFINE);
-                    sw.WriteLine(TextConst.PROTOCOL_ID_DEFINE);
+                    sw.Write(TextConst.PROTOCOL_ID_DEFINE);
+                    sw.Write(TextConst.SPACE + TextConst.EQUAL + TextConst.SPACE);
+                    sw.Write(protocol_id);
+                    sw.WriteLine(TextConst.SEMI_COLON);
                     sw.WriteLine("\t//MEMBER");
                     break;
                 case "END":
@@ -88,8 +98,11 @@ class ProtocolGenerator {
                     sw.Write(TextConst.PLUS);
                     sw.Write(TextConst.SPACE);
                     sw.Write("sizeof(int)"); //PROTOCOL_ID
-                    sw.Write(TextConst.SPACE);
-                    sw.Write(TextConst.PLUS);
+
+                    if(member_type_field_list.Count > 0) {
+                        sw.Write(TextConst.SPACE);
+                        sw.Write(TextConst.PLUS);
+                    }
 
                     int count = 0;
                     foreach (var kv in member_type_field_list) {
