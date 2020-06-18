@@ -2,3 +2,9 @@
 	string PID
 	long LoginAt
 END
+
+PACKET Test
+	string abcd
+	int ddd1
+	long lll2
+END

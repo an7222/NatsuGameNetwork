@@ -30,8 +30,8 @@ class ProtocolGenerator {
                 string fileNameWithExt = temp[temp.Length - 1];
                 string fileName = fileNameWithExt.Split(".")[0];
 
-                using (var writeFile_Server = new FileStream(Path.Combine(writeFilePath_Server, string.Concat(fileName, ".cs")), FileMode.OpenOrCreate))
-                using (var writeFile_Client = new FileStream(Path.Combine(writeFilePath_Client, string.Concat(fileName, ".cs")), FileMode.OpenOrCreate))
+                using (var writeFile_Server = new FileStream(Path.Combine(writeFilePath_Server, string.Concat(fileName, ".cs")), FileMode.Create))
+                using (var writeFile_Client = new FileStream(Path.Combine(writeFilePath_Client, string.Concat(fileName, ".cs")), FileMode.Create))
                 using (var sw_Server = new StreamWriter(writeFile_Server))
                 using (var sw_Client = new StreamWriter(writeFile_Client)){
                     sw_Server.WriteLine(TextConst.SYSTEM_IO);
@@ -174,6 +174,8 @@ class ProtocolGenerator {
 
 
                     sw.WriteLine(TextConst.BRACE_END);
+
+                    member_type_field_list.Clear();
                     break;
                 case "int":
                 case "long":
