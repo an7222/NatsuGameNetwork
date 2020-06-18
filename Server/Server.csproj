@@ -9,6 +9,7 @@
     <Folder Include="Contents\" />
     <Folder Include="Controller\" />
     <Folder Include="Platform\" />
+    <Folder Include="Protocol\" />
   </ItemGroup>
 
 </Project>

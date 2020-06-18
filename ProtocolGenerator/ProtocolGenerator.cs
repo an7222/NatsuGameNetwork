@@ -13,8 +13,11 @@ class ProtocolGenerator {
         string readFilePath = Path.Combine(rootFolder, "ProtocolGenerator");
         readFilePath = Path.Combine(readFilePath, "IDL");
 
-        string writeFilePath = Path.Combine(rootFolder, "Server");
-        writeFilePath = Path.Combine(writeFilePath, "Protocol");
+        string writeFilePath_Server = Path.Combine(rootFolder, "Server");
+        writeFilePath_Server = Path.Combine(writeFilePath_Server, "Protocol");
+
+        string writeFilePath_Client = Path.Combine(rootFolder, "Client");
+        writeFilePath_Client = Path.Combine(writeFilePath_Client, "Protocol");
 
         string[] readFilePaths = Directory.GetFiles(readFilePath, "*.idl");
 
@@ -25,17 +28,28 @@ class ProtocolGenerator {
                     continue;
 
                 string fileNameWithExt = temp[temp.Length - 1];
-                string fileName = fileNameWithExt.Split(".")[0] + "_TEST"; //TODO : remove _TEST
+                string fileName = fileNameWithExt.Split(".")[0];
 
-                using (var writeFile = new FileStream(Path.Combine(writeFilePath, string.Concat(fileName, ".cs")), FileMode.OpenOrCreate))
-                using (var sw = new StreamWriter(writeFile)) {
-                    sw.WriteLine(TextConst.SYSTEM_IO);
-                    sw.WriteLine(TextConst.SYSTEM_TEXT);
-                    sw.WriteLine();
+                using (var writeFile_Server = new FileStream(Path.Combine(writeFilePath_Server, string.Concat(fileName, ".cs")), FileMode.OpenOrCreate))
+                using (var writeFile_Client = new FileStream(Path.Combine(writeFilePath_Client, string.Concat(fileName, ".cs")), FileMode.OpenOrCreate))
+                using (var sw_Server = new StreamWriter(writeFile_Server))
+                using (var sw_Client = new StreamWriter(writeFile_Client)){
+                    sw_Server.WriteLine(TextConst.SYSTEM_IO);
+                    sw_Server.WriteLine(TextConst.SYSTEM_TEXT);
+                    sw_Server.WriteLine();
+
+                    sw_Client.WriteLine(TextConst.SYSTEM_IO);
+                    sw_Client.WriteLine(TextConst.SYSTEM_TEXT);
+                    sw_Client.WriteLine();
+
                     using (var sr = new StreamReader(readFile)) {
-                        var member_type_field_list = new List<KeyValuePair<string, string>>();
+                        var member_type_field_list_server = new List<KeyValuePair<string, string>>();
+                        var member_type_field_list_client = new List<KeyValuePair<string, string>>();
                         while (false == sr.EndOfStream) {
-                            processReadLine(sr.ReadLine(), sw, member_type_field_list);
+                            var oneLine = sr.ReadLine();
+                            processReadLine(oneLine, sw_Server, member_type_field_list_server);
+
+                            processReadLine(oneLine, sw_Client, member_type_field_list_client);
                         }
                     }
                 }
@@ -46,7 +60,7 @@ class ProtocolGenerator {
 
     static void processReadLine(string one_line, StreamWriter sw, List<KeyValuePair<string, string>> member_type_field_list) {
         var keyword = one_line.Split(TextConst.SPACE);
-        for(int i = 0; i < keyword.Length; ++i) {
+        for (int i = 0; i < keyword.Length; ++i) {
             switch (keyword[i].Trim()) {
                 case "PACKET":
                     sw.Write("class");
@@ -78,9 +92,9 @@ class ProtocolGenerator {
                     sw.Write(TextConst.PLUS);
 
                     int count = 0;
-                    foreach(var kv in member_type_field_list) {
+                    foreach (var kv in member_type_field_list) {
                         sw.Write(TextConst.SPACE);
-                        if(kv.Key == "string") {
+                        if (kv.Key == "string") {
                             sw.Write("1 + Encoding.Default.GetByteCount(" + kv.Value + ")");
                         } else {
                             sw.Write("sizeof(" + kv.Key + ")");
@@ -95,6 +109,8 @@ class ProtocolGenerator {
                     }
                     sw.WriteLine(TextConst.SEMI_COLON);
 
+                    sw.WriteLine(TextConst.TAB + TextConst.BRACE_END);
+
                     #endregion
 
 
@@ -105,10 +121,54 @@ class ProtocolGenerator {
 
                     #region READ
 
+                    sw.WriteLine(TextConst.BINARY_READ_DEFINE);
+                    foreach (var kv in member_type_field_list) {
+                        sw.Write(TextConst.DOUBLE_TAB);
+                        sw.Write(kv.Value);
+                        sw.Write(TextConst.SPACE);
+                        sw.Write(TextConst.EQUAL);
+                        sw.Write(TextConst.SPACE);
+                        sw.Write(TextConst.BINARY_READER_INSTANCE_CALL);
+
+                        switch (kv.Key) {
+                            case "string":
+                                sw.Write(TextConst.BINRAY_READER_READ_STRING);
+                                break;
+                            case "int":
+                                sw.Write(TextConst.BINRAY_READER_READ_INT);
+                                break;
+                            case "long":
+                                sw.Write(TextConst.BINRAY_READER_READ_LONG);
+                                break;
+                        }
+
+                        sw.WriteLine(TextConst.SEMI_COLON);
+                    }
+
+                    sw.WriteLine(TextConst.TAB + TextConst.BRACE_END);
+
                     #endregion
 
                     #region WRITE
 
+                    sw.WriteLine(TextConst.BINARY_WRITE_DEFINE);
+                    sw.WriteLine(TextConst.DOUBLE_TAB + "SetPacketLength();");
+
+                    sw.Write(TextConst.BINARY_WRITER_INSTANCE_CALL);//PACKET LENGTH
+                    sw.Write("Write(PACKET_LENGTH)");
+                    sw.WriteLine(TextConst.SEMI_COLON);
+                    sw.Write(TextConst.BINARY_WRITER_INSTANCE_CALL); //PROTOCOL_ID
+                    sw.Write("Write(PROTOCOL_ID)");
+                    sw.WriteLine(TextConst.SEMI_COLON);
+
+
+                    foreach (var kv in member_type_field_list) {
+                        sw.Write(TextConst.BINARY_WRITER_INSTANCE_CALL);
+                        sw.Write("Write(" + kv.Value + ")");
+                        sw.WriteLine(TextConst.SEMI_COLON);
+                    }
+
+                    sw.WriteLine(TextConst.TAB + TextConst.BRACE_END);
 
                     #endregion
 
@@ -124,12 +184,12 @@ class ProtocolGenerator {
                     sw.Write(TextConst.SPACE);
                     sw.Write(keyword[i].Trim());
                     sw.Write(TextConst.SPACE);
-                    
+
                     i++;
                     sw.Write(keyword[i].Trim()); //Member Name
                     sw.WriteLine(TextConst.SEMI_COLON);
 
-                    member_type_field_list.Add(new KeyValuePair<string, string>(keyword[i-1].Trim(), keyword[i].Trim()));
+                    member_type_field_list.Add(new KeyValuePair<string, string>(keyword[i - 1].Trim(), keyword[i].Trim()));
                     break;
             }
         }
