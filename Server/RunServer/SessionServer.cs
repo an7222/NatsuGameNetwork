@@ -33,10 +33,6 @@ class SessionServer : Singleton<SessionServer>, IRunServer {
 
         TcpClientHandler handler = new TcpClientHandler(tcpClient, session_id, this);
 
-        if(connectedTcpClientPool.TryAdd(session_id, handler)) {
-            session_id = Interlocked.Increment(ref session_id);
-        }
-
         listener.BeginAcceptTcpClient(OnAccept, listener);
     }
 
@@ -48,5 +44,11 @@ class SessionServer : Singleton<SessionServer>, IRunServer {
 
     public void OnClientLeave(int session_id) {
         connectedTcpClientPool.Remove(session_id);
+    }
+
+    public void OnLoginComplete(TcpClientHandler handler) {
+        if (connectedTcpClientPool.TryAdd(session_id, handler)) {
+            session_id = Interlocked.Increment(ref session_id);
+        }
     }
 }

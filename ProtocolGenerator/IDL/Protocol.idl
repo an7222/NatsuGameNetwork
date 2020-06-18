@@ -1,12 +1,14 @@
-﻿PACKET LoginSyn_C2S
+﻿PACKET Login_C2S
 	string PID
 END
 
-PACKET LoginFin_S2C
-	long LoginAt
+PACKET Login_ACK_S2C
+	long UserID
+	long ServerTimeUnix
+	string SessionToken
 END
 
-PACKET LoginFin_C2S
+PACKET Login_FIN_C2S
 END
 
 PACKET Test

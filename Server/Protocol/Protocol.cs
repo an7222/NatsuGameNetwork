@@ -1,7 +1,7 @@
 using System.IO;
 using System.Text;
 
-class LoginSyn_C2S : IProtocol {
+class Login_C2S : IProtocol {
 	//COMMON
 	public int PACKET_LENGTH = 0;
 	public int PROTOCOL_ID = 1;
@@ -26,14 +26,16 @@ class LoginSyn_C2S : IProtocol {
 		bw.Write(PID);
 	}
 }
-class LoginFin_S2C : IProtocol {
+class Login_ACK_S2C : IProtocol {
 	//COMMON
 	public int PACKET_LENGTH = 0;
 	public int PROTOCOL_ID = 2;
 	//MEMBER
-	public long LoginAt;
+	public long UserID;
+	public long ServerTimeUnix;
+	public string SessionToken;
 	public void SetPacketLength() {
-		PACKET_LENGTH = sizeof(int) + sizeof(int) + sizeof(long);
+		PACKET_LENGTH = sizeof(int) + sizeof(int) + sizeof(long) + sizeof(long) + 1 + Encoding.Default.GetByteCount(SessionToken);
 	}
 	public int GetPacketLength() {
 		return PACKET_LENGTH;
@@ -42,16 +44,20 @@ class LoginFin_S2C : IProtocol {
 		return PROTOCOL_ID;
 	}
 	public void Read(BinaryReader br) {
-		LoginAt = br.ReadInt64();
+		UserID = br.ReadInt64();
+		ServerTimeUnix = br.ReadInt64();
+		SessionToken = br.ReadString();
 	}
 	public void Write(BinaryWriter bw) {
 		SetPacketLength();
 		bw.Write(PACKET_LENGTH);
 		bw.Write(PROTOCOL_ID);
-		bw.Write(LoginAt);
+		bw.Write(UserID);
+		bw.Write(ServerTimeUnix);
+		bw.Write(SessionToken);
 	}
 }
-class LoginFin_C2S : IProtocol {
+class Login_FIN_C2S : IProtocol {
 	//COMMON
 	public int PACKET_LENGTH = 0;
 	public int PROTOCOL_ID = 3;
