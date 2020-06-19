@@ -46,7 +46,17 @@ class ProtocolHandler : Singleton<ProtocolHandler>{
         } else if (dummyProtocol is Login_FIN_C2S) {
             action = (IProtocol protocol, TcpClientHandler handler) => {
                 Console.WriteLine("Receive! [Login_FIN_C2S]\n");
-                SessionServer.GetInstance().OnLoginComplete(handler);
+                SessionServer.GetInstance().AddClient(handler);
+            };
+        } else if (dummyProtocol is MoveStart_C2B) {
+            action = (IProtocol protocol, TcpClientHandler handler) => {
+                var temp = protocol as MoveStart_C2B;
+                Console.WriteLine("Receive! [MoveStart_C2B]\n Direction : {0}", temp.Direction);
+
+                BattleServer.GetInstance().SendPacketAll(new MoveStart_B2C {
+                    ObjectID = 1,
+                    Direction = temp.Direction,
+                });
             };
         }
 

@@ -42,14 +42,14 @@ class SessionServer : Singleton<SessionServer>, IRealTimeServer {
         }
     }
 
-    public void OnClientLeave(int session_id) {
-        connectedTcpClientPool.Remove(session_id);
-    }
-
-    public void OnLoginComplete(TcpClientHandler handler) {
+    public void AddClient(TcpClientHandler handler) {
         if (connectedTcpClientPool.TryAdd(session_id, handler)) {
             session_id = Interlocked.Increment(ref session_id);
         }
+    }
+
+    public void RemoveClient(int session_id) {
+        connectedTcpClientPool.Remove(session_id);
     }
 
     public long GetUserID() {

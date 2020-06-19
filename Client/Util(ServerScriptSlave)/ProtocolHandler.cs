@@ -44,6 +44,11 @@ class ProtocolHandler : Singleton<ProtocolHandler>{
 
                 Program.battleHandler = new TcpClientHandler(tcpClient, false);
             };
+        } else if (dummyProtocol is MoveStart_B2C) {
+            action = (IProtocol protocol, TcpClientHandler handler) => {
+                var temp = protocol as MoveStart_B2C;
+                Console.WriteLine("Receive! [MoveStart_B2C]\nObjectID : {0}, Direction : {1}", temp.ObjectID, temp.Direction);
+            };
         }
 
         return action;

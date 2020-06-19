@@ -7,7 +7,8 @@ class RunServerManager {
 
 interface IRealTimeServer : IRunServer {
     public void SendPacketAll(IProtocol protocol);
-    public void OnClientLeave(int session_id);
+    public void AddClient(TcpClientHandler handler);
+    public void RemoveClient(int session_id);
 }
 
 interface IRunServer {

@@ -20,6 +20,10 @@ class TcpClientHandler {
         this.session_id = session_id;
         this.connectedServer = connectedServer;
         receiveBuffer = new byte[Const.RECEIVE_BUFFER_SIZE];
+
+        if(connectedServer is BattleServer) {
+            BattleServer.GetInstance().AddClient(this);
+        }
         
         ReceiveProcess();
     }
@@ -35,7 +39,7 @@ class TcpClientHandler {
                 }
             } catch (Exception e) {
                 Console.WriteLine(e);
-                connectedServer.OnClientLeave(session_id);
+                connectedServer.RemoveClient(session_id);
                 return;
             }
 
@@ -53,7 +57,7 @@ class TcpClientHandler {
                 }
             } catch (Exception e) {
                 Console.WriteLine(e);
-                connectedServer.OnClientLeave(session_id);
+                connectedServer.RemoveClient(session_id);
                 return;
             }
 
@@ -90,7 +94,7 @@ class TcpClientHandler {
             networkStream.Write(writeBuffer);
         } catch (Exception e) {
             Console.WriteLine(e);
-            connectedServer.OnClientLeave(session_id);
+            connectedServer.RemoveClient(session_id);
             return;
         }
     }

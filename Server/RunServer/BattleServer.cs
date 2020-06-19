@@ -38,7 +38,13 @@ class BattleServer : Singleton<BattleServer>, IRealTimeServer {
         }
     }
 
-    public void OnClientLeave(int session_id) {
+    public void AddClient(TcpClientHandler handler) {
+        if (connectedTcpClientPool.TryAdd(session_id, handler)) {
+            session_id = Interlocked.Increment(ref session_id);
+        }
+    }
+
+    public void RemoveClient(int session_id) {
         connectedTcpClientPool.Remove(session_id);
     }
 }
