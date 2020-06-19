@@ -9,7 +9,7 @@ using System.Text;
 using System.Threading;
 
 class ProtocolHandler : Singleton<ProtocolHandler>{
-    Dictionary<int, Action<IProtocol, TcpClientHandler>> HandlePool = new Dictionary<int, Action<IProtocol, TcpClientHandler>>();
+    Dictionary<int, Action<IProtocol, TcpSessionHandler>> HandlePool = new Dictionary<int, Action<IProtocol, TcpSessionHandler>>();
     
     public void Register() {
         var baseType = typeof(IProtocol);
@@ -20,8 +20,8 @@ class ProtocolHandler : Singleton<ProtocolHandler>{
         }
     }
 
-    public void Protocol_Logic(IProtocol protocol, TcpClientHandler handler) {
-        Action<IProtocol, TcpClientHandler> action;
+    public void Protocol_Logic(IProtocol protocol, TcpSessionHandler handler) {
+        Action<IProtocol, TcpSessionHandler> action;
         if (HandlePool.TryGetValue(protocol.GetProtocol_ID(), out action)) {
             action(protocol, handler);
         } else {
@@ -29,25 +29,39 @@ class ProtocolHandler : Singleton<ProtocolHandler>{
         }
     }
 
-    Action<IProtocol, TcpClientHandler> createAction(IProtocol dummyProtocol) {
-        Action<IProtocol, TcpClientHandler> action = null;
+    Action<IProtocol, TcpSessionHandler> createAction(IProtocol dummyProtocol) {
+        Action<IProtocol, TcpSessionHandler> action = null;
                     
         if(dummyProtocol is Login_RES_S2C) {
-            action = (IProtocol protocol, TcpClientHandler handler) => {
-                var temp = protocol as Login_RES_S2C;
-                Console.WriteLine("Receive! [Login_ACK_S2C]\nUserID : {0}, ServerTimeUnix : {1}, SessionToken : {2}", temp.UserID, temp.ServerTimeUnix, temp.SessionToken);
+            action = (IProtocol protocol, TcpSessionHandler handler) => {
+                var cast = protocol as Login_RES_S2C;
+                Console.WriteLine("Receive : [Login_RES_S2C]");
+
                 handler.SendPacket(new Login_FIN_C2S());
 
-                TcpClient tcpClient = new TcpClient(temp.BattleServerIp, Const.BATTLE_SERVER_PORT);
+                Console.WriteLine("Send : [Login_FIN_C2S]");
+
+                TcpClient tcpClient = new TcpClient("127.0.0.1", Const.BATTLE_SERVER_PORT);
+
+                Program.battleHandler = new TcpSessionHandler(tcpClient, false, cast.FieldId);
+            };
+        }
+        if (dummyProtocol is NewBattleUser_RES_C2B) {
+            action = (IProtocol protocol, TcpSessionHandler handler) => {
+                var cast = protocol as NewBattleUser_RES_C2B;
+                Console.WriteLine("Receive : [NewBattleUser_RES_C2B]");
 
                 Console.WriteLine("Battle Server Connected!");
-
-                Program.battleHandler = new TcpClientHandler(tcpClient, false);
             };
         } else if (dummyProtocol is MoveStart_B2C) {
-            action = (IProtocol protocol, TcpClientHandler handler) => {
-                var temp = protocol as MoveStart_B2C;
-                Console.WriteLine("Receive! [MoveStart_B2C]\nObjectID : {0}, Direction : {1}", temp.ObjectID, temp.Direction);
+            action = (IProtocol protocol, TcpSessionHandler handler) => {
+                var cast = protocol as MoveStart_B2C;
+                Console.WriteLine("Receive : [MoveStart_B2C]");
+            };
+        } else if (dummyProtocol is MoveEnd_B2C) {
+            action = (IProtocol protocol, TcpSessionHandler handler) => {
+                var cast = protocol as MoveEnd_B2C;
+                Console.WriteLine("Receive : [MoveEnd_B2C]");
             };
         }
 

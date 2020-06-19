@@ -7,24 +7,29 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Threading;
 
-class TcpClientHandler {
+class TcpSessionHandler {
     byte[] receiveBuffer;
     TcpClient tcpClient = null;
     NetworkStream networkStream = null;
-    int session_id;
-    IRealTimeServer connectedServer;
 
-    public TcpClientHandler(TcpClient tcpClient, int session_id, IRealTimeServer connectedServer) {
+    public TcpSessionHandler(TcpClient tcpClient, bool isSessionServer, int field_id) {
         this.tcpClient = tcpClient;
         this.networkStream = tcpClient.GetStream();
-        this.session_id = session_id;
-        this.connectedServer = connectedServer;
         receiveBuffer = new byte[Const.RECEIVE_BUFFER_SIZE];
 
-        if(connectedServer is BattleServer) {
-            BattleServer.GetInstance().AddClient(this);
+        if (isSessionServer) {
+            SendPacket(new Login_REQ_C2S {
+                PID = DateTime.Now.Ticks.ToString(),
+            });
+
+            Console.WriteLine("Send : [Login_REQ_C2S]");
+        } else {
+            SendPacket(new NewBattleUser_REQ_C2B {
+                UserID = 1,
+                FieldId = field_id,
+            });
         }
-        
+
         ReceiveProcess();
     }
 
@@ -39,7 +44,6 @@ class TcpClientHandler {
                 }
             } catch (Exception e) {
                 Console.WriteLine(e);
-                connectedServer.RemoveClient(session_id);
                 return;
             }
 
@@ -57,7 +61,6 @@ class TcpClientHandler {
                 }
             } catch (Exception e) {
                 Console.WriteLine(e);
-                connectedServer.RemoveClient(session_id);
                 return;
             }
 
@@ -94,7 +97,6 @@ class TcpClientHandler {
             networkStream.Write(writeBuffer);
         } catch (Exception e) {
             Console.WriteLine(e);
-            connectedServer.RemoveClient(session_id);
             return;
         }
     }

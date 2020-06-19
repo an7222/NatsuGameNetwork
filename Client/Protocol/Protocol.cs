@@ -34,9 +34,9 @@ class Login_RES_S2C : IProtocol {
 	public long UserID;
 	public long ServerTimeUnix;
 	public string SessionToken;
-	public string BattleServerIp;
+	public int FieldId;
 	public void SetPacketLength() {
-		PACKET_LENGTH = sizeof(int) + sizeof(int) + sizeof(long) + sizeof(long) + 1 + Encoding.Default.GetByteCount(SessionToken) + 1 + Encoding.Default.GetByteCount(BattleServerIp);
+		PACKET_LENGTH = sizeof(int) + sizeof(int) + sizeof(long) + sizeof(long) + 1 + Encoding.Default.GetByteCount(SessionToken) + sizeof(int);
 	}
 	public int GetPacketLength() {
 		return PACKET_LENGTH;
@@ -48,7 +48,7 @@ class Login_RES_S2C : IProtocol {
 		UserID = br.ReadInt64();
 		ServerTimeUnix = br.ReadInt64();
 		SessionToken = br.ReadString();
-		BattleServerIp = br.ReadString();
+		FieldId = br.ReadInt32();
 	}
 	public void Write(BinaryWriter bw) {
 		SetPacketLength();
@@ -57,7 +57,7 @@ class Login_RES_S2C : IProtocol {
 		bw.Write(UserID);
 		bw.Write(ServerTimeUnix);
 		bw.Write(SessionToken);
-		bw.Write(BattleServerIp);
+		bw.Write(FieldId);
 	}
 }
 class Login_FIN_C2S : IProtocol {
@@ -88,11 +88,12 @@ class NewBattleUser_REQ_C2B : IProtocol {
 	public int PROTOCOL_ID = 4;
 	//MEMBER
 	public long UserID;
+	public int FieldId;
 	public int Level;
 	public int HP;
 	public int TODOUserInfo;
 	public void SetPacketLength() {
-		PACKET_LENGTH = sizeof(int) + sizeof(int) + sizeof(long) + sizeof(int) + sizeof(int) + sizeof(int);
+		PACKET_LENGTH = sizeof(int) + sizeof(int) + sizeof(long) + sizeof(int) + sizeof(int) + sizeof(int) + sizeof(int);
 	}
 	public int GetPacketLength() {
 		return PACKET_LENGTH;
@@ -102,6 +103,7 @@ class NewBattleUser_REQ_C2B : IProtocol {
 	}
 	public void Read(BinaryReader br) {
 		UserID = br.ReadInt64();
+		FieldId = br.ReadInt32();
 		Level = br.ReadInt32();
 		HP = br.ReadInt32();
 		TODOUserInfo = br.ReadInt32();
@@ -111,6 +113,7 @@ class NewBattleUser_REQ_C2B : IProtocol {
 		bw.Write(PACKET_LENGTH);
 		bw.Write(PROTOCOL_ID);
 		bw.Write(UserID);
+		bw.Write(FieldId);
 		bw.Write(Level);
 		bw.Write(HP);
 		bw.Write(TODOUserInfo);
@@ -270,5 +273,33 @@ class ChangePos_B2C : IProtocol {
 		bw.Write(ObjectID);
 		bw.Write(Pos_x);
 		bw.Write(Pos_y);
+	}
+}
+class Field : IProtocol {
+	//COMMON
+	public int PACKET_LENGTH = 0;
+	public int PROTOCOL_ID = 11;
+	//MEMBER
+	public int FieldId;
+	public string FieldName;
+	public void SetPacketLength() {
+		PACKET_LENGTH = sizeof(int) + sizeof(int) + sizeof(int) + 1 + Encoding.Default.GetByteCount(FieldName);
+	}
+	public int GetPacketLength() {
+		return PACKET_LENGTH;
+	}
+	public int GetProtocol_ID() {
+		return PROTOCOL_ID;
+	}
+	public void Read(BinaryReader br) {
+		FieldId = br.ReadInt32();
+		FieldName = br.ReadString();
+	}
+	public void Write(BinaryWriter bw) {
+		SetPacketLength();
+		bw.Write(PACKET_LENGTH);
+		bw.Write(PROTOCOL_ID);
+		bw.Write(FieldId);
+		bw.Write(FieldName);
 	}
 }

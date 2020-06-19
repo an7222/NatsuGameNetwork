@@ -7,22 +7,25 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Threading;
 
-class TcpClientHandler {
+class TcpSessionHandler {
     byte[] receiveBuffer;
     TcpClient tcpClient = null;
     NetworkStream networkStream = null;
+    int session_id;
+    IRealTimeServer connectedServer;
+    int field_id = 0;
 
-    public TcpClientHandler(TcpClient tcpClient, bool isSessionServer) {
+    public TcpSessionHandler(TcpClient tcpClient, int session_id, IRealTimeServer connectedServer) {
         this.tcpClient = tcpClient;
         this.networkStream = tcpClient.GetStream();
+        this.session_id = session_id;
+        this.connectedServer = connectedServer;
         receiveBuffer = new byte[Const.RECEIVE_BUFFER_SIZE];
 
-        if (isSessionServer) {
-            SendPacket(new Login_REQ_C2S {
-                PID = DateTime.Now.Ticks.ToString(),
-            });
+        if(connectedServer is BattleServer) {
+            BattleServer.GetInstance().AddClient(this);
         }
-
+        
         ReceiveProcess();
     }
 
@@ -37,6 +40,7 @@ class TcpClientHandler {
                 }
             } catch (Exception e) {
                 Console.WriteLine(e);
+                connectedServer.RemoveClient(session_id);
                 return;
             }
 
@@ -54,6 +58,7 @@ class TcpClientHandler {
                 }
             } catch (Exception e) {
                 Console.WriteLine(e);
+                connectedServer.RemoveClient(session_id);
                 return;
             }
 
@@ -90,10 +95,17 @@ class TcpClientHandler {
             networkStream.Write(writeBuffer);
         } catch (Exception e) {
             Console.WriteLine(e);
+            connectedServer.RemoveClient(session_id);
             return;
         }
     }
 
+    public void SetFieldId(int field_id) {
+        this.field_id = field_id; 
+    }
+    public int GetFieldId() {
+        return field_id;
+    }
     //TODO : need flush?
     void flush() {
         networkStream.Flush();

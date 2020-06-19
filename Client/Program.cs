@@ -7,8 +7,8 @@ using System.Threading.Tasks;
 using System.IO;
 
 class Program {
-    public static TcpClientHandler sessionHandler = null;
-    public static TcpClientHandler battleHandler = null;
+    public static TcpSessionHandler sessionHandler = null;
+    public static TcpSessionHandler battleHandler = null;
 
     static void StartGame() {
         TcpClient tcpClient = new TcpClient("127.0.0.1", Const.SESSION_SERVER_PORT);
@@ -24,19 +24,25 @@ class Program {
                     battleHandler.SendPacket(new MoveStart_C2B {
                         Direction = (int)Direction.Up,
                     });
+
+                    Console.WriteLine("Send : [MoveStart_C2B]");
                 } else if (input.Key == ConsoleKey.DownArrow) {
                     battleHandler.SendPacket(new MoveStart_C2B {
                         Direction = (int)Direction.Down,
                     });
+
+                    Console.WriteLine("Send : [MoveStart_C2B]");
                 } else if (input.Key == ConsoleKey.Spacebar) {
                     battleHandler.SendPacket(new MoveEnd_C2B {
                     });
+
+                    Console.WriteLine("Send : [MoveEnd_C2B]");
                 }
             }
         });
         consoleReadTask.Start();
 
-        sessionHandler = new TcpClientHandler(tcpClient, true);
+        sessionHandler = new TcpSessionHandler(tcpClient, true, 0);
     }
 
     static void Main(String[] args) {

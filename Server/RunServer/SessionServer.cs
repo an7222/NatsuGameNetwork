@@ -11,7 +11,7 @@ using System.Reflection;
 class SessionServer : Singleton<SessionServer>, IRealTimeServer {
     int session_id = 1;
     long user_id = 10000;
-    Dictionary<int, TcpClientHandler> connectedTcpClientPool = new Dictionary<int, TcpClientHandler>();
+    Dictionary<int, TcpSessionHandler> connectedClientPool = new Dictionary<int, TcpSessionHandler>();
     
     public void Start() {
         TcpListener listener = new TcpListener(IPAddress.Any, Const.SESSION_SERVER_PORT);
@@ -31,25 +31,25 @@ class SessionServer : Singleton<SessionServer>, IRealTimeServer {
         TcpListener listener = (TcpListener)ar.AsyncState;
         TcpClient tcpClient = listener.EndAcceptTcpClient(ar);
 
-        TcpClientHandler handler = new TcpClientHandler(tcpClient, session_id, this);
+        TcpSessionHandler handler = new TcpSessionHandler(tcpClient, session_id, this);
 
         listener.BeginAcceptTcpClient(OnAccept, listener);
     }
 
     public void SendPacketAll(IProtocol protocol) {
-        foreach(var handler in connectedTcpClientPool.Values) {
+        foreach(var handler in connectedClientPool.Values) {
             handler.SendPacket(protocol);
         }
     }
 
-    public void AddClient(TcpClientHandler handler) {
-        if (connectedTcpClientPool.TryAdd(session_id, handler)) {
+    public void AddClient(TcpSessionHandler handler) {
+        if (connectedClientPool.TryAdd(session_id, handler)) {
             session_id = Interlocked.Increment(ref session_id);
         }
     }
 
     public void RemoveClient(int session_id) {
-        connectedTcpClientPool.Remove(session_id);
+        connectedClientPool.Remove(session_id);
     }
 
     public long GetUserID() {
