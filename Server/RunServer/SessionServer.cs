@@ -11,11 +11,10 @@ using System.Reflection;
 class SessionServer : Singleton<SessionServer>, IRealTimeServer {
     int session_id = 1;
     long user_id = 10000;
-    const int PORT = 8001;
     Dictionary<int, TcpClientHandler> connectedTcpClientPool = new Dictionary<int, TcpClientHandler>();
     
     public void Start() {
-        TcpListener listener = new TcpListener(IPAddress.Any, PORT);
+        TcpListener listener = new TcpListener(IPAddress.Any, Const.SESSION_SERVER_PORT);
 
         try {
             listener.Start();

@@ -32,11 +32,17 @@ class ProtocolHandler : Singleton<ProtocolHandler>{
     Action<IProtocol, TcpClientHandler> createAction(IProtocol dummyProtocol) {
         Action<IProtocol, TcpClientHandler> action = null;
                     
-        if(dummyProtocol is Login_ACK_S2C) {
+        if(dummyProtocol is Login_RES_S2C) {
             action = (IProtocol protocol, TcpClientHandler handler) => {
-                var temp = protocol as Login_ACK_S2C;
+                var temp = protocol as Login_RES_S2C;
                 Console.WriteLine("Receive! [Login_ACK_S2C]\nUserID : {0}, ServerTimeUnix : {1}, SessionToken : {2}", temp.UserID, temp.ServerTimeUnix, temp.SessionToken);
                 handler.SendPacket(new Login_FIN_C2S());
+
+                TcpClient tcpClient = new TcpClient(temp.BattleServerIp, Const.BATTLE_SERVER_PORT);
+
+                Console.WriteLine("Battle Server Connected!");
+
+                Program.battleHandler = new TcpClientHandler(tcpClient, false);
             };
         }
 

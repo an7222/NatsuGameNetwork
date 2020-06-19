@@ -7,11 +7,10 @@ using System.Threading;
 
 class BattleServer : Singleton<BattleServer>, IRealTimeServer {
     int session_id = 1;
-    const int PORT = 8002;
     Dictionary<int, TcpClientHandler> connectedTcpClientPool = new Dictionary<int, TcpClientHandler>();
 
     public void Start() {
-        TcpListener listener = new TcpListener(IPAddress.Any, PORT);
+        TcpListener listener = new TcpListener(IPAddress.Any, Const.BATTLE_SERVER_PORT);
 
         try {
             listener.Start();

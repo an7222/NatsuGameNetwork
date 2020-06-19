@@ -1,18 +1,46 @@
-﻿PACKET Login_C2S
+﻿PACKET Login_REQ_C2S
 	string PID
 END
 
-PACKET Login_ACK_S2C
+PACKET Login_RES_S2C
 	long UserID
 	long ServerTimeUnix
 	string SessionToken
+	string BattleServerIp
 END
 
 PACKET Login_FIN_C2S
 END
 
-PACKET Test
-	string abcd
-	int ddd1
-	long lll2
+PACKET NewBattleUser_REQ_C2B
+	long UserID
+	int Level
+	int HP
+	int TODOUserInfo
+END
+
+PACKET NewBattleUser_RES_C2B
+	long ObjectIDList
+	int TODOStatusList
+END
+
+PACKET MoveStart_C2B
+	int Direction
+END
+
+PACKET MoveEnd_C2B
+END
+
+PACKET MoveStart_B2C
+	long ObjectID
+	int Direction
+END
+
+PACKET MoveEnd_B2C
+END
+
+PACKET ChangePos_B2C
+	long ObjectID
+	int Pos_x
+	int Pos_y
 END

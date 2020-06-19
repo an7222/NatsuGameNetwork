@@ -12,14 +12,16 @@ class TcpClientHandler {
     TcpClient tcpClient = null;
     NetworkStream networkStream = null;
 
-    public TcpClientHandler(TcpClient tcpClient) {
+    public TcpClientHandler(TcpClient tcpClient, bool isSessionServer) {
         this.tcpClient = tcpClient;
         this.networkStream = tcpClient.GetStream();
         receiveBuffer = new byte[Const.RECEIVE_BUFFER_SIZE];
 
-        SendPacket(new Login_C2S {
-            PID = DateTime.Now.Ticks.ToString(),
-        });
+        if (isSessionServer) {
+            SendPacket(new Login_REQ_C2S {
+                PID = DateTime.Now.Ticks.ToString(),
+            });
+        }
 
         ReceiveProcess();
     }

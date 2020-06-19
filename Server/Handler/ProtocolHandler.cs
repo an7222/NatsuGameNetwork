@@ -32,14 +32,15 @@ class ProtocolHandler : Singleton<ProtocolHandler>{
     Action<IProtocol, TcpClientHandler> createAction(IProtocol dummyProtocol) {
         Action<IProtocol, TcpClientHandler> action = null;
                     
-        if(dummyProtocol is Login_C2S) {
+        if(dummyProtocol is Login_REQ_C2S) {
             action = (IProtocol protocol, TcpClientHandler handler) => {
-                var temp = protocol as Login_C2S;
+                var temp = protocol as Login_REQ_C2S;
                 Console.WriteLine("Receive! [Login_C2S]\nPID : {0}", temp.PID);
-                handler.SendPacket(new Login_ACK_S2C {
+                handler.SendPacket(new Login_RES_S2C {
                     UserID = SessionServer.GetInstance().GetUserID(),
                     ServerTimeUnix = DateTime.Now.Ticks,
                     SessionToken = Guid.NewGuid().ToString(),
+                    BattleServerIp = "127.0.0.1",
                 });
             };
         } else if (dummyProtocol is Login_FIN_C2S) {
