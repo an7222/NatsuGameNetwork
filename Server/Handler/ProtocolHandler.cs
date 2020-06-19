@@ -59,6 +59,7 @@ class ProtocolHandler : Singleton<ProtocolHandler> {
                 Console.WriteLine("FIELD ID : " + cast.FieldId);
                 handler.SetFieldId(cast.FieldId);
                 BattleServer.GetInstance().AddFieldCLient(handler, cast.FieldId);
+                BattleServer.GetInstance().AddClient(handler);
                 handler.SendPacket(new NewBattleUser_RES_C2B {
                     ObjectIDList = 4,
                     TODOStatusList = 5,

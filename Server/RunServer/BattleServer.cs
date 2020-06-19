@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Net;
 using System.Net.Sockets;
+using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading;
 
@@ -52,12 +53,6 @@ class BattleServer : Singleton<BattleServer>, IRealTimeServer {
         listener.BeginAcceptTcpClient(OnAccept, listener);
     }
 
-    public void SendPacketAll(IProtocol protocol) {
-        foreach (var handler in connectedClientPool.Values) {
-            handler.SendPacket(protocol);
-        }
-    }
-
     public void AddClient(TcpSessionHandler handler) {
         if (connectedClientPool.TryAdd(session_id, handler)) {
             session_id = Interlocked.Increment(ref session_id);
@@ -65,24 +60,36 @@ class BattleServer : Singleton<BattleServer>, IRealTimeServer {
     }
 
     public void RemoveClient(int session_id) {
+        TcpSessionHandler handler;
+        if (connectedClientPool.TryGetValue(session_id, out handler)) {
+            List<TcpSessionHandler> list;
+            if(fieldClientPool.TryGetValue(handler.GetFieldId(), out list)){
+                list.Remove(handler);
+            }
+        }
         connectedClientPool.Remove(session_id);
     }
 
     public void AddFieldCLient(TcpSessionHandler handler, int field_id) {
         List<TcpSessionHandler> list;
-        if (fieldClientPool.TryGetValue(field_id, out list)) {
-            list.Add(handler);
-        } else {
-            fieldClientPool.Add(field_id, new List<TcpSessionHandler>());
+
+        if (false == fieldClientPool.TryGetValue(field_id, out list)) {
+            list = new List<TcpSessionHandler>();
+            fieldClientPool.Add(field_id, list);
         }
+
+        list.Add(handler);
     }
 
     public void SendPacketField(IProtocol protocol, int field_id) {
         List<TcpSessionHandler> list;
+        Console.WriteLine(field_id);
         if (fieldClientPool.TryGetValue(field_id, out list)) {
             foreach(var handler in list) {
                 handler.SendPacket(protocol);
             }
+        } else {
+            Console.WriteLine("No Field!");
         }
     }
 }

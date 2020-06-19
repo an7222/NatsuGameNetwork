@@ -21,10 +21,6 @@ class TcpSessionHandler {
         this.session_id = session_id;
         this.connectedServer = connectedServer;
         receiveBuffer = new byte[Const.RECEIVE_BUFFER_SIZE];
-
-        if(connectedServer is BattleServer) {
-            BattleServer.GetInstance().AddClient(this);
-        }
         
         ReceiveProcess();
     }
