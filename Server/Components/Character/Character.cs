@@ -3,15 +3,15 @@ using System.Collections.Generic;
 using System.Numerics;
 using System.Text;
 
-class Character {
-    protected int hp;
+class Character : GameObject {
+    protected int HP;
     protected int attack;
     protected int def;
 
     protected Vector2 pos;
 
-    public Character(int hp, int attack, int def, Vector2 pos) {
-        this.hp = hp;
+    public Character(int HP, int attack, int def, Vector2 pos) {
+        this.HP = HP;
         this.attack = attack;
         this.def = def;
         this.pos = pos;
@@ -22,19 +22,19 @@ class Character {
     }
 
     public void AttackTo(Character target) {
-        target.ReceiveATtack(this);
+        target.ReceiveAttack(this);
     }
 
-    public void ReceiveATtack(Character attacker) {
+    public void ReceiveAttack(Character attacker) {
         ReceiveDamage(attacker.attack - this.def);
     }
 
     protected void ReceiveDamage(int damage) {
-        ChangeHp(damage);
+        ChangeHP(damage);
     }
 
-    protected void ChangeHp(int amount_change) {
-        hp += amount_change;
+    protected void ChangeHP(int amount_change) {
+        HP += amount_change;
     }
 }
 

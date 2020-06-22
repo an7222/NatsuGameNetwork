@@ -5,36 +5,76 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using System.Transactions;
 
+class AggroInstance {
+    public int object_ID;
+    public int aggro;
+    public DateTime aggroClearTime;
+}
+
+enum NpcFightType {
+    PIECE,
+    FIGHT,
+    ONLY_ESCAPE,
+}
+
 class NPC : Character {
-    int Aggro;
+    Dictionary<int, AggroInstance> aggroMap = new Dictionary<int, AggroInstance>();
 
     Random r;
-    public NPC(int hp, int attack, int def, Vector2 pos, bool FSM) : base(hp, attack, def, pos) {
-        if (FSM) {
-            r = new Random();
-            ProcessFSM();
-        }
+
+    NpcFightType npcFightType;
+    public NPC(int HP, int attack, int def, Vector2 pos, NpcFightType npcFightType) : base(HP, attack, def, pos) {
+        this.npcFightType = npcFightType;
+
+        ProcessFSM();
     }
 
     //TODO FSM;
     public void ProcessFSM() {
-        while (true) {
-            Vector2 dest = new Vector2 {
-                X = r.Next(-1, 1),
-                Y = r.Next(-1, 1),
-            };
-            MoveTo(dest);
+        r = new Random();
+        //TODO pos changed check
+        pos.X += r.Next(-1, 1);
+        pos.Y += r.Next(-1, 1);
 
-            FindEnemy();
+        FindEnemy();
+    }
+
+    new public void ReceiveAttack(Character attacker) {
+        base.ReceiveAttack(attacker);
+
+        if (npcFightType != NpcFightType.FIGHT)
+            return;
+
+        //Aggro Process
+        int attackerObjectID = attacker.GetObjectID();
+        if (aggroMap.ContainsKey(attackerObjectID)) {
+            aggroMap[attackerObjectID].aggro++;
+        } else {
+            aggroMap.Add(attackerObjectID, new AggroInstance {
+                object_ID = attackerObjectID,
+                aggro = 1,
+                aggroClearTime = DateTime.Now.AddSeconds(Const.AGGRO_CLEAR_SEC),
+            });
         }
     }
 
-    new public void ReceiveATtack(Character attacker) {
-        base.ReceiveATtack(attacker);
-        Aggro++;
+    void FindEnemy() {
+        if (npcFightType == NpcFightType.PIECE)
+            return;
     }
 
-    public void FindEnemy() {
+    void ClearAggro(Character enemy) {
+        int attackerObjectID = enemy.GetObjectID();
+        if (aggroMap.ContainsKey(attackerObjectID)) {
+            aggroMap.Remove(attackerObjectID);
+        }
+    }
+
+    public void Chase(Character target) {
+
+    }
+
+    public void Escape(Character target) {
 
     }
 }
