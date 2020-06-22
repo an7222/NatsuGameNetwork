@@ -9,22 +9,25 @@ using System.Threading;
 class BattleServer : Singleton<BattleServer>, IRealTimeServer {
     int session_id = 1;
     Dictionary<int, TcpSessionHandler> connectedClientPool = new Dictionary<int, TcpSessionHandler>();
-    List<Field> fieldList = new List<Field>();
     Dictionary<int, List<TcpSessionHandler>> fieldClientPool = new Dictionary<int, List<TcpSessionHandler>>();
 
+    List<FieldController> fieldControllerPool = new List<FieldController>();
+
     public void Start() {
+        var fieldDataList = new List<Field_Excel>();
         //TODO : Read for DB or Excel
-        fieldList.Add(new Field {
+        fieldDataList.Add(new Field_Excel {
             FieldId = 1,
             FieldName = "안토리네 집",
         });
-        fieldList.Add(new Field {
+        fieldDataList.Add(new Field_Excel {
             FieldId = 2,
             FieldName = "깃허브",
         });
 
-        for (int i = 0; i < fieldList.Count; ++i) {
+        for (int i = 0; i < fieldDataList.Count; ++i) {
             FieldController fieldController = new FieldController();
+            fieldControllerPool.Add(fieldController);
         }
 
         TcpListener listener = new TcpListener(IPAddress.Any, Const.BATTLE_SERVER_PORT);
@@ -87,5 +90,9 @@ class BattleServer : Singleton<BattleServer>, IRealTimeServer {
         } else {
             Console.WriteLine("No Field!");
         }
+    }
+
+    public List<FieldController> GetFieldControllerPool() {
+        return fieldControllerPool;
     }
 }

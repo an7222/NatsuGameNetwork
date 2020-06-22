@@ -2,21 +2,30 @@
 using System.Collections.Generic;
 using System.Text;
 
-class FieldController {
-    class FieldInstance{
+class FieldController : IController {
+    class FieldInstance {
     }
+
+    List<IController> controllerList = new List<IController>();
+    NPCController npcController;
+    PlayerCharacterController playerCharacterController;
 
     public FieldController() {
         FieldInstance fieldInstance = new FieldInstance();
 
-        FieldProcess();
+        npcController = new NPCController();
+        controllerList.Add(npcController);
+
+        playerCharacterController = new PlayerCharacterController();
+        controllerList.Add(playerCharacterController);
+
+
+        Update();
     }
 
-    void FieldProcess() {
-        ThreadManager.GetInstance().RegisterWork(() => {
-            while (true) {
-
-            }
-        });
+    public void Update() {
+        foreach (var con in controllerList) {
+            con.Update();
+        };
     }
 }
