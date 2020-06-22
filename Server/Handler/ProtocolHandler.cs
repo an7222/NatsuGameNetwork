@@ -56,10 +56,17 @@ class ProtocolHandler : Singleton<ProtocolHandler> {
                 var cast = protocol as NewBattleUser_REQ_C2B;
                 Console.WriteLine("Receive : [NewBattleUser_REQ_C2B]");
 
+                if(false == IsBattleHandler(handler)) {
+                    Console.WriteLine("No Battle Handler!");
+                    return;
+                }
+
+                var battleHandler = handler as TcpSessionHandler_Battle;
+
                 Console.WriteLine("FIELD ID : " + cast.FieldId);
-                handler.SetFieldId(cast.FieldId);
-                BattleServer.GetInstance().AddClient(handler);
-                handler.SendPacket(new NewBattleUser_RES_C2B {
+                battleHandler.SetFieldId(cast.FieldId);
+                BattleServer.GetInstance().AddClient(battleHandler);
+                battleHandler.SendPacket(new NewBattleUser_RES_C2B {
                     ObjectIDList = 4,
                     TODOStatusList = 5,
                 });
@@ -71,10 +78,17 @@ class ProtocolHandler : Singleton<ProtocolHandler> {
                 var cast = protocol as MoveStart_C2B;
                 Console.WriteLine("Receive : [MoveStart_C2B]");
 
+                if (false == IsBattleHandler(handler)) {
+                    Console.WriteLine("No Battle Handler!");
+                    return;
+                }
+
+                var battleHandler = handler as TcpSessionHandler_Battle;
+
                 BattleServer.GetInstance().SendPacketField(new MoveStart_B2C {
                     ObjectID = 1,
                     Direction = cast.Direction,
-                }, handler.GetFieldId());
+                }, battleHandler.GetFieldId());
 
                 Console.WriteLine("SendField : [MoveStart_B2C]");
             };
@@ -83,13 +97,24 @@ class ProtocolHandler : Singleton<ProtocolHandler> {
                 var cast = protocol as MoveEnd_C2B;
                 Console.WriteLine("Receive : [MoveEnd_C2B]");
 
+                if (false == IsBattleHandler(handler)) {
+                    Console.WriteLine("No Battle Handler!");
+                    return;
+                }
+
+                var battleHandler = handler as TcpSessionHandler_Battle;
+
                 BattleServer.GetInstance().SendPacketField(new MoveEnd_B2C {
-                }, handler.GetFieldId());
+                }, battleHandler.GetFieldId());
 
                 Console.WriteLine("SendField : [MoveEnd_B2C]");
             };
         }
         return action;
+    }
+
+    bool IsBattleHandler(TcpSessionHandler handler) {
+        return handler is TcpSessionHandler_Battle;
     }
 }
 

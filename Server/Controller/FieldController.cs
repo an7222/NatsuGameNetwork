@@ -33,12 +33,14 @@ class FieldController : Controller {
         };
     }
 
-    public void AddClient(TcpSessionHandler client) {
+    public void AddClient(TcpSessionHandler_Battle client) {
         clientList.Add(client);
+        client.SetFieldController(this);
     }
 
-    public void RemoveClient(TcpSessionHandler client) {
+    public void RemoveClient(TcpSessionHandler_Battle client) {
         clientList.Remove(client);
+        client.SetFieldController(null);
     }
 
     public void SendPacketField(IProtocol protocol) {

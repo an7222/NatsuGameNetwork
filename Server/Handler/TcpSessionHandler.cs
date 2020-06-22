@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Net.Sockets;
+using System.Reflection.Metadata;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading;
@@ -13,7 +14,6 @@ class TcpSessionHandler {
     NetworkStream networkStream = null;
     int session_id;
     IRealTimeServer connectedServer;
-    int field_id = 0;
 
     public TcpSessionHandler(TcpClient tcpClient, int session_id, IRealTimeServer connectedServer) {
         this.tcpClient = tcpClient;
@@ -96,12 +96,6 @@ class TcpSessionHandler {
         }
     }
 
-    public void SetFieldId(int field_id) {
-        this.field_id = field_id; 
-    }
-    public int GetFieldId() {
-        return field_id;
-    }
     //TODO : need flush?
     void flush() {
         networkStream.Flush();

@@ -46,7 +46,7 @@ class BattleServer : Singleton<BattleServer>, IRealTimeServer {
         TcpListener listener = (TcpListener)ar.AsyncState;
         TcpClient tcpClient = listener.EndAcceptTcpClient(ar);
 
-        TcpSessionHandler handler = new TcpSessionHandler(tcpClient, session_id, this);
+        TcpSessionHandler_Battle handler = new TcpSessionHandler_Battle(tcpClient, session_id, this);
 
         listener.BeginAcceptTcpClient(OnAccept, listener);
     }
