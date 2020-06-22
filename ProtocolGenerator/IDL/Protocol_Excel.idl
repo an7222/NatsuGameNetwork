@@ -1,0 +1,4 @@
+﻿PACKET Field_Excel
+	int FieldId
+	string FieldName
+END

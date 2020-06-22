@@ -1,0 +1,13 @@
+﻿PACKET Login_REQ_C2S
+	string PID
+END
+
+PACKET Login_RES_S2C
+	long UserID
+	long ServerTimeUnix
+	string SessionToken
+	int FieldId
+END
+
+PACKET Login_FIN_C2S
+END

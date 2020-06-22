@@ -2,5 +2,5 @@
 using System.Collections.Generic;
 using System.Text;
 
-class FieldHandler {
+class PlayerCharacter : Character {
 }

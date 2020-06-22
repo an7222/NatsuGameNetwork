@@ -24,11 +24,7 @@ class BattleServer : Singleton<BattleServer>, IRealTimeServer {
         });
 
         for (int i = 0; i < fieldList.Count; ++i) {
-            ThreadManager.GetInstance().RegisterWork(() => {
-                while (true) {
-
-                }
-            });
+            FieldController fieldController = new FieldController();
         }
 
         TcpListener listener = new TcpListener(IPAddress.Any, Const.BATTLE_SERVER_PORT);
@@ -63,7 +59,7 @@ class BattleServer : Singleton<BattleServer>, IRealTimeServer {
         TcpSessionHandler handler;
         if (connectedClientPool.TryGetValue(session_id, out handler)) {
             List<TcpSessionHandler> list;
-            if(fieldClientPool.TryGetValue(handler.GetFieldId(), out list)){
+            if (fieldClientPool.TryGetValue(handler.GetFieldId(), out list)) {
                 list.Remove(handler);
             }
         }
@@ -85,7 +81,7 @@ class BattleServer : Singleton<BattleServer>, IRealTimeServer {
         List<TcpSessionHandler> list;
         Console.WriteLine(field_id);
         if (fieldClientPool.TryGetValue(field_id, out list)) {
-            foreach(var handler in list) {
+            foreach (var handler in list) {
                 handler.SendPacket(protocol);
             }
         } else {
