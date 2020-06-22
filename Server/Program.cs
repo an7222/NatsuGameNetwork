@@ -7,16 +7,13 @@ class Program {
         BattleServer.GetInstance().Start();
         RestAPIServer.GetInstance().Start();
 
-        //ThreadManager.GetInstance().RegisterWork(() => {
-        //    Console.WriteLine("Test");
-        //});
 
         while (true) {
-            ThreadManager.GetInstance().RegisterWork(() => {
-                foreach (var con in BattleServer.GetInstance().GetFieldControllerPool()) {
+            foreach (var con in BattleServer.GetInstance().GetFieldControllerPool()) {
+                ThreadManager.GetInstance().RegisterWork(() => {
                     con.Update();
-                }
-            });
+                });
+            }
         }
     }
 }

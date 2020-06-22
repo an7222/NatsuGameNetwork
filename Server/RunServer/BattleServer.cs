@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Net;
 using System.Net.Sockets;
@@ -9,9 +10,7 @@ using System.Threading;
 class BattleServer : Singleton<BattleServer>, IRealTimeServer {
     int session_id = 1;
     Dictionary<int, TcpSessionHandler> connectedClientPool = new Dictionary<int, TcpSessionHandler>();
-    Dictionary<int, List<TcpSessionHandler>> fieldClientPool = new Dictionary<int, List<TcpSessionHandler>>();
-
-    List<FieldController> fieldControllerPool = new List<FieldController>();
+    Dictionary<int, FieldController> fieldControllerPool = new Dictionary<int, FieldController>();
 
     public void Start() {
         var fieldDataList = new List<Field_Excel>();
@@ -27,7 +26,7 @@ class BattleServer : Singleton<BattleServer>, IRealTimeServer {
 
         for (int i = 0; i < fieldDataList.Count; ++i) {
             FieldController fieldController = new FieldController();
-            fieldControllerPool.Add(fieldController);
+            fieldControllerPool.Add(fieldDataList[0].FieldId, fieldController);
         }
 
         TcpListener listener = new TcpListener(IPAddress.Any, Const.BATTLE_SERVER_PORT);
@@ -52,47 +51,39 @@ class BattleServer : Singleton<BattleServer>, IRealTimeServer {
         listener.BeginAcceptTcpClient(OnAccept, listener);
     }
 
-    public void AddClient(TcpSessionHandler handler) {
-        if (connectedClientPool.TryAdd(session_id, handler)) {
+    public void AddClient(TcpSessionHandler client) {
+        if (connectedClientPool.TryAdd(session_id, client)) {
             session_id = Interlocked.Increment(ref session_id);
+        }
+
+        FieldController fieldCon;
+        if (fieldControllerPool.TryGetValue(client.GetFieldId(), out fieldCon)) {
+            fieldCon.AddClient(client);
         }
     }
 
     public void RemoveClient(int session_id) {
         TcpSessionHandler handler;
         if (connectedClientPool.TryGetValue(session_id, out handler)) {
-            List<TcpSessionHandler> list;
-            if (fieldClientPool.TryGetValue(handler.GetFieldId(), out list)) {
-                list.Remove(handler);
+            FieldController fieldCon;
+            if (fieldControllerPool.TryGetValue(handler.GetFieldId(), out fieldCon)) {
+                fieldCon.RemoveClient(handler);
             }
         }
         connectedClientPool.Remove(session_id);
     }
 
-    public void AddFieldCLient(TcpSessionHandler handler, int field_id) {
-        List<TcpSessionHandler> list;
-
-        if (false == fieldClientPool.TryGetValue(field_id, out list)) {
-            list = new List<TcpSessionHandler>();
-            fieldClientPool.Add(field_id, list);
-        }
-
-        list.Add(handler);
-    }
-
     public void SendPacketField(IProtocol protocol, int field_id) {
-        List<TcpSessionHandler> list;
-        Console.WriteLine(field_id);
-        if (fieldClientPool.TryGetValue(field_id, out list)) {
-            foreach (var handler in list) {
-                handler.SendPacket(protocol);
-            }
+        FieldController fieldCon;
+
+        if (fieldControllerPool.TryGetValue(field_id, out fieldCon)) {
+            fieldCon.SendPacketField(protocol);
         } else {
             Console.WriteLine("No Field!");
         }
     }
-
-    public List<FieldController> GetFieldControllerPool() {
-        return fieldControllerPool;
+    
+    public IEnumerable<FieldController> GetFieldControllerPool() {
+        return fieldControllerPool.Values;
     }
 }

@@ -2,11 +2,13 @@
 using System.Collections.Generic;
 using System.Text;
 
-class FieldController : IController {
+class FieldController : Controller {
+    List<TcpSessionHandler> clientList = new List<TcpSessionHandler>();
+    public int FIELD_ID = 0;
     class FieldInstance {
     }
 
-    List<IController> controllerList = new List<IController>();
+    List<Controller> controllerList = new List<Controller>();
     NPCController npcController;
     PlayerCharacterController playerCharacterController;
 
@@ -23,9 +25,25 @@ class FieldController : IController {
         Update();
     }
 
-    public void Update() {
+    new public void Update() {
+        base.Update();
+
         foreach (var con in controllerList) {
             con.Update();
         };
+    }
+
+    public void AddClient(TcpSessionHandler client) {
+        clientList.Add(client);
+    }
+
+    public void RemoveClient(TcpSessionHandler client) {
+        clientList.Remove(client);
+    }
+
+    public void SendPacketField(IProtocol protocol) {
+        foreach(var client in clientList) {
+            client.SendPacket(protocol);
+        }
     }
 }
