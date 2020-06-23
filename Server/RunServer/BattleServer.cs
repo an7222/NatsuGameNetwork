@@ -26,7 +26,7 @@ class BattleServer : Singleton<BattleServer>, IRealTimeServer {
 
         for (int i = 0; i < fieldDataList.Count; ++i) {
             FieldController fieldController = new FieldController();
-            fieldControllerPool.Add(fieldDataList[0].FieldId, fieldController);
+            fieldControllerPool.Add(fieldDataList[i].FieldId, fieldController);
         }
 
         TcpListener listener = new TcpListener(IPAddress.Any, Const.BATTLE_SERVER_PORT);
@@ -56,18 +56,25 @@ class BattleServer : Singleton<BattleServer>, IRealTimeServer {
             session_id = Interlocked.Increment(ref session_id);
         }
 
-        FieldController fieldCon;
-        if (fieldControllerPool.TryGetValue(client.GetFieldId(), out fieldCon)) {
-            fieldCon.AddClient(client);
+        if (client is TcpSessionHandler_Battle) {
+            var castClient = client as TcpSessionHandler_Battle;
+
+            FieldController fieldCon;
+            if (fieldControllerPool.TryGetValue(castClient.GetFieldId(), out fieldCon)) {
+                fieldCon.AddClient(castClient);
+            }
         }
     }
 
     public void RemoveClient(int session_id) {
-        TcpSessionHandler handler;
-        if (connectedClientPool.TryGetValue(session_id, out handler)) {
-            FieldController fieldCon;
-            if (fieldControllerPool.TryGetValue(handler.GetFieldId(), out fieldCon)) {
-                fieldCon.RemoveClient(handler);
+        TcpSessionHandler client;
+        if (connectedClientPool.TryGetValue(session_id, out client)) {
+            if (client is TcpSessionHandler_Battle) {
+                var castClient = client as TcpSessionHandler_Battle;
+                FieldController fieldCon;
+                if (fieldControllerPool.TryGetValue(castClient.GetFieldId(), out fieldCon)) {
+                    fieldCon.RemoveClient(castClient);
+                }
             }
         }
         connectedClientPool.Remove(session_id);
@@ -82,7 +89,7 @@ class BattleServer : Singleton<BattleServer>, IRealTimeServer {
             Console.WriteLine("No Field!");
         }
     }
-    
+
     public IEnumerable<FieldController> GetFieldControllerPool() {
         return fieldControllerPool.Values;
     }

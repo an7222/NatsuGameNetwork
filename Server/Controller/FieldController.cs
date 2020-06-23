@@ -5,26 +5,33 @@ using System.Text;
 class FieldController : Controller {
     List<TcpSessionHandler> clientList = new List<TcpSessionHandler>();
     public int FIELD_ID = 0;
-    class FieldInstance {
-    }
 
     List<Controller> controllerList = new List<Controller>();
     NPCController npcController;
     PlayerCharacterController playerCharacterController;
 
+    #region Controller Initialize
     public FieldController() {
-        FieldInstance fieldInstance = new FieldInstance();
-
         npcController = new NPCController();
         controllerList.Add(npcController);
 
         playerCharacterController = new PlayerCharacterController();
         controllerList.Add(playerCharacterController);
 
-
         Update();
     }
 
+    public NPCController GetNPCController() {
+        return npcController;
+    }
+
+    public PlayerCharacterController GetPlayerCharacterController() {
+        return playerCharacterController;
+    }
+
+    #endregion
+
+    #region Field Logic
     new public void Update() {
         base.Update();
 
@@ -33,6 +40,14 @@ class FieldController : Controller {
         };
     }
 
+    public void CreateMonster() {
+
+    }
+
+
+    #endregion
+
+    #region Session
     public void AddClient(TcpSessionHandler_Battle client) {
         clientList.Add(client);
         client.SetFieldController(this);
@@ -48,4 +63,6 @@ class FieldController : Controller {
             client.SendPacket(protocol);
         }
     }
+
+    #endregion
 }

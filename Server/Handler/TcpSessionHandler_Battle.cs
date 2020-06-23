@@ -5,7 +5,7 @@ using System.Text;
 
 class TcpSessionHandler_Battle : TcpSessionHandler{
     int field_id = 0;
-    FieldController fc;
+    PlayerCharacterController pcc;
 
     public TcpSessionHandler_Battle(TcpClient tcpClient, int session_id, IRealTimeServer connectedServer) : base(tcpClient, session_id, connectedServer) {
     }
@@ -17,11 +17,11 @@ class TcpSessionHandler_Battle : TcpSessionHandler{
         return field_id;
     }
 
-    public void SetFieldController(FieldController fc) {
-        this.fc = fc;
+    public void SetPlayerCharacterController(PlayerCharacterController pcc) {
+        this.pcc = pcc;
     }
 
-    public FieldController GetFieldController() {
-        return fc;
+    public PlayerCharacterController GetPlayerCharacterController() {
+        return pcc;
     }
 }
