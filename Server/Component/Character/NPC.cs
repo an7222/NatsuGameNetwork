@@ -6,9 +6,18 @@ using System.Text;
 using System.Transactions;
 
 class AggroInstance {
-    public int object_ID;
-    public int aggro;
-    public DateTime aggroClearTime;
+    int OBJECT_ID;
+    int aggro;
+    DateTime aggroClearTime;
+    public AggroInstance(int object_ID, int aggro, DateTime aggroClearTime) {
+        this.OBJECT_ID = object_ID;
+        this.aggro = aggro;
+        this.aggroClearTime = aggroClearTime;
+    }
+
+    public void UpdateAggro(int changeAmout) {
+        aggro += changeAmout;
+    }
 }
 
 enum NpcFightType {
@@ -23,7 +32,7 @@ class NPC : Character {
     Random r;
 
     NpcFightType npcFightType;
-    public NPC(int HP, int attack, int def, Vector2 pos, NpcFightType npcFightType) : base(HP, attack, def, pos) {
+    public NPC(Stat stat, Vector2 pos, NpcFightType npcFightType) : base(stat, pos) {
         this.npcFightType = npcFightType;
 
         ProcessFSM();
@@ -32,9 +41,9 @@ class NPC : Character {
     //TODO FSM;
     public void ProcessFSM() {
         r = new Random();
+
         //TODO pos changed check
-        pos.X += r.Next(-1, 1);
-        pos.Y += r.Next(-1, 1);
+        MoveTo(new Vector2(pos.X += r.Next(-1, 1), pos.Y += r.Next(-1, 1)));
 
         FindEnemy();
     }
@@ -48,14 +57,14 @@ class NPC : Character {
         //Aggro Process
         int attackerObjectID = attacker.GetObjectID();
         if (aggroMap.ContainsKey(attackerObjectID)) {
-            aggroMap[attackerObjectID].aggro++;
+            aggroMap[attackerObjectID].UpdateAggro(1);
         } else {
-            aggroMap.Add(attackerObjectID, new AggroInstance {
-                object_ID = attackerObjectID,
-                aggro = 1,
-                aggroClearTime = DateTime.Now.AddSeconds(Const.AGGRO_CLEAR_SEC),
-            });
+            aggroMap.Add(attackerObjectID, new AggroInstance(attackerObjectID, 1, DateTime.Now.AddSeconds(Const.AGGRO_CLEAR_SEC)));
         }
+    }
+
+    public override void OnDead() {
+
     }
 
     void FindEnemy() {

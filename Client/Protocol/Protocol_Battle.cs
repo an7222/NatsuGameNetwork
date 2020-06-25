@@ -6,8 +6,8 @@ class NewBattleUser_REQ_C2B : IProtocol {
 	public int PACKET_LENGTH = 0;
 	public int PROTOCOL_ID = 1;
 	//MEMBER
-	public long UserID;
-	public int FieldId;
+	public long USER_ID;
+	public int FIELD_ID;
 	public int Level;
 	public int HP;
 	public int TODOUserInfo;
@@ -21,8 +21,8 @@ class NewBattleUser_REQ_C2B : IProtocol {
 		return PROTOCOL_ID;
 	}
 	public void Read(BinaryReader br) {
-		UserID = br.ReadInt64();
-		FieldId = br.ReadInt32();
+		USER_ID = br.ReadInt64();
+		FIELD_ID = br.ReadInt32();
 		Level = br.ReadInt32();
 		HP = br.ReadInt32();
 		TODOUserInfo = br.ReadInt32();
@@ -31,8 +31,8 @@ class NewBattleUser_REQ_C2B : IProtocol {
 		SetPacketLength();
 		bw.Write(PACKET_LENGTH);
 		bw.Write(PROTOCOL_ID);
-		bw.Write(UserID);
-		bw.Write(FieldId);
+		bw.Write(USER_ID);
+		bw.Write(FIELD_ID);
 		bw.Write(Level);
 		bw.Write(HP);
 		bw.Write(TODOUserInfo);
@@ -118,7 +118,7 @@ class MoveStart_B2C : IProtocol {
 	public int PACKET_LENGTH = 0;
 	public int PROTOCOL_ID = 5;
 	//MEMBER
-	public long ObjectID;
+	public long OBJECT_ID;
 	public int Direction;
 	public void SetPacketLength() {
 		PACKET_LENGTH = sizeof(int) + sizeof(int) + sizeof(long) + sizeof(int);
@@ -130,14 +130,14 @@ class MoveStart_B2C : IProtocol {
 		return PROTOCOL_ID;
 	}
 	public void Read(BinaryReader br) {
-		ObjectID = br.ReadInt64();
+		OBJECT_ID = br.ReadInt64();
 		Direction = br.ReadInt32();
 	}
 	public void Write(BinaryWriter bw) {
 		SetPacketLength();
 		bw.Write(PACKET_LENGTH);
 		bw.Write(PROTOCOL_ID);
-		bw.Write(ObjectID);
+		bw.Write(OBJECT_ID);
 		bw.Write(Direction);
 	}
 }
@@ -168,7 +168,7 @@ class ChangePos_B2C : IProtocol {
 	public int PACKET_LENGTH = 0;
 	public int PROTOCOL_ID = 7;
 	//MEMBER
-	public long ObjectID;
+	public long OBJECT_ID;
 	public int Pos_x;
 	public int Pos_y;
 	public void SetPacketLength() {
@@ -181,7 +181,7 @@ class ChangePos_B2C : IProtocol {
 		return PROTOCOL_ID;
 	}
 	public void Read(BinaryReader br) {
-		ObjectID = br.ReadInt64();
+		OBJECT_ID = br.ReadInt64();
 		Pos_x = br.ReadInt32();
 		Pos_y = br.ReadInt32();
 	}
@@ -189,7 +189,7 @@ class ChangePos_B2C : IProtocol {
 		SetPacketLength();
 		bw.Write(PACKET_LENGTH);
 		bw.Write(PROTOCOL_ID);
-		bw.Write(ObjectID);
+		bw.Write(OBJECT_ID);
 		bw.Write(Pos_x);
 		bw.Write(Pos_y);
 	}

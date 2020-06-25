@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Numerics;
 using System.Text;
 
 class FieldController : Controller {
@@ -7,26 +8,29 @@ class FieldController : Controller {
     public int FIELD_ID = 0;
 
     List<Controller> controllerList = new List<Controller>();
-    NPCController npcController;
-    PlayerCharacterController playerCharacterController;
+    public NPCController npcController {
+        get;
+        private set;
+    }
+    public PlayerCharacterController playerCharacterController {
+        get;
+        private set;
+    }
+
+    Vector2 startPoint = new Vector2 {
+        X = 0,
+        Y = 0
+    };
 
     #region Controller Initialize
     public FieldController() {
-        npcController = new NPCController();
+        npcController = new NPCController(startPoint);
         controllerList.Add(npcController);
 
-        playerCharacterController = new PlayerCharacterController();
+        playerCharacterController = new PlayerCharacterController(startPoint);
         controllerList.Add(playerCharacterController);
 
         Update();
-    }
-
-    public NPCController GetNPCController() {
-        return npcController;
-    }
-
-    public PlayerCharacterController GetPlayerCharacterController() {
-        return playerCharacterController;
     }
 
     #endregion
@@ -40,22 +44,17 @@ class FieldController : Controller {
         };
     }
 
-    public void CreateMonster() {
-
-    }
-
-
     #endregion
 
     #region Session
     public void AddClient(TcpSessionHandler_Battle client) {
         clientList.Add(client);
-        client.SetFieldController(this);
+        client.SetPlayerCharacterController(playerCharacterController);
     }
 
     public void RemoveClient(TcpSessionHandler_Battle client) {
         clientList.Remove(client);
-        client.SetFieldController(null);
+        client.RemovePlayerCharacterController();
     }
 
     public void SendPacketField(IProtocol protocol) {

@@ -3,13 +3,13 @@ using System.Collections.Generic;
 using System.Text;
 
 class GameObject {
-    protected int object_ID;
+    protected int OBJECT_ID;
 
     public int GetObjectID() {
-        return object_ID;
+        return OBJECT_ID;
     }
 
     public void SetObjectID(int object_ID) {
-        this.object_ID = object_ID;
+        this.OBJECT_ID = object_ID;
     }
 }

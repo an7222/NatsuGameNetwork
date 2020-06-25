@@ -9,8 +9,8 @@ using System.Linq;
 using System.Reflection;
 
 class SessionServer : Singleton<SessionServer>, IRealTimeServer {
-    int session_id = 1;
-    long user_id = 10000;
+    int SESSION_ID = 1;
+    long USER_ID = 10000;
     Dictionary<int, TcpSessionHandler> connectedClientPool = new Dictionary<int, TcpSessionHandler>();
     
     public void Start() {
@@ -31,7 +31,7 @@ class SessionServer : Singleton<SessionServer>, IRealTimeServer {
         TcpListener listener = (TcpListener)ar.AsyncState;
         TcpClient tcpClient = listener.EndAcceptTcpClient(ar);
 
-        TcpSessionHandler handler = new TcpSessionHandler(tcpClient, session_id, this);
+        TcpSessionHandler handler = new TcpSessionHandler(tcpClient, SESSION_ID, this);
 
         listener.BeginAcceptTcpClient(OnAccept, listener);
     }
@@ -43,8 +43,8 @@ class SessionServer : Singleton<SessionServer>, IRealTimeServer {
     }
 
     public void AddClient(TcpSessionHandler handler) {
-        if (connectedClientPool.TryAdd(session_id, handler)) {
-            session_id = Interlocked.Increment(ref session_id);
+        if (connectedClientPool.TryAdd(SESSION_ID, handler)) {
+            SESSION_ID = Interlocked.Increment(ref SESSION_ID);
         }
     }
 
@@ -52,7 +52,7 @@ class SessionServer : Singleton<SessionServer>, IRealTimeServer {
         connectedClientPool.Remove(session_id);
     }
 
-    public long GetUserID() {
-        return user_id = Interlocked.Increment(ref user_id);
+    public long GetUniqueUserID() {
+        return USER_ID = Interlocked.Increment(ref USER_ID);
     }
 }

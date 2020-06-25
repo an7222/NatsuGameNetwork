@@ -38,10 +38,10 @@ class ProtocolHandler : Singleton<ProtocolHandler> {
                 Console.WriteLine("Receive : [Login_REQ_C2S]");
                 Random r = new Random();
                 handler.SendPacket(new Login_RES_S2C {
-                    UserID = SessionServer.GetInstance().GetUserID(),
+                    USER_ID = SessionServer.GetInstance().GetUniqueUserID(),
                     ServerTimeUnix = DateTime.Now.Ticks,
                     SessionToken = Guid.NewGuid().ToString(),
-                    FieldId = r.Next(1, 2), //TODO read for RESTAPI
+                    FIELD_ID = r.Next(1, 2), //TODO read for RESTAPI
                 });
 
                 Console.WriteLine("Send : [Login_RES_S2C]");
@@ -63,8 +63,8 @@ class ProtocolHandler : Singleton<ProtocolHandler> {
 
                 var battleHandler = handler as TcpSessionHandler_Battle;
 
-                Console.WriteLine("FIELD ID : " + cast.FieldId);
-                battleHandler.SetFieldId(cast.FieldId);
+                Console.WriteLine("FIELD ID : " + cast.FIELD_ID);
+                battleHandler.FIELD_ID = cast.FIELD_ID;
                 BattleServer.GetInstance().AddClient(battleHandler);
                 battleHandler.SendPacket(new NewBattleUser_RES_C2B {
                     ObjectIDList = 4,
@@ -86,9 +86,9 @@ class ProtocolHandler : Singleton<ProtocolHandler> {
                 var battleHandler = handler as TcpSessionHandler_Battle;
 
                 BattleServer.GetInstance().SendPacketField(new MoveStart_B2C {
-                    ObjectID = 1,
+                    OBJECT_ID = 1,
                     Direction = cast.Direction,
-                }, battleHandler.GetFieldId());
+                }, battleHandler.FIELD_ID);
 
                 Console.WriteLine("SendField : [MoveStart_B2C]");
             };
@@ -105,7 +105,7 @@ class ProtocolHandler : Singleton<ProtocolHandler> {
                 var battleHandler = handler as TcpSessionHandler_Battle;
 
                 BattleServer.GetInstance().SendPacketField(new MoveEnd_B2C {
-                }, battleHandler.GetFieldId());
+                }, battleHandler.FIELD_ID);
 
                 Console.WriteLine("SendField : [MoveEnd_B2C]");
             };

@@ -3,10 +3,10 @@
 END
 
 PACKET Login_RES_S2C
-	long UserID
+	long USER_ID
 	long ServerTimeUnix
 	string SessionToken
-	int FieldId
+	int FIELD_ID
 END
 
 PACKET Login_FIN_C2S

@@ -1,4 +1,4 @@
 ﻿PACKET Field_Excel
-	int FieldId
+	int FIELD_ID
 	string FieldName
 END

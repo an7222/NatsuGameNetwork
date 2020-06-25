@@ -12,13 +12,13 @@ class TcpSessionHandler {
     byte[] receiveBuffer;
     TcpClient tcpClient = null;
     NetworkStream networkStream = null;
-    int session_id;
+    int SESSION_ID;
     IRealTimeServer connectedServer;
 
     public TcpSessionHandler(TcpClient tcpClient, int session_id, IRealTimeServer connectedServer) {
         this.tcpClient = tcpClient;
         this.networkStream = tcpClient.GetStream();
-        this.session_id = session_id;
+        this.SESSION_ID = session_id;
         this.connectedServer = connectedServer;
         receiveBuffer = new byte[Const.RECEIVE_BUFFER_SIZE];
         
@@ -36,7 +36,7 @@ class TcpSessionHandler {
                 }
             } catch (Exception e) {
                 Console.WriteLine(e);
-                connectedServer.RemoveClient(session_id);
+                connectedServer.RemoveClient(SESSION_ID);
                 return;
             }
 
@@ -54,7 +54,7 @@ class TcpSessionHandler {
                 }
             } catch (Exception e) {
                 Console.WriteLine(e);
-                connectedServer.RemoveClient(session_id);
+                connectedServer.RemoveClient(SESSION_ID);
                 return;
             }
 
@@ -91,7 +91,7 @@ class TcpSessionHandler {
             networkStream.Write(writeBuffer);
         } catch (Exception e) {
             Console.WriteLine(e);
-            connectedServer.RemoveClient(session_id);
+            connectedServer.RemoveClient(SESSION_ID);
             return;
         }
     }

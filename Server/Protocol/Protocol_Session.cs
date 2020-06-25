@@ -31,10 +31,10 @@ class Login_RES_S2C : IProtocol {
 	public int PACKET_LENGTH = 0;
 	public int PROTOCOL_ID = 10;
 	//MEMBER
-	public long UserID;
+	public long USER_ID;
 	public long ServerTimeUnix;
 	public string SessionToken;
-	public int FieldId;
+	public int FIELD_ID;
 	public void SetPacketLength() {
 		PACKET_LENGTH = sizeof(int) + sizeof(int) + sizeof(long) + sizeof(long) + 1 + Encoding.Default.GetByteCount(SessionToken) + sizeof(int);
 	}
@@ -45,19 +45,19 @@ class Login_RES_S2C : IProtocol {
 		return PROTOCOL_ID;
 	}
 	public void Read(BinaryReader br) {
-		UserID = br.ReadInt64();
+		USER_ID = br.ReadInt64();
 		ServerTimeUnix = br.ReadInt64();
 		SessionToken = br.ReadString();
-		FieldId = br.ReadInt32();
+		FIELD_ID = br.ReadInt32();
 	}
 	public void Write(BinaryWriter bw) {
 		SetPacketLength();
 		bw.Write(PACKET_LENGTH);
 		bw.Write(PROTOCOL_ID);
-		bw.Write(UserID);
+		bw.Write(USER_ID);
 		bw.Write(ServerTimeUnix);
 		bw.Write(SessionToken);
-		bw.Write(FieldId);
+		bw.Write(FIELD_ID);
 	}
 }
 class Login_FIN_C2S : IProtocol {

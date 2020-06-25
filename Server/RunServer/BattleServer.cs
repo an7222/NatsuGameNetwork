@@ -8,7 +8,7 @@ using System.Text;
 using System.Threading;
 
 class BattleServer : Singleton<BattleServer>, IRealTimeServer {
-    int session_id = 1;
+    int SESSION_ID = 1;
     Dictionary<int, TcpSessionHandler> connectedClientPool = new Dictionary<int, TcpSessionHandler>();
     Dictionary<int, FieldController> fieldControllerPool = new Dictionary<int, FieldController>();
 
@@ -16,17 +16,17 @@ class BattleServer : Singleton<BattleServer>, IRealTimeServer {
         var fieldDataList = new List<Field_Excel>();
         //TODO : Read for DB or Excel
         fieldDataList.Add(new Field_Excel {
-            FieldId = 1,
+            FIELD_ID = 1,
             FieldName = "안토리네 집",
         });
         fieldDataList.Add(new Field_Excel {
-            FieldId = 2,
+            FIELD_ID = 2,
             FieldName = "깃허브",
         });
 
         for (int i = 0; i < fieldDataList.Count; ++i) {
             FieldController fieldController = new FieldController();
-            fieldControllerPool.Add(fieldDataList[i].FieldId, fieldController);
+            fieldControllerPool.Add(fieldDataList[i].FIELD_ID, fieldController);
         }
 
         TcpListener listener = new TcpListener(IPAddress.Any, Const.BATTLE_SERVER_PORT);
@@ -46,21 +46,21 @@ class BattleServer : Singleton<BattleServer>, IRealTimeServer {
         TcpListener listener = (TcpListener)ar.AsyncState;
         TcpClient tcpClient = listener.EndAcceptTcpClient(ar);
 
-        TcpSessionHandler_Battle handler = new TcpSessionHandler_Battle(tcpClient, session_id, this);
+        TcpSessionHandler_Battle handler = new TcpSessionHandler_Battle(tcpClient, SESSION_ID, this);
 
         listener.BeginAcceptTcpClient(OnAccept, listener);
     }
 
     public void AddClient(TcpSessionHandler client) {
-        if (connectedClientPool.TryAdd(session_id, client)) {
-            session_id = Interlocked.Increment(ref session_id);
+        if (connectedClientPool.TryAdd(SESSION_ID, client)) {
+            SESSION_ID = Interlocked.Increment(ref SESSION_ID);
         }
 
         if (client is TcpSessionHandler_Battle) {
             var castClient = client as TcpSessionHandler_Battle;
 
             FieldController fieldCon;
-            if (fieldControllerPool.TryGetValue(castClient.GetFieldId(), out fieldCon)) {
+            if (fieldControllerPool.TryGetValue(castClient.FIELD_ID, out fieldCon)) {
                 fieldCon.AddClient(castClient);
             }
         }
@@ -72,7 +72,7 @@ class BattleServer : Singleton<BattleServer>, IRealTimeServer {
             if (client is TcpSessionHandler_Battle) {
                 var castClient = client as TcpSessionHandler_Battle;
                 FieldController fieldCon;
-                if (fieldControllerPool.TryGetValue(castClient.GetFieldId(), out fieldCon)) {
+                if (fieldControllerPool.TryGetValue(castClient.FIELD_ID, out fieldCon)) {
                     fieldCon.RemoveClient(castClient);
                 }
             }

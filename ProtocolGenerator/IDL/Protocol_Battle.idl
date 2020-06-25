@@ -1,6 +1,6 @@
 ﻿PACKET NewBattleUser_REQ_C2B
-	long UserID
-	int FieldId
+	long USER_ID
+	int FIELD_ID
 	int Level
 	int HP
 	int TODOUserInfo
@@ -19,7 +19,7 @@ PACKET MoveEnd_C2B
 END
 
 PACKET MoveStart_B2C
-	long ObjectID
+	long OBJECT_ID
 	int Direction
 END
 
@@ -27,7 +27,7 @@ PACKET MoveEnd_B2C
 END
 
 PACKET ChangePos_B2C
-	long ObjectID
+	long OBJECT_ID
 	int Pos_x
 	int Pos_y
 END
