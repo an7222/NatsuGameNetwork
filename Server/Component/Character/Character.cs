@@ -22,10 +22,14 @@ class STAT {
     }
 }
 
-abstract class Character : GameObject {
+class Character : GameObject {
     protected Vector2 pos;
 
     STAT stat;
+
+    public CharacterController CharacterController {
+        get; set;
+    }
 
     public Character(STAT stat, Vector2 pos) {
         this.stat = stat;
@@ -50,8 +54,13 @@ abstract class Character : GameObject {
 
     void ChangeHP(int amount_change) {
         stat.HP += amount_change;
+
+        if (stat.HP <= 0)
+            OnDead();
     }
 
-    abstract public void OnDead();
+    void OnDead() {
+        CharacterController.HandleDeadEvent(this);
+    }
 }
 

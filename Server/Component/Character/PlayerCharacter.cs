@@ -7,8 +7,4 @@ class PlayerCharacter : Character {
     public PlayerCharacter(STAT stat, Vector2 pos) : base(stat, pos) {
 
     }
-
-    public override void OnDead() {
-
-    }
 }

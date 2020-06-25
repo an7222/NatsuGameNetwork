@@ -32,6 +32,7 @@ class NPC : Character {
     Random r;
 
     NpcFightType npcFightType;
+
     public NPC(STAT stat, Vector2 pos, NpcFightType npcFightType) : base(stat, pos) {
         this.npcFightType = npcFightType;
 
@@ -61,10 +62,6 @@ class NPC : Character {
         } else {
             aggroMap.Add(attackerObjectID, new AggroInstance(attackerObjectID, 1, DateTime.Now.AddSeconds(Const.AGGRO_CLEAR_SEC)));
         }
-    }
-
-    public override void OnDead() {
-
     }
 
     void FindEnemy() {
