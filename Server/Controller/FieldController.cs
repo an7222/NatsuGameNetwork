@@ -17,6 +17,7 @@ class FieldController : Controller {
         private set;
     }
 
+    //TODO : Load For Map Data
     Vector2 startPoint = new Vector2 {
         X = 0,
         Y = 0
@@ -49,12 +50,12 @@ class FieldController : Controller {
     #region Session
     public void AddClient(TcpSessionHandler_Battle client) {
         clientList.Add(client);
-        client.SetPlayerCharacterController(playerCharacterController);
+        client.PlayerCharacterController = playerCharacterController;
     }
 
     public void RemoveClient(TcpSessionHandler_Battle client) {
         clientList.Remove(client);
-        client.RemovePlayerCharacterController();
+        client.PlayerCharacterController = null;
     }
 
     public void SendPacketField(IProtocol protocol) {

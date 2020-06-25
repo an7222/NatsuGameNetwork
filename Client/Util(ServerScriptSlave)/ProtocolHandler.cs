@@ -43,7 +43,7 @@ class ProtocolHandler : Singleton<ProtocolHandler>{
 
                 TcpClient tcpClient = new TcpClient("127.0.0.1", Const.BATTLE_SERVER_PORT);
 
-                Program.battleHandler = new TcpSessionHandler(tcpClient, false, cast.FieldId);
+                Program.battleHandler = new TcpSessionHandler(tcpClient, false, cast.FIELD_ID);
             };
         }
         if (dummyProtocol is NewBattleUser_RES_C2B) {

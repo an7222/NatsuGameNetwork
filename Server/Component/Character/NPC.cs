@@ -32,7 +32,7 @@ class NPC : Character {
     Random r;
 
     NpcFightType npcFightType;
-    public NPC(Stat stat, Vector2 pos, NpcFightType npcFightType) : base(stat, pos) {
+    public NPC(STAT stat, Vector2 pos, NpcFightType npcFightType) : base(stat, pos) {
         this.npcFightType = npcFightType;
 
         ProcessFSM();
@@ -55,7 +55,7 @@ class NPC : Character {
             return;
 
         //Aggro Process
-        int attackerObjectID = attacker.GetObjectID();
+        int attackerObjectID = attacker.OBJECT_ID;
         if (aggroMap.ContainsKey(attackerObjectID)) {
             aggroMap[attackerObjectID].UpdateAggro(1);
         } else {
@@ -73,7 +73,7 @@ class NPC : Character {
     }
 
     void ClearAggro(Character enemy) {
-        int attackerObjectID = enemy.GetObjectID();
+        int attackerObjectID = enemy.OBJECT_ID;
         if (aggroMap.ContainsKey(attackerObjectID)) {
             aggroMap.Remove(attackerObjectID);
         }

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Numerics;
 using System.Text;
 
-class Stat {
+class STAT {
     public int HP {
         get;
         set;
@@ -25,9 +25,9 @@ class Stat {
 abstract class Character : GameObject {
     protected Vector2 pos;
 
-    Stat stat;
+    STAT stat;
 
-    public Character(Stat stat, Vector2 pos) {
+    public Character(STAT stat, Vector2 pos) {
         this.stat = stat;
         this.pos = pos;
     }

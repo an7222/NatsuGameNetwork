@@ -25,8 +25,8 @@ class TcpSessionHandler {
             Console.WriteLine("Send : [Login_REQ_C2S]");
         } else {
             SendPacket(new NewBattleUser_REQ_C2B {
-                UserID = 1,
-                FieldId = field_id,
+                USER_ID = 1,
+                FIELD_ID = field_id,
             });
         }
 

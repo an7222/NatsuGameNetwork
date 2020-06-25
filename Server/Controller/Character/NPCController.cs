@@ -18,6 +18,12 @@ class NPCController : Controller{
     }
 
     public void CreateNPC(Vector2 start_pos, NpcFightType npcFightType) {
-        NPC npc = new NPC(100, 10, 2, start_pos, npcFightType);
+        STAT stat = new STAT {
+            HP = 100,
+            ATTACK = 10,
+            DEF = 10,
+            SPEED = 1,
+        };
+        NPC npc = new NPC(stat, start_pos, npcFightType);
     }
 }
