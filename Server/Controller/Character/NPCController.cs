@@ -5,7 +5,8 @@ using System.Text;
 
 class NPCController : CharacterController {
     Random r;
-    public NPCController(FieldController fc, Vector2 startPoint) : base(fc, startPoint){
+
+    public NPCController(FieldController fc, Vector2 startPoint) : base(fc, startPoint) {
         r = new Random();
     }
 
@@ -13,22 +14,11 @@ class NPCController : CharacterController {
         base.Update();
 
         foreach (var character in characterList) {
-            if(character is NPC) {
-                ProcessFSM(character as NPC);
+            if (character is NPC) {
+                var npc = character as NPC;
+                npc.FSM.Update();
             }
         }
-    }
-
-    //TODO FSM;
-    public void ProcessFSM(NPC npc) {
-        if(elapsedTime <= 0) {
-            return;
-        }
-
-        npc.isMoving = true;
-        SetPos(new Vector2(pos.X += r.Next(-1, 1), pos.Y += r.Next(-1, 1)));
-
-        FindEnemy();
     }
 
     public override void CreateCharacter(Vector2 startPoint) {
@@ -39,6 +29,9 @@ class NPCController : CharacterController {
             SPEED = 1,
         };
         NPC npc = new NPC(stat, startPoint, NpcFightType.FIGHT);
+        FSM<NPC> FSM = new FSM<NPC>();
+        npc.FSM = FSM;
+        FSM.Configure(npc, new NPC_IdleState());
 
         npc.CharacterController = this;
 

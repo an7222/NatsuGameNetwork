@@ -28,8 +28,22 @@ class NPC : Character {
 
     NpcFightType npcFightType;
 
+    public FSM<NPC> FSM {
+        get; set;
+    }
+
+    public NPC_IdleState IdleState {
+        get; private set;
+    }
+    public NPC_MoveState MoveState {
+        get; private set;
+    }
+
     public NPC(STAT stat, Vector2 pos, NpcFightType npcFightType) : base(stat, pos) {
         this.npcFightType = npcFightType;
+
+        IdleState = new NPC_IdleState();
+        MoveState = new NPC_MoveState();
     }
 
     new public void ReceiveAttack(Character attacker) {

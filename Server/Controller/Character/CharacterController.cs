@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Numerics;
 using System.Text;
 
-abstract class CharacterController : TickAction {
+abstract class CharacterController : TickBase {
     protected Vector2 startPoint;
     protected FieldController fieldController;
     public List<Character> characterList = new List<Character>();

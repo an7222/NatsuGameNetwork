@@ -51,6 +51,10 @@ class Character : GameObject {
         pos = dest;
     }
 
+    public void MoveStart(Direction dir) {
+        this.dir = dir;
+    }
+
     public void AttackTo(Character target) {
         target.ReceiveAttack(this);
     }

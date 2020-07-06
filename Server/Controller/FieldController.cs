@@ -3,11 +3,11 @@ using System.Collections.Generic;
 using System.Numerics;
 using System.Text;
 
-class FieldController : TickAction {
+class FieldController : TickBase {
     List<TcpSessionHandler> clientList = new List<TcpSessionHandler>();
     public int FIELD_ID = 0;
 
-    List<TickAction> controllerList = new List<TickAction>();
+    List<TickBase> controllerList = new List<TickBase>();
     public NPCController npcController {
         get;
         private set;

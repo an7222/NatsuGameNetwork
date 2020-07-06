@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Text;
 
-class TickAction {
+class TickBase {
     Queue<Action> ActionQueue = new Queue<Action>();
 
     protected Stopwatch sw = new Stopwatch();
@@ -16,6 +16,7 @@ class TickAction {
     public void EnqueueMesssage(Action action) {
         ActionQueue.Enqueue(action);
     }
+
     protected Action DequeueMesssage() {
         if(ActionQueue.Count > 0) {
             return ActionQueue.Dequeue();
