@@ -142,7 +142,7 @@ class ProtocolGenerator {
                         sw.Write(TextConst.EQUAL);
                         sw.Write(TextConst.SPACE);
                         sw.Write(TextConst.BINARY_READER_INSTANCE_CALL);
-
+                        
                         switch (kv.Key) {
                             case "string":
                                 sw.Write(TextConst.BINRAY_READER_READ_STRING);
@@ -152,6 +152,9 @@ class ProtocolGenerator {
                                 break;
                             case "long":
                                 sw.Write(TextConst.BINRAY_READER_READ_LONG);
+                                break;
+                            case "float":
+                                sw.Write(TextConst.BINRAY_READER_READ_FLOAT);
                                 break;
                         }
 
@@ -193,6 +196,7 @@ class ProtocolGenerator {
                 case "int":
                 case "long":
                 case "string":
+                case "float":
                     sw.Write(TextConst.TAB);
                     sw.Write(TextConst.PUBLIC);
 

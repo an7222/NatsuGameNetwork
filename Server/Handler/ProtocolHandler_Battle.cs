@@ -46,6 +46,8 @@ partial class ProtocolHandler : Singleton<ProtocolHandler> {
 
                 var battleHandler = handler as TcpSessionHandler_Battle;
 
+                battleHandler.PlayerCharacter.;
+
                 BattleServer.GetInstance().SendPacketField(new MoveStart_B2C {
                     OBJECT_ID = 1,
                     Direction = cast.Direction,

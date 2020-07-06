@@ -23,9 +23,20 @@ class STAT {
 }
 
 class Character : GameObject {
-    protected Vector2 pos;
+    public Vector2 pos {
+        get; private set;
+    }
+    public Direction dir {
+        get; set;
+    }
 
-    STAT stat;
+    public STAT stat {
+        get; set;
+    }
+
+    public bool isMoving {
+        get; set;
+    }
 
     public CharacterController CharacterController {
         get; set;
@@ -36,7 +47,7 @@ class Character : GameObject {
         this.pos = pos;
     }
 
-    public void MoveTo(Vector2 dest) {
+    public void SetPos(Vector2 dest) {
         pos = dest;
     }
 

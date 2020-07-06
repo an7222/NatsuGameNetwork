@@ -146,33 +146,9 @@ class MoveEnd_B2C : IProtocol {
 	public int PACKET_LENGTH = 0;
 	public int PROTOCOL_ID = 6;
 	//MEMBER
-	public void SetPacketLength() {
-		PACKET_LENGTH = sizeof(int) + sizeof(int);
-	}
-	public int GetPacketLength() {
-		return PACKET_LENGTH;
-	}
-	public int GetProtocol_ID() {
-		return PROTOCOL_ID;
-	}
-	public void Read(BinaryReader br) {
-	}
-	public void Write(BinaryWriter bw) {
-		SetPacketLength();
-		bw.Write(PACKET_LENGTH);
-		bw.Write(PROTOCOL_ID);
-	}
-}
-class ChangePos_B2C : IProtocol {
-	//COMMON
-	public int PACKET_LENGTH = 0;
-	public int PROTOCOL_ID = 7;
-	//MEMBER
 	public long OBJECT_ID;
-	public int Pos_x;
-	public int Pos_y;
 	public void SetPacketLength() {
-		PACKET_LENGTH = sizeof(int) + sizeof(int) + sizeof(long) + sizeof(int) + sizeof(int);
+		PACKET_LENGTH = sizeof(int) + sizeof(int) + sizeof(long);
 	}
 	public int GetPacketLength() {
 		return PACKET_LENGTH;
@@ -182,8 +158,35 @@ class ChangePos_B2C : IProtocol {
 	}
 	public void Read(BinaryReader br) {
 		OBJECT_ID = br.ReadInt64();
-		Pos_x = br.ReadInt32();
-		Pos_y = br.ReadInt32();
+	}
+	public void Write(BinaryWriter bw) {
+		SetPacketLength();
+		bw.Write(PACKET_LENGTH);
+		bw.Write(PROTOCOL_ID);
+		bw.Write(OBJECT_ID);
+	}
+}
+class ChangePos_B2C : IProtocol {
+	//COMMON
+	public int PACKET_LENGTH = 0;
+	public int PROTOCOL_ID = 7;
+	//MEMBER
+	public long OBJECT_ID;
+	public float Pos_x;
+	public float Pos_y;
+	public void SetPacketLength() {
+		PACKET_LENGTH = sizeof(int) + sizeof(int) + sizeof(long) + sizeof(float) + sizeof(float);
+	}
+	public int GetPacketLength() {
+		return PACKET_LENGTH;
+	}
+	public int GetProtocol_ID() {
+		return PROTOCOL_ID;
+	}
+	public void Read(BinaryReader br) {
+		OBJECT_ID = br.ReadInt64();
+		Pos_x = br.ReadSingle();
+		Pos_y = br.ReadSingle();
 	}
 	public void Write(BinaryWriter bw) {
 		SetPacketLength();

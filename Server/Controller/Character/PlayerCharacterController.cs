@@ -1,16 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Numerics;
 using System.Text;
 
 class PlayerCharacterController : CharacterController {
-    public List<PlayerCharacter> pcList = new List<PlayerCharacter>();
 
-    Vector2 startPoint;
-    public PlayerCharacterController(Vector2 startPoint) {
-        this.startPoint = startPoint;
 
-        CreateCharacter(startPoint);
+    public PlayerCharacterController(FieldController fc, Vector2 startPoint) : base(fc, startPoint) {
     }
 
     public override void CreateCharacter(Vector2 startPoint) {
@@ -24,7 +21,7 @@ class PlayerCharacterController : CharacterController {
         PlayerCharacter pc = new PlayerCharacter(stat, startPoint);
         pc.CharacterController = this;
 
-        pcList.Add(pc);
+        characterList.Add(pc);
     }
 
     public override void HandleDeadEvent(Character character) {
@@ -34,10 +31,8 @@ class PlayerCharacterController : CharacterController {
         }
 
         var pc = character as PlayerCharacter;
-        pcList.Remove(pc);
+        characterList.Remove(pc);
 
         Console.WriteLine("PC Dead");
-
-        CreateCharacter(startPoint);
     }
 }

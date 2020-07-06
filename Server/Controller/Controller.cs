@@ -1,9 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Text;
 
-class Controller {
-    protected Queue<Action> ActionQueue = new Queue<Action>();
+class TickAction {
+    Queue<Action> ActionQueue = new Queue<Action>();
+
+    protected Stopwatch sw = new Stopwatch();
+
     public void Update() {
         Action action = DequeueMesssage();
         if (action != null)

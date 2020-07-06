@@ -7,7 +7,7 @@ class TcpSessionHandler_Battle : TcpSessionHandler{
     public int FIELD_ID {
         get;set;
     }
-    public PlayerCharacterController PlayerCharacterController {
+    public PlayerCharacter PlayerCharacter {
         get;set;
     }
 

@@ -4,22 +4,31 @@ using System.Numerics;
 using System.Text;
 
 class NPCController : CharacterController {
-    public List<NPC> npcList = new List<NPC>();
-
-    Vector2 startPoint;
-    public NPCController(Vector2 startPoint) {
-        this.startPoint = startPoint;
-
-
-        CreateCharacter(startPoint);
+    Random r;
+    public NPCController(FieldController fc, Vector2 startPoint) : base(fc, startPoint){
+        r = new Random();
     }
 
     new public void Update() {
         base.Update();
 
-        foreach (var npc in npcList) {
-            npc.ProcessFSM();
+        foreach (var character in characterList) {
+            if(character is NPC) {
+                ProcessFSM(character as NPC);
+            }
         }
+    }
+
+    //TODO FSM;
+    public void ProcessFSM(NPC npc) {
+        if(elapsedTime <= 0) {
+            return;
+        }
+
+        npc.isMoving = true;
+        SetPos(new Vector2(pos.X += r.Next(-1, 1), pos.Y += r.Next(-1, 1)));
+
+        FindEnemy();
     }
 
     public override void CreateCharacter(Vector2 startPoint) {
@@ -33,7 +42,7 @@ class NPCController : CharacterController {
 
         npc.CharacterController = this;
 
-        npcList.Add(npc);
+        characterList.Add(npc);
     }
 
     public override void HandleDeadEvent(Character character) {
@@ -43,10 +52,8 @@ class NPCController : CharacterController {
         }
 
         var npc = character as NPC;
-        npcList.Remove(npc);
+        characterList.Remove(npc);
 
         Console.WriteLine("NPC Dead");
-
-        CreateCharacter(startPoint);
     }
 }

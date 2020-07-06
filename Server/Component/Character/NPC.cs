@@ -1,9 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Numerics;
-using System.Runtime.CompilerServices;
-using System.Text;
-using System.Transactions;
 
 class AggroInstance {
     int OBJECT_ID;
@@ -29,24 +26,10 @@ enum NpcFightType {
 class NPC : Character {
     Dictionary<int, AggroInstance> aggroMap = new Dictionary<int, AggroInstance>();
 
-    Random r;
-
     NpcFightType npcFightType;
 
     public NPC(STAT stat, Vector2 pos, NpcFightType npcFightType) : base(stat, pos) {
         this.npcFightType = npcFightType;
-
-        ProcessFSM();
-    }
-
-    //TODO FSM;
-    public void ProcessFSM() {
-        r = new Random();
-
-        //TODO pos changed check
-        MoveTo(new Vector2(pos.X += r.Next(-1, 1), pos.Y += r.Next(-1, 1)));
-
-        FindEnemy();
     }
 
     new public void ReceiveAttack(Character attacker) {

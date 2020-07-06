@@ -3,11 +3,11 @@ using System.Collections.Generic;
 using System.Numerics;
 using System.Text;
 
-class FieldController : Controller {
+class FieldController : TickAction {
     List<TcpSessionHandler> clientList = new List<TcpSessionHandler>();
     public int FIELD_ID = 0;
 
-    List<Controller> controllerList = new List<Controller>();
+    List<TickAction> controllerList = new List<TickAction>();
     public NPCController npcController {
         get;
         private set;
@@ -25,10 +25,10 @@ class FieldController : Controller {
 
     #region Controller Initialize
     public FieldController() {
-        npcController = new NPCController(startPoint);
+        npcController = new NPCController(this, startPoint);
         controllerList.Add(npcController);
 
-        playerCharacterController = new PlayerCharacterController(startPoint);
+        playerCharacterController = new PlayerCharacterController(this, startPoint);
         controllerList.Add(playerCharacterController);
 
         Update();
@@ -50,12 +50,14 @@ class FieldController : Controller {
     #region Session
     public void AddClient(TcpSessionHandler_Battle client) {
         clientList.Add(client);
-        client.PlayerCharacterController = playerCharacterController;
+
+        playerCharacterController.CreateCharacter()
+        client.PlayerCharacter = playerCharacterController;
     }
 
     public void RemoveClient(TcpSessionHandler_Battle client) {
         clientList.Remove(client);
-        client.PlayerCharacterController = null;
+        client.PlayerCharacter = null;
     }
 
     public void SendPacketField(IProtocol protocol) {

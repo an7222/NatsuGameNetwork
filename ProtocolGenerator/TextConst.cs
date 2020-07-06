@@ -32,6 +32,7 @@ class TextConst {
     public const string BINRAY_READER_READ_STRING = "ReadString()";
     public const string BINRAY_READER_READ_INT = "ReadInt32()";
     public const string BINRAY_READER_READ_LONG = "ReadInt64()";
+    public const string BINRAY_READER_READ_FLOAT = "ReadSingle()";
 
     public const string BINARY_WRITE_DEFINE = TAB + PUBLIC + SPACE + "void Write(BinaryWriter bw)" + SPACE + BRACE_START;
     public const string BINARY_WRITER_INSTANCE_CALL = DOUBLE_TAB + "bw.";
