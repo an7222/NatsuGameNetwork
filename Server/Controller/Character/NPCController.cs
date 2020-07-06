@@ -21,7 +21,7 @@ class NPCController : CharacterController {
         }
     }
 
-    public override void CreateCharacter(Vector2 startPoint) {
+    public override Character CreateCharacter(Vector2 startPoint) {
         STAT stat = new STAT {
             HP = 100,
             ATTACK = 10,
@@ -36,6 +36,8 @@ class NPCController : CharacterController {
         npc.CharacterController = this;
 
         characterList.Add(npc);
+
+        return npc;
     }
 
     public override void HandleDeadEvent(Character character) {

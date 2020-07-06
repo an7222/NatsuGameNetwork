@@ -4,8 +4,9 @@ using System.Numerics;
 using System.Text;
 
 class NPC_MoveState : FSMState<NPC> {
-    Random r;
+    Random r = new Random();
     public override void Enter(NPC npc) {
+        sw.Start();
         npc.dir = (Direction)r.Next(0, 4);
         npc.isMoving = true;
         Console.Write("[Move] Enter");
@@ -19,6 +20,9 @@ class NPC_MoveState : FSMState<NPC> {
     }
     public override void Exit(NPC npc) {
         npc.isMoving = false;
+        if (sw.IsRunning) {
+            sw.Stop();
+        }
         Console.Write("[Move] Exit");
     }
 }

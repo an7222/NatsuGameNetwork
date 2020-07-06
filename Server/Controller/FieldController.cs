@@ -51,8 +51,13 @@ class FieldController : TickBase {
     public void AddClient(TcpSessionHandler_Battle client) {
         clientList.Add(client);
 
-        playerCharacterController.CreateCharacter()
-        client.PlayerCharacter = playerCharacterController;
+        Character character = playerCharacterController.CreateCharacter(startPoint);
+
+        if(character is PlayerCharacter) {
+            client.PlayerCharacter = character as PlayerCharacter;
+        } else {
+            Console.WriteLine("Player Character Create Error!");
+        }
     }
 
     public void RemoveClient(TcpSessionHandler_Battle client) {

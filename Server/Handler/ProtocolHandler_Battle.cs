@@ -46,14 +46,9 @@ partial class ProtocolHandler : Singleton<ProtocolHandler> {
 
                 var battleHandler = handler as TcpSessionHandler_Battle;
 
-                battleHandler.PlayerCharacter.;
+                battleHandler.PlayerCharacter.MoveStart((Direction)cast.Direction);
 
-                BattleServer.GetInstance().SendPacketField(new MoveStart_B2C {
-                    OBJECT_ID = 1,
-                    Direction = cast.Direction,
-                }, battleHandler.FIELD_ID);
-
-                Console.WriteLine("SendField : [MoveStart_B2C]");
+                battleHandler.PlayerCharacter.CharacterController.BroadCast_MoveStart(battleHandler.PlayerCharacter);
             };
         } else if (dummyProtocol is MoveEnd_C2B) {
             action = (IProtocol protocol, TcpSessionHandler handler) => {

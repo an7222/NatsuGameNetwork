@@ -46,13 +46,13 @@ abstract class CharacterController : TickBase {
         }
     }
 
-    public abstract void CreateCharacter(Vector2 startPoint);
+    public abstract Character CreateCharacter(Vector2 startPoint);
     public abstract void HandleDeadEvent(Character character);
 
-    public void BroadCast_MoveStart(Character caster, Direction direction) {
+    public void BroadCast_MoveStart(Character caster) {
         var protocol = new MoveStart_B2C {
             OBJECT_ID = caster.OBJECT_ID,
-            Direction = (int)direction,
+            Direction = (int)caster.dir,
         };
 
         caster.isMoving = true;
@@ -80,22 +80,22 @@ abstract class CharacterController : TickBase {
         fieldController.SendPacketField(protocol);
     }
 
-    public void BroadCast_AttackTo(Character target) {
-        target.ReceiveAttack(this);
-    }
+    //public void BroadCast_AttackTo(Character caster, Character target) {
+    //    target.ReceiveAttack(this);
+    //}
 
-    public void BroadCast_ReceiveAttack(Character attacker) {
-        ReceiveDamage(attacker.stat.ATTACK - this.stat.DEF);
-    }
+    //public void BroadCast_ReceiveAttack(Character attacker) {
+    //    ReceiveDamage(attacker.stat.ATTACK - this.stat.DEF);
+    //}
 
-    void BroadCast_ReceiveDamage(int damage) {
-        ChangeHP(damage);
-    }
+    //void BroadCast_ReceiveDamage(int damage) {
+    //    ChangeHP(damage);
+    //}
 
-    void BroadCast_ChangeHP(int amount_change) {
-        stat.HP += amount_change;
+    //void BroadCast_ChangeHP(int amount_change) {
+    //    stat.HP += amount_change;
 
-        if (stat.HP <= 0)
-            OnDead();
-    }
+    //    if (stat.HP <= 0)
+    //        OnDead();
+    //}
 }
