@@ -8,9 +8,11 @@ class NPCController : CharacterController {
 
     public NPCController(FieldController fc, Vector2 startPoint) : base(fc, startPoint) {
         r = new Random();
+
+        CreateCharacter(startPoint);
     }
 
-    new public void Update() {
+    public override void Update() {
         base.Update();
 
         foreach (var character in characterList) {

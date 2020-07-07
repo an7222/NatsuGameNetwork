@@ -15,7 +15,7 @@ abstract class CharacterController : TickBase {
 
     protected long elapsedTime = 0;
 
-    new public void Update() {
+    public override void Update() {
         base.Update();
 
 

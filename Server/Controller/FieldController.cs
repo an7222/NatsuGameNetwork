@@ -37,9 +37,8 @@ class FieldController : TickBase {
     #endregion
 
     #region Field Logic
-    new public void Update() {
+    public override void Update() {
         base.Update();
-
         foreach (var con in controllerList) {
             con.Update();
         };

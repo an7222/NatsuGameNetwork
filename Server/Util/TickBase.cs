@@ -8,7 +8,7 @@ class TickBase {
 
     protected Stopwatch sw = new Stopwatch();
 
-    public void Update() {
+    public virtual void Update() {
         Action action = DequeueMesssage();
         if (action != null)
             action();

@@ -10,9 +10,7 @@ class Program {
 
         while (true) {
             foreach (var con in BattleServer.GetInstance().GetFieldControllerPool()) {
-                ThreadManager.GetInstance().RegisterWork(() => {
-                    con.Update();
-                });
+                con.Update();
             }
         }
     }
