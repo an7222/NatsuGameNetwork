@@ -11,8 +11,8 @@ class Program {
 
 
         while (true) {
-            foreach (var field in BattleServer.GetInstance().GetChannelControllerPool()) {
-                field.Update();
+            foreach (var channelController in BattleServer.GetInstance().GetChannelControllerPool()) {
+                channelController.Update();
             }
         }
     }

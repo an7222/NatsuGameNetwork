@@ -37,7 +37,7 @@ class ChannelController : TickBase {
 
     #endregion
 
-    #region Field Logic
+    #region Channel Logic
     public override void Update() {
         base.Update();
         foreach (var con in controllerList) {
