@@ -21,7 +21,7 @@ partial class ProtocolHandler : Singleton<ProtocolHandler> {
                     USER_ID = SessionServer.GetInstance().GetUniqueUserID(),
                     ServerTimeUnix = DateTime.Now.Ticks,
                     SessionToken = Guid.NewGuid().ToString(),
-                    FIELD_ID = r.Next(1, 2), //TODO read for RESTAPI
+                    CHANNEL_ID = r.Next(1, 2), //TODO read for RESTAPI
                 });
 
                 Console.WriteLine("Send : [Login_RES_S2C]");

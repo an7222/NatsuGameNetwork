@@ -5,11 +5,11 @@ using System.Text;
 
 abstract class CharacterController : TickBase {
     protected Vector2 startPoint;
-    protected FieldController fieldController;
+    protected ChannelController channelController;
     public List<Character> characterList = new List<Character>();
 
-    public CharacterController(FieldController fc, Vector2 startPoint) {
-        this.fieldController = fc;
+    public CharacterController(ChannelController cc, Vector2 startPoint) {
+        this.channelController = cc;
         this.startPoint = startPoint;
     }
 
@@ -50,34 +50,40 @@ abstract class CharacterController : TickBase {
     public abstract void HandleDeadEvent(Character character);
 
     public void BroadCast_MoveStart(Character caster) {
-        var protocol = new MoveStart_B2C {
-            OBJECT_ID = caster.OBJECT_ID,
-            Direction = (int)caster.dir,
-        };
+        EnqueueAction(() => {
+            var protocol = new MoveStart_B2C {
+                OBJECT_ID = caster.OBJECT_ID,
+                Direction = (int)caster.dir,
+            };
 
-        caster.isMoving = true;
+            caster.isMoving = true;
 
-        fieldController.SendPacketField(protocol);
+            channelController.SendPacketField(protocol);
+        });
     }
 
     public void BroadCast_MoveEnd(Character caster) {
-        var protocol = new MoveEnd_B2C {
-            OBJECT_ID = caster.OBJECT_ID,
-        };
+        EnqueueAction(() => {
+            var protocol = new MoveEnd_B2C {
+                OBJECT_ID = caster.OBJECT_ID,
+            };
 
-        caster.isMoving = false;
+            caster.isMoving = false;
 
-        fieldController.SendPacketField(protocol);
+            channelController.SendPacketField(protocol);
+        });
     }
 
     public void BroadCast_RefreshPos(Character caster) {
-        var protocol = new ChangePos_B2C {
-            OBJECT_ID = caster.OBJECT_ID,
-            Pos_x = caster.pos.X,
-            Pos_y = caster.pos.Y,
-        };
+        EnqueueAction(() => {
+            var protocol = new ChangePos_B2C {
+                OBJECT_ID = caster.OBJECT_ID,
+                Pos_x = caster.pos.X,
+                Pos_y = caster.pos.Y,
+            };
 
-        fieldController.SendPacketField(protocol);
+            channelController.SendPacketField(protocol);
+        });
     }
 
     //public void BroadCast_AttackTo(Character caster, Character target) {

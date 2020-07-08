@@ -2,8 +2,9 @@
 using System.Collections.Generic;
 using System.Numerics;
 using System.Text;
+using System.Threading;
 
-class FieldController : TickBase {
+class ChannelController : TickBase {
     List<TcpSessionHandler> clientList = new List<TcpSessionHandler>();
     public int FIELD_ID = 0;
 
@@ -24,7 +25,7 @@ class FieldController : TickBase {
     };
 
     #region Controller Initialize
-    public FieldController() {
+    public ChannelController() {
         npcController = new NPCController(this, startPoint);
         controllerList.Add(npcController);
 
@@ -40,7 +41,14 @@ class FieldController : TickBase {
     public override void Update() {
         base.Update();
         foreach (var con in controllerList) {
-            con.Update();
+            if (con.updateLock)
+                continue;
+
+            con.updateLock = true;
+            ThreadManager.GetInstance().RegisterWork(() => {
+                con.Update();
+                con.updateLock = false;
+            });
         };
     }
 
@@ -52,7 +60,7 @@ class FieldController : TickBase {
 
         Character character = playerCharacterController.CreateCharacter(startPoint);
 
-        if(character is PlayerCharacter) {
+        if (character is PlayerCharacter) {
             client.PlayerCharacter = character as PlayerCharacter;
         } else {
             Console.WriteLine("Player Character Create Error!");
@@ -65,7 +73,7 @@ class FieldController : TickBase {
     }
 
     public void SendPacketField(IProtocol protocol) {
-        foreach(var client in clientList) {
+        foreach (var client in clientList) {
             client.SendPacket(protocol);
         }
     }

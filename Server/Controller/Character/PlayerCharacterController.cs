@@ -7,7 +7,7 @@ using System.Text;
 class PlayerCharacterController : CharacterController {
 
 
-    public PlayerCharacterController(FieldController fc, Vector2 startPoint) : base(fc, startPoint) {
+    public PlayerCharacterController(ChannelController cc, Vector2 startPoint) : base(cc, startPoint) {
     }
 
     public override Character CreateCharacter(Vector2 startPoint) {

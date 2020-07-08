@@ -24,8 +24,8 @@ partial class ProtocolHandler : Singleton<ProtocolHandler> {
 
                 var battleHandler = handler as TcpSessionHandler_Battle;
 
-                Console.WriteLine("FIELD ID : " + cast.FIELD_ID);
-                battleHandler.FIELD_ID = cast.FIELD_ID;
+                Console.WriteLine("FIELD ID : " + cast.CHANNEL_ID);
+                battleHandler.CHANNEL_ID = cast.CHANNEL_ID;
                 BattleServer.GetInstance().AddClient(battleHandler);
                 battleHandler.SendPacket(new NewBattleUser_RES_C2B {
                     ObjectIDList = 4,
@@ -62,8 +62,8 @@ partial class ProtocolHandler : Singleton<ProtocolHandler> {
 
                 var battleHandler = handler as TcpSessionHandler_Battle;
 
-                BattleServer.GetInstance().SendPacketField(new MoveEnd_B2C {
-                }, battleHandler.FIELD_ID);
+                BattleServer.GetInstance().SendPacketChannel(new MoveEnd_B2C {
+                }, battleHandler.CHANNEL_ID);
 
                 Console.WriteLine("SendField : [MoveEnd_B2C]");
             };

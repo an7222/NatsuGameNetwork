@@ -10,7 +10,7 @@ using System.Threading;
 class BattleServer : Singleton<BattleServer>, IRealTimeServer {
     int SESSION_ID = 1;
     Dictionary<int, TcpSessionHandler> connectedClientPool = new Dictionary<int, TcpSessionHandler>();
-    Dictionary<int, FieldController> fieldControllerPool = new Dictionary<int, FieldController>();
+    Dictionary<int, ChannelController> channelControllerPool = new Dictionary<int, ChannelController>();
 
     public void Start() {
         var fieldDataList = new List<Field_Excel>();
@@ -19,14 +19,14 @@ class BattleServer : Singleton<BattleServer>, IRealTimeServer {
             FIELD_ID = 1,
             FieldName = "안토리네 집",
         });
-        fieldDataList.Add(new Field_Excel {
-            FIELD_ID = 2,
-            FieldName = "깃허브",
-        });
+        //fieldDataList.Add(new Field_Excel {
+        //    FIELD_ID = 2,
+        //    FieldName = "깃허브",
+        //});
 
         for (int i = 0; i < fieldDataList.Count; ++i) {
-            FieldController fieldController = new FieldController();
-            fieldControllerPool.Add(fieldDataList[i].FIELD_ID, fieldController);
+            ChannelController channelController = new ChannelController();
+            channelControllerPool.Add(fieldDataList[i].FIELD_ID, channelController);
         }
 
         TcpListener listener = new TcpListener(IPAddress.Any, Const.BATTLE_SERVER_PORT);
@@ -59,9 +59,9 @@ class BattleServer : Singleton<BattleServer>, IRealTimeServer {
         if (client is TcpSessionHandler_Battle) {
             var castClient = client as TcpSessionHandler_Battle;
 
-            FieldController fieldCon;
-            if (fieldControllerPool.TryGetValue(castClient.FIELD_ID, out fieldCon)) {
-                fieldCon.AddClient(castClient);
+            ChannelController channelCon;
+            if (channelControllerPool.TryGetValue(castClient.CHANNEL_ID, out channelCon)) {
+                channelCon.AddClient(castClient);
             }
         }
     }
@@ -71,26 +71,26 @@ class BattleServer : Singleton<BattleServer>, IRealTimeServer {
         if (connectedClientPool.TryGetValue(session_id, out client)) {
             if (client is TcpSessionHandler_Battle) {
                 var castClient = client as TcpSessionHandler_Battle;
-                FieldController fieldCon;
-                if (fieldControllerPool.TryGetValue(castClient.FIELD_ID, out fieldCon)) {
-                    fieldCon.RemoveClient(castClient);
+                ChannelController channelCon;
+                if (channelControllerPool.TryGetValue(castClient.CHANNEL_ID, out channelCon)) {
+                    channelCon.RemoveClient(castClient);
                 }
             }
         }
         connectedClientPool.Remove(session_id);
     }
 
-    public void SendPacketField(IProtocol protocol, int field_id) {
-        FieldController fieldCon;
+    public void SendPacketChannel(IProtocol protocol, int channel_id) {
+        ChannelController channelCon;
 
-        if (fieldControllerPool.TryGetValue(field_id, out fieldCon)) {
-            fieldCon.SendPacketField(protocol);
+        if (channelControllerPool.TryGetValue(channel_id, out channelCon)) {
+            channelCon.SendPacketField(protocol);
         } else {
             Console.WriteLine("No Field!");
         }
     }
 
-    public IEnumerable<FieldController> GetFieldControllerPool() {
-        return fieldControllerPool.Values;
+    public IEnumerable<ChannelController> GetChannelControllerPool() {
+        return channelControllerPool.Values;
     }
 }

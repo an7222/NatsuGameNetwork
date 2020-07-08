@@ -7,7 +7,7 @@ class NewBattleUser_REQ_C2B : IProtocol {
 	public int PROTOCOL_ID = 1;
 	//MEMBER
 	public long USER_ID;
-	public int FIELD_ID;
+	public int CHANNEL_ID;
 	public int Level;
 	public int HP;
 	public int TODOUserInfo;
@@ -22,7 +22,7 @@ class NewBattleUser_REQ_C2B : IProtocol {
 	}
 	public void Read(BinaryReader br) {
 		USER_ID = br.ReadInt64();
-		FIELD_ID = br.ReadInt32();
+		CHANNEL_ID = br.ReadInt32();
 		Level = br.ReadInt32();
 		HP = br.ReadInt32();
 		TODOUserInfo = br.ReadInt32();
@@ -32,7 +32,7 @@ class NewBattleUser_REQ_C2B : IProtocol {
 		bw.Write(PACKET_LENGTH);
 		bw.Write(PROTOCOL_ID);
 		bw.Write(USER_ID);
-		bw.Write(FIELD_ID);
+		bw.Write(CHANNEL_ID);
 		bw.Write(Level);
 		bw.Write(HP);
 		bw.Write(TODOUserInfo);

@@ -6,7 +6,7 @@ PACKET Login_RES_S2C
 	long USER_ID
 	long ServerTimeUnix
 	string SessionToken
-	int FIELD_ID
+	int CHANNEL_ID
 END
 
 PACKET Login_FIN_C2S

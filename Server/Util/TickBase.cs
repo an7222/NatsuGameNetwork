@@ -1,27 +1,33 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Text;
 
 class TickBase {
-    Queue<Action> ActionQueue = new Queue<Action>();
+    ConcurrentQueue<Action> ActionQueue = new ConcurrentQueue<Action>();
 
     protected Stopwatch sw = new Stopwatch();
 
-    public virtual void Update() {
-        Action action = DequeueMesssage();
-        if (action != null)
-            action();
+    public bool updateLock {
+        get; set;
     }
-    public void EnqueueMesssage(Action action) {
+
+    public virtual void Update() {
+        if (false == ActionQueue.IsEmpty) {
+            Action action = DequeueAction();
+            if (action != null)
+                action();
+        }
+    }
+    public void EnqueueAction(Action action) {
         ActionQueue.Enqueue(action);
     }
 
-    protected Action DequeueMesssage() {
-        if(ActionQueue.Count > 0) {
-            return ActionQueue.Dequeue();
-        }
+    protected Action DequeueAction() {
+        Action cb;
+        ActionQueue.TryDequeue(out cb);
 
-        return null;
+        return cb;
     }
 }

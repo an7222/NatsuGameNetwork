@@ -12,7 +12,7 @@ class TcpSessionHandler {
     TcpClient tcpClient = null;
     NetworkStream networkStream = null;
 
-    public TcpSessionHandler(TcpClient tcpClient, bool isSessionServer, int field_id) {
+    public TcpSessionHandler(TcpClient tcpClient, bool isSessionServer, int channel_id) {
         this.tcpClient = tcpClient;
         this.networkStream = tcpClient.GetStream();
         receiveBuffer = new byte[Const.RECEIVE_BUFFER_SIZE];
@@ -26,7 +26,7 @@ class TcpSessionHandler {
         } else {
             SendPacket(new NewBattleUser_REQ_C2B {
                 USER_ID = 1,
-                FIELD_ID = field_id,
+                CHANNEL_ID = channel_id,
             });
         }
 

@@ -1,6 +1,6 @@
 ﻿PACKET NewBattleUser_REQ_C2B
 	long USER_ID
-	int FIELD_ID
+	int CHANNEL_ID
 	int Level
 	int HP
 	int TODOUserInfo
