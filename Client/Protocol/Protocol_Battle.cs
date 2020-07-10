@@ -7,12 +7,11 @@ class NewBattleUser_REQ_C2B : IProtocol {
 	public int PROTOCOL_ID = 1;
 	//MEMBER
 	public long USER_ID;
-	public int CHANNEL_ID;
 	public int Level;
 	public int HP;
 	public int TODOUserInfo;
 	public void SetPacketLength() {
-		PACKET_LENGTH = sizeof(int) + sizeof(int) + sizeof(long) + sizeof(int) + sizeof(int) + sizeof(int) + sizeof(int);
+		PACKET_LENGTH = sizeof(int) + sizeof(int) + sizeof(long) + sizeof(int) + sizeof(int) + sizeof(int);
 	}
 	public int GetPacketLength() {
 		return PACKET_LENGTH;
@@ -22,7 +21,6 @@ class NewBattleUser_REQ_C2B : IProtocol {
 	}
 	public void Read(BinaryReader br) {
 		USER_ID = br.ReadInt64();
-		CHANNEL_ID = br.ReadInt32();
 		Level = br.ReadInt32();
 		HP = br.ReadInt32();
 		TODOUserInfo = br.ReadInt32();
@@ -32,7 +30,6 @@ class NewBattleUser_REQ_C2B : IProtocol {
 		bw.Write(PACKET_LENGTH);
 		bw.Write(PROTOCOL_ID);
 		bw.Write(USER_ID);
-		bw.Write(CHANNEL_ID);
 		bw.Write(Level);
 		bw.Write(HP);
 		bw.Write(TODOUserInfo);
@@ -66,10 +63,35 @@ class NewBattleUser_RES_C2B : IProtocol {
 		bw.Write(TODOStatusList);
 	}
 }
-class MoveStart_C2B : IProtocol {
+class NewBattleUser_FIN_C2B : IProtocol {
 	//COMMON
 	public int PACKET_LENGTH = 0;
 	public int PROTOCOL_ID = 3;
+	//MEMBER
+	public int CHANNEL_ID;
+	public void SetPacketLength() {
+		PACKET_LENGTH = sizeof(int) + sizeof(int) + sizeof(int);
+	}
+	public int GetPacketLength() {
+		return PACKET_LENGTH;
+	}
+	public int GetProtocol_ID() {
+		return PROTOCOL_ID;
+	}
+	public void Read(BinaryReader br) {
+		CHANNEL_ID = br.ReadInt32();
+	}
+	public void Write(BinaryWriter bw) {
+		SetPacketLength();
+		bw.Write(PACKET_LENGTH);
+		bw.Write(PROTOCOL_ID);
+		bw.Write(CHANNEL_ID);
+	}
+}
+class MoveStart_C2B : IProtocol {
+	//COMMON
+	public int PACKET_LENGTH = 0;
+	public int PROTOCOL_ID = 4;
 	//MEMBER
 	public int Direction;
 	public void SetPacketLength() {
@@ -94,7 +116,7 @@ class MoveStart_C2B : IProtocol {
 class MoveEnd_C2B : IProtocol {
 	//COMMON
 	public int PACKET_LENGTH = 0;
-	public int PROTOCOL_ID = 4;
+	public int PROTOCOL_ID = 5;
 	//MEMBER
 	public void SetPacketLength() {
 		PACKET_LENGTH = sizeof(int) + sizeof(int);
@@ -116,7 +138,7 @@ class MoveEnd_C2B : IProtocol {
 class MoveStart_B2C : IProtocol {
 	//COMMON
 	public int PACKET_LENGTH = 0;
-	public int PROTOCOL_ID = 5;
+	public int PROTOCOL_ID = 6;
 	//MEMBER
 	public long OBJECT_ID;
 	public int Direction;
@@ -144,7 +166,7 @@ class MoveStart_B2C : IProtocol {
 class MoveEnd_B2C : IProtocol {
 	//COMMON
 	public int PACKET_LENGTH = 0;
-	public int PROTOCOL_ID = 6;
+	public int PROTOCOL_ID = 7;
 	//MEMBER
 	public long OBJECT_ID;
 	public void SetPacketLength() {
@@ -169,7 +191,7 @@ class MoveEnd_B2C : IProtocol {
 class ChangePos_B2C : IProtocol {
 	//COMMON
 	public int PACKET_LENGTH = 0;
-	public int PROTOCOL_ID = 7;
+	public int PROTOCOL_ID = 8;
 	//MEMBER
 	public long OBJECT_ID;
 	public float Pos_x;

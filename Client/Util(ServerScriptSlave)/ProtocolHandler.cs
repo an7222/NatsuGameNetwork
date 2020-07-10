@@ -51,6 +51,10 @@ class ProtocolHandler : Singleton<ProtocolHandler>{
                 var cast = protocol as NewBattleUser_RES_C2B;
                 Console.WriteLine("Receive : [NewBattleUser_RES_C2B]");
 
+                Program.battleHandler.SendPacket(new NewBattleUser_FIN_C2B {
+                    CHANNEL_ID = Program.battleHandler.channel_id,
+                });
+
                 Console.WriteLine("Battle Server Connected!");
             };
         } else if (dummyProtocol is MoveStart_B2C) {
@@ -62,6 +66,11 @@ class ProtocolHandler : Singleton<ProtocolHandler>{
             action = (IProtocol protocol, TcpSessionHandler handler) => {
                 var cast = protocol as MoveEnd_B2C;
                 Console.WriteLine("Receive : [MoveEnd_B2C]");
+            };
+        } else if (dummyProtocol is ChangePos_B2C) {
+            action = (IProtocol protocol, TcpSessionHandler handler) => {
+                var cast = protocol as ChangePos_B2C;
+                Console.WriteLine("Receive : [ChangePos_B2C]");
             };
         }
 

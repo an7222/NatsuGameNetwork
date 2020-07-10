@@ -4,7 +4,7 @@ using System.Text;
 class Field_Excel : IProtocol {
 	//COMMON
 	public int PACKET_LENGTH = 0;
-	public int PROTOCOL_ID = 8;
+	public int PROTOCOL_ID = 9;
 	//MEMBER
 	public int FIELD_ID;
 	public string FieldName;

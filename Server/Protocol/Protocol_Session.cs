@@ -4,7 +4,7 @@ using System.Text;
 class Login_REQ_C2S : IProtocol {
 	//COMMON
 	public int PACKET_LENGTH = 0;
-	public int PROTOCOL_ID = 9;
+	public int PROTOCOL_ID = 10;
 	//MEMBER
 	public string PID;
 	public void SetPacketLength() {
@@ -29,7 +29,7 @@ class Login_REQ_C2S : IProtocol {
 class Login_RES_S2C : IProtocol {
 	//COMMON
 	public int PACKET_LENGTH = 0;
-	public int PROTOCOL_ID = 10;
+	public int PROTOCOL_ID = 11;
 	//MEMBER
 	public long USER_ID;
 	public long ServerTimeUnix;
@@ -63,7 +63,7 @@ class Login_RES_S2C : IProtocol {
 class Login_FIN_C2S : IProtocol {
 	//COMMON
 	public int PACKET_LENGTH = 0;
-	public int PROTOCOL_ID = 11;
+	public int PROTOCOL_ID = 12;
 	//MEMBER
 	public void SetPacketLength() {
 		PACKET_LENGTH = sizeof(int) + sizeof(int);

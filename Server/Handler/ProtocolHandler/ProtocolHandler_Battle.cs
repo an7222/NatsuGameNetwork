@@ -23,16 +23,29 @@ partial class ProtocolHandler : Singleton<ProtocolHandler> {
                 }
 
                 var battleHandler = handler as TcpSessionHandler_Battle;
-
-                Console.WriteLine("FIELD ID : " + cast.CHANNEL_ID);
-                battleHandler.CHANNEL_ID = cast.CHANNEL_ID;
-                BattleServer.GetInstance().AddClient(battleHandler);
                 battleHandler.SendPacket(new NewBattleUser_RES_C2B {
                     ObjectIDList = 4,
                     TODOStatusList = 5,
                 });
 
                 Console.WriteLine("Send : [NewBattleUser_RES_C2B]");
+            };
+        }
+        if (dummyProtocol is NewBattleUser_FIN_C2B) {
+            action = (IProtocol protocol, TcpSessionHandler handler) => {
+                var cast = protocol as NewBattleUser_FIN_C2B;
+                Console.WriteLine("Receive : [NewBattleUser_FIN_C2B]");
+
+                if (false == IsBattleHandler(handler)) {
+                    Console.WriteLine("No Battle Handler!");
+                    return;
+                }
+
+                var battleHandler = handler as TcpSessionHandler_Battle;
+
+                Console.WriteLine("FIELD ID : " + cast.CHANNEL_ID);
+                battleHandler.CHANNEL_ID = cast.CHANNEL_ID;
+                BattleServer.GetInstance().AddClient(battleHandler);
             };
         } else if (dummyProtocol is MoveStart_C2B) {
             action = (IProtocol protocol, TcpSessionHandler handler) => {

@@ -6,11 +6,13 @@ using System.Net.Sockets;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading;
+using System.Threading.Channels;
 
 class TcpSessionHandler {
     byte[] receiveBuffer;
     TcpClient tcpClient = null;
     NetworkStream networkStream = null;
+    public int channel_id = 0;
 
     public TcpSessionHandler(TcpClient tcpClient, bool isSessionServer, int channel_id) {
         this.tcpClient = tcpClient;
@@ -26,10 +28,12 @@ class TcpSessionHandler {
         } else {
             SendPacket(new NewBattleUser_REQ_C2B {
                 USER_ID = 1,
-                CHANNEL_ID = channel_id,
             });
+
+            Console.WriteLine("Send : [NewBattleUser_REQ_C2B]");
         }
 
+        this.channel_id = channel_id;
         ReceiveProcess();
     }
 

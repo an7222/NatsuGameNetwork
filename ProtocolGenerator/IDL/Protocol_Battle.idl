@@ -1,6 +1,5 @@
 ﻿PACKET NewBattleUser_REQ_C2B
 	long USER_ID
-	int CHANNEL_ID
 	int Level
 	int HP
 	int TODOUserInfo
@@ -9,6 +8,10 @@ END
 PACKET NewBattleUser_RES_C2B
 	long ObjectIDList
 	int TODOStatusList
+END
+
+PACKET NewBattleUser_FIN_C2B
+	int CHANNEL_ID	
 END
 
 PACKET MoveStart_C2B
