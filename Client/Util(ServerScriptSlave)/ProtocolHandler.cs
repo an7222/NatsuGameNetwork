@@ -39,11 +39,17 @@ class ProtocolHandler : Singleton<ProtocolHandler>{
 
                 handler.SendPacket(new Login_FIN_C2S());
 
-                Console.WriteLine("Send : [Login_FIN_C2S]");
-
                 TcpClient tcpClient = new TcpClient("127.0.0.1", Const.BATTLE_SERVER_PORT);
 
                 Program.battleHandler = new TcpSessionHandler(tcpClient, false, cast.CHANNEL_ID);
+
+                Program.battleHandler.SendPacket(new NewBattleUser_REQ_C2B {
+                    USER_ID = 1,
+                });
+
+                Console.WriteLine("Send : [NewBattleUser_REQ_C2B]");
+
+                Console.WriteLine("Send : [Login_FIN_C2S]");
             };
         }
         if (dummyProtocol is NewBattleUser_RES_C2B) {

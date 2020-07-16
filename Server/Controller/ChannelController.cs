@@ -72,7 +72,7 @@ class ChannelController : TickBase {
         client.PlayerCharacter = null;
     }
 
-    public void SendPacketField(IProtocol protocol) {
+    public void SendPacketChannel(IProtocol protocol) {
         foreach (var client in clientList) {
             client.SendPacket(protocol);
         }

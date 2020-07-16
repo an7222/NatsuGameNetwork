@@ -84,7 +84,7 @@ class BattleServer : Singleton<BattleServer>, IRealTimeServer {
         ChannelController channelCon;
 
         if (channelControllerPool.TryGetValue(channel_id, out channelCon)) {
-            channelCon.SendPacketField(protocol);
+            channelCon.SendPacketChannel(protocol);
         } else {
             Console.WriteLine("No Field!");
         }

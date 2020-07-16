@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Numerics;
 using System.Text;
+using System.Threading;
 
 abstract class CharacterController : TickBase {
     protected Vector2 startPoint;
@@ -58,7 +59,7 @@ abstract class CharacterController : TickBase {
 
             caster.isMoving = true;
 
-            channelController.SendPacketField(protocol);
+            channelController.SendPacketChannel(protocol);
         });
     }
 
@@ -70,7 +71,7 @@ abstract class CharacterController : TickBase {
 
             caster.isMoving = false;
 
-            channelController.SendPacketField(protocol);
+            channelController.SendPacketChannel(protocol);
         });
     }
 
@@ -82,7 +83,7 @@ abstract class CharacterController : TickBase {
                 Pos_y = caster.pos.Y,
             };
 
-            channelController.SendPacketField(protocol);
+            channelController.SendPacketChannel(protocol);
         });
     }
 

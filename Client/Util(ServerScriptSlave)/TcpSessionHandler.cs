@@ -19,38 +19,22 @@ class TcpSessionHandler {
         this.networkStream = tcpClient.GetStream();
         receiveBuffer = new byte[Const.RECEIVE_BUFFER_SIZE];
 
-        if (isSessionServer) {
-            SendPacket(new Login_REQ_C2S {
-                PID = DateTime.Now.Ticks.ToString(),
-            });
-
-            Console.WriteLine("Send : [Login_REQ_C2S]");
-        } else {
-            SendPacket(new NewBattleUser_REQ_C2B {
-                USER_ID = 1,
-            });
-
-            Console.WriteLine("Send : [NewBattleUser_REQ_C2B]");
-        }
 
         this.channel_id = channel_id;
         ReceiveProcess();
     }
 
     async void ReceiveProcess() {
+        int bytesReceived = 0;
         while (true) {
-            int bytesReceived = 0;
             try {
-                bytesReceived  = await networkStream.ReadAsync(receiveBuffer, 0, receiveBuffer.Length).ConfigureAwait(false);
-
-                while (bytesReceived <= Const.PACKET_LENGTH_HEADER_SIZE) {
+                while (bytesReceived < Const.PACKET_LENGTH_HEADER_SIZE) {
                     bytesReceived += await networkStream.ReadAsync(receiveBuffer, bytesReceived, receiveBuffer.Length - bytesReceived).ConfigureAwait(false);
                 }
             } catch (Exception e) {
                 Console.WriteLine(e);
                 return;
             }
-
 
             int packetLength = BitConverter.ToInt32(receiveBuffer);
 
@@ -60,14 +44,13 @@ class TcpSessionHandler {
             }
 
             try {
-                while (bytesReceived <= packetLength) {
+                while (bytesReceived < packetLength) {
                     bytesReceived += await networkStream.ReadAsync(receiveBuffer, bytesReceived, receiveBuffer.Length - bytesReceived).ConfigureAwait(false);
                 }
             } catch (Exception e) {
                 Console.WriteLine(e);
                 return;
             }
-
 
             int bodyLength = packetLength - Const.PACKET_LENGTH_HEADER_SIZE;
             byte[] optimizeBuffer = new byte[bodyLength];
@@ -84,8 +67,11 @@ class TcpSessionHandler {
                 }
             }
 
+            int nextBufferSize = receiveBuffer.Length - packetLength;
+            Array.Copy(receiveBuffer, packetLength, receiveBuffer, 0, nextBufferSize);
+            Array.Clear(receiveBuffer, nextBufferSize, receiveBuffer.Length - nextBufferSize);
 
-            Array.Clear(receiveBuffer, 0, receiveBuffer.Length);
+            bytesReceived -= packetLength;
         }
     }
 
@@ -93,20 +79,5 @@ class TcpSessionHandler {
         using (var bw = new BinaryWriter(networkStream, Encoding.Default, true)) {
             protocol.Write(bw);
         }
-
-        
-        byte[] writeBuffer = new byte[protocol.GetPacketLength()];
-
-        try {
-            networkStream.Write(writeBuffer);
-        } catch (Exception e) {
-            Console.WriteLine(e);
-            return;
-        }
-    }
-
-    //TODO : need flush?
-    void flush() {
-        networkStream.Flush();
     }
 }

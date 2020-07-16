@@ -43,6 +43,12 @@ class Program {
         consoleReadTask.Start();
 
         sessionHandler = new TcpSessionHandler(tcpClient, true, 0);
+
+        sessionHandler.SendPacket(new Login_REQ_C2S {
+            PID = DateTime.Now.Ticks.ToString(),
+        });
+
+        Console.WriteLine("Send : [Login_REQ_C2S]");
     }
 
     static void Main(String[] args) {
