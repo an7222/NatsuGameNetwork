@@ -21,10 +21,10 @@ class TcpSessionHandler {
 
 
         this.channel_id = channel_id;
-        ReceiveProcess();
+        ProcessReceive();
     }
 
-    async void ReceiveProcess() {
+    async void ProcessReceive() {
         int bytesReceived = 0;
         while (true) {
             try {

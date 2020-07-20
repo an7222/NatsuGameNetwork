@@ -22,10 +22,10 @@ class TcpSessionHandler {
         this.connectedServer = connectedServer;
         receiveBuffer = new byte[Const.RECEIVE_BUFFER_SIZE];
         
-        ReceiveProcess();
+        ProcessReceive();
     }
 
-    async void ReceiveProcess() {
+    async void ProcessReceive() {
         int bytesReceived = 0;
         while (true) {
             try {

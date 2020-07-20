@@ -12,6 +12,7 @@ class Program {
 
         while (true) {
             foreach (var channelController in BattleServer.GetInstance().GetChannelControllerPool()) {
+                //TODO : Frame Sync
                 channelController.Update();
             }
         }
