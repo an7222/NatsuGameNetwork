@@ -16,7 +16,6 @@ namespace UnitTest {
         }
 
         static void Main(string[] args) {
-
             AggroInstance temp = new AggroInstance();
             Console.WriteLine(temp.aggro);
             temp.UpdateAggro(1);
