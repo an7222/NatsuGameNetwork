@@ -125,6 +125,7 @@ UINT WINAPI IOCPServer::CompletionThread()
 		if (perIoData->rwMode == READ)
 		{
 			cout << "Recv Msg : " << perIoData->wsaBuf.buf << endl;
+			
 			if (dwBytesTransferred == 0)
 			{
 				cout << "socket will be closed!" << endl;
