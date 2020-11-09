@@ -14,7 +14,7 @@ class ProtocolGenerator {
         string readFilePath = Path.Combine(rootFolder, "ProtocolGenerator");
         readFilePath = Path.Combine(readFilePath, "IDL");
 
-        string writeFilePath_Server = Path.Combine(rootFolder, "Server");
+        string writeFilePath_Server = Path.Combine(rootFolder, "CSharpServer");
         writeFilePath_Server = Path.Combine(writeFilePath_Server, "Protocol");
 
         string writeFilePath_Client = Path.Combine(rootFolder, "Client");
