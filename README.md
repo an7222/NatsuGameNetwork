@@ -19,6 +19,7 @@ RestAPIServer : ASP.NET core 기반 REST API 서버입니다. 기반 작업만 �
 
 
 프로젝트 예정 목록
-운영툴(C# Blazor)
-Pub/Sub(Go)
-Contents Imbed(TypeScript)
+1. DLL화를 통해 C++, C# 라이브러리 공유
+2. 운영툴(C# Blazor)
+3. Pub/Sub(Go)
+4. Server Code Editor(TypeScript)
