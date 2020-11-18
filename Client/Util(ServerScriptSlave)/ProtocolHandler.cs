@@ -31,7 +31,7 @@ class ProtocolHandler : Singleton<ProtocolHandler>{
 
     Action<IProtocol, TcpSessionHandler> createAction(IProtocol dummyProtocol) {
         Action<IProtocol, TcpSessionHandler> action = null;
-                    
+
         if(dummyProtocol is Login_RES_S2C) {
             action = (IProtocol protocol, TcpSessionHandler handler) => {
                 var cast = protocol as Login_RES_S2C;
@@ -77,6 +77,13 @@ class ProtocolHandler : Singleton<ProtocolHandler>{
             action = (IProtocol protocol, TcpSessionHandler handler) => {
                 var cast = protocol as ChangePos_B2C;
                 Console.WriteLine("Receive : [ChangePos_B2C]");
+            };
+        } else if (dummyProtocol is RestAPI_RES_S2C) {
+            action = (IProtocol protocol, TcpSessionHandler handler) => {
+                var cast = protocol as RestAPI_RES_S2C;
+                Console.WriteLine("Receive : [RestAPI_RES_S2C]");
+
+                Console.WriteLine(cast.Info);
             };
         }
 

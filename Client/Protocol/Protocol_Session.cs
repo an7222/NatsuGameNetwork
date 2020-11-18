@@ -82,3 +82,50 @@ class Login_FIN_C2S : IProtocol {
 		bw.Write(PROTOCOL_ID);
 	}
 }
+class RestAPI_REQ_C2S : IProtocol {
+	//COMMON
+	public int PACKET_LENGTH = 0;
+	public int PROTOCOL_ID = 13;
+	//MEMBER
+	public void SetPacketLength() {
+		PACKET_LENGTH = sizeof(int) + sizeof(int);
+	}
+	public int GetPacketLength() {
+		return PACKET_LENGTH;
+	}
+	public int GetProtocol_ID() {
+		return PROTOCOL_ID;
+	}
+	public void Read(BinaryReader br) {
+	}
+	public void Write(BinaryWriter bw) {
+		SetPacketLength();
+		bw.Write(PACKET_LENGTH);
+		bw.Write(PROTOCOL_ID);
+	}
+}
+class RestAPI_RES_S2C : IProtocol {
+	//COMMON
+	public int PACKET_LENGTH = 0;
+	public int PROTOCOL_ID = 14;
+	//MEMBER
+	public string Info;
+	public void SetPacketLength() {
+		PACKET_LENGTH = sizeof(int) + sizeof(int) + 1 + Encoding.Default.GetByteCount(Info);
+	}
+	public int GetPacketLength() {
+		return PACKET_LENGTH;
+	}
+	public int GetProtocol_ID() {
+		return PROTOCOL_ID;
+	}
+	public void Read(BinaryReader br) {
+		Info = br.ReadString();
+	}
+	public void Write(BinaryWriter bw) {
+		SetPacketLength();
+		bw.Write(PACKET_LENGTH);
+		bw.Write(PROTOCOL_ID);
+		bw.Write(Info);
+	}
+}

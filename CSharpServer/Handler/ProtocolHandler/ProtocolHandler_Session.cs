@@ -7,6 +7,7 @@ using System.Reflection;
 using System.Reflection.Metadata;
 using System.Text;
 using System.Threading;
+using System.Net.Http;
 
 partial class ProtocolHandler : Singleton<ProtocolHandler> {
     Action<IProtocol, TcpSessionHandler> createAction_session(IProtocol dummyProtocol) {
@@ -31,8 +32,31 @@ partial class ProtocolHandler : Singleton<ProtocolHandler> {
                 Console.WriteLine("Receive : [Login_FIN_C2S]");
                 SessionServer.GetInstance().AddClient(handler);
             };
+        } else if (dummyProtocol is RestAPI_REQ_C2S) {
+            action = (IProtocol protocol, TcpSessionHandler handler) => {
+                Console.WriteLine("Receive : [RestAPI_REQ_C2S]");
+                var client = new HttpClient();
+                client.DefaultRequestHeaders.Accept.Clear();
+                client.DefaultRequestHeaders.Accept.Add(
+                    new MediaTypeWithQualityHeaderValue("application/json"));
+                client.BaseAddress = new Uri("https://localhost:44365/weatherforecast");
+
+                RestAPI_REQ(client, handler);
+            };
         }
         return action;
+    }
+
+    async void RestAPI_REQ(HttpClient client, TcpSessionHandler handler) {
+        HttpResponseMessage response = await client.GetAsync(client.BaseAddress);
+        if (response.IsSuccessStatusCode) {
+            var info = await response.Content.ReadAsStringAsync();
+            handler.SendPacket(new RestAPI_RES_S2C {
+                Info = info,
+            });
+
+            Console.WriteLine("Send : [RestAPI_RES_S2C]" + info);
+        }
     }
 }
 

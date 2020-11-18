@@ -37,6 +37,11 @@ class Program {
                     });
 
                     Console.WriteLine("Send : [MoveEnd_C2B]");
+                } else if (input.Key == ConsoleKey.R) {
+                    battleHandler.SendPacket(new RestAPI_REQ_C2S {
+                    });
+
+                    Console.WriteLine("Send : [RestAPI_REQ_C2S]");
                 }
             }
         });
