@@ -14,20 +14,12 @@ class TickBase {
     }
 
     public virtual void Update() {
-        if (false == ActionQueue.IsEmpty) {
-            Action action = DequeueAction();
-            if (action != null)
-                action();
+        Action cb;
+        if (ActionQueue.TryDequeue(out cb)) {
+            cb();
         }
     }
     public void EnqueueAction(Action action) {
         ActionQueue.Enqueue(action);
-    }
-
-    protected Action DequeueAction() {
-        Action cb;
-        ActionQueue.TryDequeue(out cb);
-
-        return cb;
     }
 }

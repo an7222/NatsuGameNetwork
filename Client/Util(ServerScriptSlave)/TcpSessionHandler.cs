@@ -89,7 +89,12 @@ class TcpSessionHandler : TickBase {
     public void SendPacket(IProtocol protocol) {
         EnqueueAction(() => {
             using (var bw = new BinaryWriter(networkStream, Encoding.Default, true)) {
-                protocol.Write(bw);
+                try {
+                    protocol.Write(bw);
+                } catch (Exception e) {
+                    Console.WriteLine(e);
+                    return;
+                }
             }
         });
 
