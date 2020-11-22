@@ -41,7 +41,7 @@ class ProtocolHandler : Singleton<ProtocolHandler>{
 
                 TcpClient tcpClient = new TcpClient("127.0.0.1", Const.BATTLE_SERVER_PORT);
 
-                Program.battleHandler = new TcpSessionHandler(tcpClient, false, cast.CHANNEL_ID);
+                Program.battleHandler = new TcpSessionHandler(tcpClient, cast.CHANNEL_ID);
 
                 Program.battleHandler.SendPacket(new NewBattleUser_REQ_C2B {
                     USER_ID = 1,

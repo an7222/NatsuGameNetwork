@@ -7,18 +7,20 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Threading;
 using System.Threading.Channels;
+using System.Threading.Tasks;
 
-class TcpSessionHandler {
+class TcpSessionHandler : TickBase {
     byte[] receiveBuffer;
     NetworkStream networkStream = null;
     public int channel_id = 0;
 
-    public TcpSessionHandler(TcpClient tcpClient, bool isSessionServer, int channel_id) {
+    public TcpSessionHandler(TcpClient tcpClient, int channel_id) {
         this.networkStream = tcpClient.GetStream();
         receiveBuffer = new byte[Const.RECEIVE_BUFFER_SIZE];
 
         this.channel_id = channel_id;
         ProcessReceive();
+        ProcessSend();
     }
 
     async void ProcessReceive() {
@@ -72,9 +74,25 @@ class TcpSessionHandler {
         }
     }
 
+    AutoResetEvent autoEvent = new AutoResetEvent(false);
+    void ProcessSend() {
+        Task sendTask = new Task(() => {
+            while (true) {
+                Update();
+                autoEvent.WaitOne();
+            }
+        });
+
+        sendTask.Start();
+    }
+
     public void SendPacket(IProtocol protocol) {
-        using (var bw = new BinaryWriter(networkStream, Encoding.Default, true)) {
-            protocol.Write(bw);
-        }
+        EnqueueAction(() => {
+            using (var bw = new BinaryWriter(networkStream, Encoding.Default, true)) {
+                protocol.Write(bw);
+            }
+        });
+
+        autoEvent.Set();
     }
 }

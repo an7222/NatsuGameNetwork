@@ -8,6 +8,7 @@ using System.Reflection.Metadata;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading;
+using System.Threading.Tasks;
 
 class TcpSessionHandler : TickBase {
     byte[] receiveBuffer;
@@ -80,10 +81,16 @@ class TcpSessionHandler : TickBase {
         }
     }
 
-    void ProcessSend() {   
-        while (true) {
-            Update();
-        }
+    AutoResetEvent autoEvent = new AutoResetEvent(false);
+    void ProcessSend() {
+        Task sendTask = new Task(() => {
+            while (true) {
+                Update();
+                autoEvent.WaitOne();
+            }
+        });
+
+        sendTask.Start();
     }
 
     public void SendPacket(IProtocol protocol) {
@@ -92,5 +99,7 @@ class TcpSessionHandler : TickBase {
                 protocol.Write(bw);
             }
         });
+
+        autoEvent.Set();
     }
 }
