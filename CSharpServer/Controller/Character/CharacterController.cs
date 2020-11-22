@@ -42,7 +42,7 @@ abstract class CharacterController : TickBase {
                     pc.SetPos(new Vector2(pc.pos.X, pc.pos.Y - (elapsedTime / 1000) * pc.stat.SPEED));
                 }
 
-                //BroadCast_RefreshPos(pc);
+                BroadCast_RefreshPos(pc);
             }
         }
     }

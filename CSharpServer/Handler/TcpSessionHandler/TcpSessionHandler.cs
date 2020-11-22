@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Concurrent;
 using System.Diagnostics;
 using System.IO;
 using System.Net.Sockets;
@@ -8,21 +9,20 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Threading;
 
-class TcpSessionHandler {
+class TcpSessionHandler : TickBase {
     byte[] receiveBuffer;
-    TcpClient tcpClient = null;
     NetworkStream networkStream = null;
     int SESSION_ID;
     IRealTimeServer connectedServer;
 
     public TcpSessionHandler(TcpClient tcpClient, int session_id, IRealTimeServer connectedServer) {
-        this.tcpClient = tcpClient;
         this.networkStream = tcpClient.GetStream();
         this.SESSION_ID = session_id;
         this.connectedServer = connectedServer;
         receiveBuffer = new byte[Const.RECEIVE_BUFFER_SIZE];
         
         ProcessReceive();
+        ProcessSend();
     }
 
     async void ProcessReceive() {
@@ -80,9 +80,17 @@ class TcpSessionHandler {
         }
     }
 
-    public void SendPacket(IProtocol protocol) {
-        using (var bw = new BinaryWriter(networkStream, Encoding.Default, true)) {
-            protocol.Write(bw);
+    void ProcessSend() {   
+        while (true) {
+            Update();
         }
+    }
+
+    public void SendPacket(IProtocol protocol) {
+        EnqueueAction(() => {
+            using (var bw = new BinaryWriter(networkStream, Encoding.Default, true)) {
+                protocol.Write(bw);
+            }
+        });
     }
 }

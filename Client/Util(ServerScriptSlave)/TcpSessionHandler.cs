@@ -8,20 +8,18 @@ using System.Text;
 using System.Threading;
 using System.Threading.Channels;
 
-class TcpSessionHandler {
+class TcpSessionHandler : TickBase{
     byte[] receiveBuffer;
-    TcpClient tcpClient = null;
     NetworkStream networkStream = null;
     public int channel_id = 0;
 
     public TcpSessionHandler(TcpClient tcpClient, bool isSessionServer, int channel_id) {
-        this.tcpClient = tcpClient;
         this.networkStream = tcpClient.GetStream();
         receiveBuffer = new byte[Const.RECEIVE_BUFFER_SIZE];
 
-
         this.channel_id = channel_id;
         ProcessReceive();
+        ProcessSend();
     }
 
     async void ProcessReceive() {
@@ -75,9 +73,17 @@ class TcpSessionHandler {
         }
     }
 
-    public void SendPacket(IProtocol protocol) {
-        using (var bw = new BinaryWriter(networkStream, Encoding.Default, true)) {
-            protocol.Write(bw);
+    void ProcessSend() {
+        while (true) {
+            Update();
         }
+    }
+
+    public void SendPacket(IProtocol protocol) {
+        EnqueueAction(() => {
+            using (var bw = new BinaryWriter(networkStream, Encoding.Default, true)) {
+                protocol.Write(bw);
+            }
+        });
     }
 }
