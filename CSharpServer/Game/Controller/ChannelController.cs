@@ -42,7 +42,7 @@ class ChannelController : TickBase {
                 continue;
 
             con.updateLock = true;
-            ThreadHelper.GetInstance().RegisterWork(() => {
+            ThreadHelper.RegisterWork(() => {
                 con.Update();
                 con.updateLock = false;
             });
