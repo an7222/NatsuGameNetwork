@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
@@ -9,10 +9,6 @@
     <Compile Remove="Contents\**" />
     <EmbeddedResource Remove="Contents\**" />
     <None Remove="Contents\**" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Protocol\" />
   </ItemGroup>
 
 </Project>

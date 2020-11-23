@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading;
 
 class ChannelController : TickBase {
-    List<TcpSessionHandler> clientList = new List<TcpSessionHandler>();
+    List<TcpHandler> clientList = new List<TcpHandler>();
     public int FIELD_ID = 0;
 
     List<TickBase> controllerList = new List<TickBase>();
@@ -52,7 +52,7 @@ class ChannelController : TickBase {
     #endregion
 
     #region Session
-    public void AddClient(TcpSessionHandler_Battle client) {
+    public void AddClient(TcpHandler_Battle client) {
         clientList.Add(client);
 
         Character character = playerCharacterController.CreateCharacter(startPoint);
@@ -64,7 +64,7 @@ class ChannelController : TickBase {
         }
     }
 
-    public void RemoveClient(TcpSessionHandler_Battle client) {
+    public void RemoveClient(TcpHandler_Battle client) {
         clientList.Remove(client);
         client.PlayerCharacter = null;
     }

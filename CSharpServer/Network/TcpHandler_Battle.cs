@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Net.Sockets;
 using System.Text;
 
-class TcpSessionHandler_Battle : TcpSessionHandler{
+class TcpHandler_Battle : TcpHandler{
     public int CHANNEL_ID {
         get;set;
     }
@@ -11,6 +11,6 @@ class TcpSessionHandler_Battle : TcpSessionHandler{
         get;set;
     }
 
-    public TcpSessionHandler_Battle(TcpClient tcpClient, int session_id, IRealTimeServer connectedServer) : base(tcpClient, session_id, connectedServer) {
+    public TcpHandler_Battle(TcpClient tcpClient, int session_id, IRealTimeServer connectedServer) : base(tcpClient, session_id, connectedServer) {
     }
 }

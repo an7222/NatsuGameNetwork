@@ -6,7 +6,7 @@ class Program {
 
     static void Main(string[] args) {
         ProtocolManager.GetInstance().Register();
-        ProtocolHandler.GetInstance().Register();
+        ProtocolDispatcher.GetInstance().Register();
         SessionServer.GetInstance().Start();
         BattleServer.GetInstance().Start();
 

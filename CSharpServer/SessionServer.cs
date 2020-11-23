@@ -11,7 +11,7 @@ using System.Reflection;
 class SessionServer : Singleton<SessionServer>, IRealTimeServer {
     int SESSION_ID = 1;
     long USER_ID = 10000;
-    Dictionary<int, TcpSessionHandler> connectedClientPool = new Dictionary<int, TcpSessionHandler>();
+    Dictionary<int, TcpHandler> connectedClientPool = new Dictionary<int, TcpHandler>();
     
     public void Start() {
         TcpListener listener = new TcpListener(IPAddress.Any, Const.SESSION_SERVER_PORT);
@@ -31,7 +31,7 @@ class SessionServer : Singleton<SessionServer>, IRealTimeServer {
         TcpListener listener = (TcpListener)ar.AsyncState;
         TcpClient tcpClient = listener.EndAcceptTcpClient(ar);
 
-        TcpSessionHandler handler = new TcpSessionHandler(tcpClient, SESSION_ID, this);
+        TcpHandler handler = new TcpHandler(tcpClient, SESSION_ID, this);
 
         listener.BeginAcceptTcpClient(OnAccept, listener);
     }
@@ -42,7 +42,7 @@ class SessionServer : Singleton<SessionServer>, IRealTimeServer {
         }
     }
 
-    public void AddClient(TcpSessionHandler handler) {
+    public void AddClient(TcpHandler handler) {
         if (connectedClientPool.TryAdd(SESSION_ID, handler)) {
             SESSION_ID = Interlocked.Increment(ref SESSION_ID);
         }

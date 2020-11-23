@@ -9,7 +9,7 @@ using System.Threading;
 
 class BattleServer : Singleton<BattleServer>, IRealTimeServer {
     int SESSION_ID = 1;
-    Dictionary<int, TcpSessionHandler> connectedClientPool = new Dictionary<int, TcpSessionHandler>();
+    Dictionary<int, TcpHandler> connectedClientPool = new Dictionary<int, TcpHandler>();
     Dictionary<int, ChannelController> channelControllerPool = new Dictionary<int, ChannelController>();
 
     public void Start() {
@@ -46,18 +46,18 @@ class BattleServer : Singleton<BattleServer>, IRealTimeServer {
         TcpListener listener = (TcpListener)ar.AsyncState;
         TcpClient tcpClient = listener.EndAcceptTcpClient(ar);
 
-        TcpSessionHandler_Battle handler = new TcpSessionHandler_Battle(tcpClient, SESSION_ID, this);
+        TcpHandler_Battle handler = new TcpHandler_Battle(tcpClient, SESSION_ID, this);
 
         listener.BeginAcceptTcpClient(OnAccept, listener);
     }
 
-    public void AddClient(TcpSessionHandler client) {
+    public void AddClient(TcpHandler client) {
         if (connectedClientPool.TryAdd(SESSION_ID, client)) {
             SESSION_ID = Interlocked.Increment(ref SESSION_ID);
         }
 
-        if (client is TcpSessionHandler_Battle) {
-            var castClient = client as TcpSessionHandler_Battle;
+        if (client is TcpHandler_Battle) {
+            var castClient = client as TcpHandler_Battle;
 
             ChannelController channelCon;
             if (channelControllerPool.TryGetValue(castClient.CHANNEL_ID, out channelCon)) {
@@ -67,10 +67,10 @@ class BattleServer : Singleton<BattleServer>, IRealTimeServer {
     }
 
     public void RemoveClient(int session_id) {
-        TcpSessionHandler client;
+        TcpHandler client;
         if (connectedClientPool.TryGetValue(session_id, out client)) {
-            if (client is TcpSessionHandler_Battle) {
-                var castClient = client as TcpSessionHandler_Battle;
+            if (client is TcpHandler_Battle) {
+                var castClient = client as TcpHandler_Battle;
                 ChannelController channelCon;
                 if (channelControllerPool.TryGetValue(castClient.CHANNEL_ID, out channelCon)) {
                     channelCon.RemoveClient(castClient);

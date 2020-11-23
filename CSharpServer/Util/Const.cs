@@ -9,6 +9,7 @@ class Const {
 
     public const int SESSION_SERVER_PORT = 8001;
     public const int BATTLE_SERVER_PORT = 8002;
+    public const int REST_API_SERVER_PORT = 8003;
 
     public const int AGGRO_CLEAR_SEC = 10;
 }

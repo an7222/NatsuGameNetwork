@@ -8,15 +8,15 @@ using System.Reflection.Metadata;
 using System.Text;
 using System.Threading;
 
-partial class ProtocolHandler : Singleton<ProtocolHandler> {
-    Dictionary<int, Action<IProtocol, TcpSessionHandler>> HandlePool = new Dictionary<int, Action<IProtocol, TcpSessionHandler>>();
+partial class ProtocolDispatcher : Singleton<ProtocolDispatcher> {
+    Dictionary<int, Action<IProtocol, TcpHandler>> HandlePool = new Dictionary<int, Action<IProtocol, TcpHandler>>();
 
     public void Register() {
         var baseType = typeof(IProtocol);
         var a = Assembly.GetAssembly(baseType).GetTypes().Where(t => baseType != t && baseType.IsAssignableFrom(t));
         foreach (var b in a) {
             IProtocol instance = (IProtocol)Activator.CreateInstance(b);
-            Action<IProtocol, TcpSessionHandler> action = createAction_session(instance);
+            Action<IProtocol, TcpHandler> action = createAction_session(instance);
             if(action == null) {
                 action = createAction_battle(instance);
             }
@@ -24,8 +24,8 @@ partial class ProtocolHandler : Singleton<ProtocolHandler> {
         }
     }
 
-    public void Protocol_Logic(IProtocol protocol, TcpSessionHandler handler) {
-        Action<IProtocol, TcpSessionHandler> action;
+    public void Protocol_Logic(IProtocol protocol, TcpHandler handler) {
+        Action<IProtocol, TcpHandler> action;
         if (HandlePool.TryGetValue(protocol.GetProtocol_ID(), out action)) {
             action(protocol, handler);
         } else {
@@ -33,8 +33,8 @@ partial class ProtocolHandler : Singleton<ProtocolHandler> {
         }
     }
 
-    bool IsBattleHandler(TcpSessionHandler handler) {
-        return handler is TcpSessionHandler_Battle;
+    bool IsBattleHandler(TcpHandler handler) {
+        return handler is TcpHandler_Battle;
     }
 }
 

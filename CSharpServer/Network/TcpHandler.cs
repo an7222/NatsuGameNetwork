@@ -10,13 +10,13 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
-class TcpSessionHandler : TickBase {
+class TcpHandler : TickBase {
     byte[] receiveBuffer;
     NetworkStream networkStream = null;
     int SESSION_ID;
     IRealTimeServer connectedServer;
 
-    public TcpSessionHandler(TcpClient tcpClient, int session_id, IRealTimeServer connectedServer) {
+    public TcpHandler(TcpClient tcpClient, int session_id, IRealTimeServer connectedServer) {
         this.networkStream = tcpClient.GetStream();
         this.SESSION_ID = session_id;
         this.connectedServer = connectedServer;
@@ -69,7 +69,7 @@ class TcpSessionHandler : TickBase {
                 var protocol = ProtocolManager.GetInstance().GetProtocol(protocol_id);
                 if (protocol != null) {
                     protocol.Read(br);
-                    ProtocolHandler.GetInstance().Protocol_Logic(protocol, this);
+                    ProtocolDispatcher.GetInstance().Protocol_Logic(protocol, this);
                 }
             }
 

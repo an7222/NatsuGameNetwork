@@ -6,7 +6,7 @@ class RunServerManager {
 }
 
 interface IRealTimeServer : IRunServer {
-    public void AddClient(TcpSessionHandler handler);
+    public void AddClient(TcpHandler handler);
     public void RemoveClient(int session_id);
 }
 
