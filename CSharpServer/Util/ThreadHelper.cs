@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Threading;
 
-class ThreadManager : Singleton<ThreadManager> {
+class ThreadHelper : Singleton<ThreadHelper> {
     public void RegisterWork(Action cb) {
 
         ThreadPool.QueueUserWorkItem(new WaitCallback((object a) => {
