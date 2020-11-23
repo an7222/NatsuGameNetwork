@@ -17,9 +17,6 @@ abstract class CharacterController : TickBase {
     protected long elapsedTime = 0;
 
     public override void Update() {
-        base.Update();
-
-
         if (sw.IsRunning) {
             if (sw.ElapsedMilliseconds <= 0) {
                 return;
@@ -51,40 +48,34 @@ abstract class CharacterController : TickBase {
     public abstract void HandleDeadEvent(Character character);
 
     public void BroadCast_MoveStart(Character caster) {
-        EnqueueAction(() => {
-            var protocol = new MoveStart_B2C {
-                OBJECT_ID = caster.OBJECT_ID,
-                Direction = (int)caster.dir,
-            };
+        var protocol = new MoveStart_B2C {
+            OBJECT_ID = caster.OBJECT_ID,
+            Direction = (int)caster.dir,
+        };
 
-            caster.isMoving = true;
+        caster.isMoving = true;
 
-            channelController.SendPacketChannel(protocol);
-        });
+        channelController.SendPacketChannel(protocol);
     }
 
     public void BroadCast_MoveEnd(Character caster) {
-        EnqueueAction(() => {
-            var protocol = new MoveEnd_B2C {
-                OBJECT_ID = caster.OBJECT_ID,
-            };
+        var protocol = new MoveEnd_B2C {
+            OBJECT_ID = caster.OBJECT_ID,
+        };
 
-            caster.isMoving = false;
+        caster.isMoving = false;
 
-            channelController.SendPacketChannel(protocol);
-        });
+        channelController.SendPacketChannel(protocol);
     }
 
     public void BroadCast_RefreshPos(Character caster) {
-        EnqueueAction(() => {
-            var protocol = new ChangePos_B2C {
-                OBJECT_ID = caster.OBJECT_ID,
-                Pos_x = caster.pos.X,
-                Pos_y = caster.pos.Y,
-            };
+        var protocol = new ChangePos_B2C {
+            OBJECT_ID = caster.OBJECT_ID,
+            Pos_x = caster.pos.X,
+            Pos_y = caster.pos.Y,
+        };
 
-            channelController.SendPacketChannel(protocol);
-        });
+        channelController.SendPacketChannel(protocol);
     }
 
     //public void BroadCast_AttackTo(Character caster, Character target) {

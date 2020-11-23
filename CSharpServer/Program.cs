@@ -16,7 +16,9 @@ class Program {
             sw.Restart();
 
             foreach (var channelController in BattleServer.GetInstance().GetChannelControllerPool()) {
-                channelController.Update();
+                ThreadManager.GetInstance().RegisterWork(() => {
+                    channelController.Update();
+                });
             }
 
             sw.Stop();

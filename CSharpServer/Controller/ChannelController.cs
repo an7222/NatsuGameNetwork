@@ -31,15 +31,12 @@ class ChannelController : TickBase {
 
         playerCharacterController = new PlayerCharacterController(this, startPoint);
         controllerList.Add(playerCharacterController);
-
-        Update();
     }
 
     #endregion
 
     #region Channel Logic
     public override void Update() {
-        base.Update();
         foreach (var con in controllerList) {
             if (con.updateLock)
                 continue;

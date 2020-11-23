@@ -75,8 +75,7 @@ partial class ProtocolHandler : Singleton<ProtocolHandler> {
 
                 var battleHandler = handler as TcpSessionHandler_Battle;
 
-                BattleServer.GetInstance().SendPacketChannel(new MoveEnd_B2C {
-                }, battleHandler.CHANNEL_ID);
+                battleHandler.PlayerCharacter.CharacterController.BroadCast_MoveEnd(battleHandler.PlayerCharacter);
 
                 Console.WriteLine("SendField : [MoveEnd_B2C]");
             };

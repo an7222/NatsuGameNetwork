@@ -9,7 +9,7 @@ class NPC_IdleState : FSMState<NPC> {
         Console.WriteLine("[Idle] Enter");
     }
     public override void Update(NPC npc) {
-        if(sw.Elapsed.TotalSeconds >= 3) {
+        if(sw.Elapsed.TotalSeconds >= 5) {
             npc.FSM.ChangeState(npc.MoveState);
         }
     }
