@@ -8,7 +8,7 @@ class Login_REQ_C2S : IProtocol {
 	//MEMBER
 	public string PID;
 	public void SetPacketLength() {
-		PACKET_LENGTH = sizeof(int) + sizeof(int) + 1 + Encoding.Default.GetByteCount(PID);
+		PACKET_LENGTH = sizeof(int) + sizeof(int) + CommonUtil.get7BitEncodingLength(Encoding.Default.GetByteCount(PID)) + Encoding.Default.GetByteCount(PID);
 	}
 	public int GetPacketLength() {
 		return PACKET_LENGTH;
@@ -36,7 +36,7 @@ class Login_RES_S2C : IProtocol {
 	public string SessionToken;
 	public int CHANNEL_ID;
 	public void SetPacketLength() {
-		PACKET_LENGTH = sizeof(int) + sizeof(int) + sizeof(long) + sizeof(long) + 1 + Encoding.Default.GetByteCount(SessionToken) + sizeof(int);
+		PACKET_LENGTH = sizeof(int) + sizeof(int) + sizeof(long) + sizeof(long) + CommonUtil.get7BitEncodingLength(Encoding.Default.GetByteCount(SessionToken)) + Encoding.Default.GetByteCount(SessionToken) + sizeof(int);
 	}
 	public int GetPacketLength() {
 		return PACKET_LENGTH;
@@ -111,7 +111,7 @@ class RestAPI_RES_S2C : IProtocol {
 	//MEMBER
 	public string Info;
 	public void SetPacketLength() {
-		PACKET_LENGTH = sizeof(int) + sizeof(int) + 1 + Encoding.Default.GetByteCount(Info);
+		PACKET_LENGTH = sizeof(int) + sizeof(int) + CommonUtil.get7BitEncodingLength(Encoding.Default.GetByteCount(Info)) + Encoding.Default.GetByteCount(Info);
 	}
 	public int GetPacketLength() {
 		return PACKET_LENGTH;

@@ -9,12 +9,12 @@ using System.Threading;
 using System.Threading.Channels;
 using System.Threading.Tasks;
 
-class TcpSessionHandler : TickBase {
+class TcpHandler : TickBase {
     byte[] receiveBuffer;
     NetworkStream networkStream = null;
     public int channel_id = 0;
 
-    public TcpSessionHandler(TcpClient tcpClient, int channel_id) {
+    public TcpHandler(TcpClient tcpClient, int channel_id) {
         this.networkStream = tcpClient.GetStream();
         receiveBuffer = new byte[Const.RECEIVE_BUFFER_SIZE];
 
@@ -62,7 +62,7 @@ class TcpSessionHandler : TickBase {
                 var protocol = ProtocolManager.GetInstance().GetProtocol(protocol_id);
                 if (protocol != null) {
                     protocol.Read(br);
-                    ProtocolHandler.GetInstance().Protocol_Logic(protocol, this);
+                    ProtocolDispatcher.GetInstance().Protocol_Logic(protocol, this);
                 }
             }
 

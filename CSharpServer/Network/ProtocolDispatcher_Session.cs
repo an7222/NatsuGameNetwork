@@ -8,6 +8,7 @@ using System.Reflection.Metadata;
 using System.Text;
 using System.Threading;
 using System.Net.Http;
+using System.Net;
 
 partial class ProtocolDispatcher : Singleton<ProtocolDispatcher> {
     Action<IProtocol, TcpHandler> createAction_session(IProtocol dummyProtocol) {
@@ -35,20 +36,22 @@ partial class ProtocolDispatcher : Singleton<ProtocolDispatcher> {
         } else if (dummyProtocol is RestAPI_REQ_C2S) {
             action = (IProtocol protocol, TcpHandler handler) => {
                 Console.WriteLine("Receive : [RestAPI_REQ_C2S]");
-                var client = new HttpClient();
-                client.DefaultRequestHeaders.Accept.Clear();
-                client.DefaultRequestHeaders.Accept.Add(
-                    new MediaTypeWithQualityHeaderValue("application/json"));
-                client.BaseAddress = new Uri("https://localhost:" + Const.REST_API_SERVER_PORT + "/weatherforecast");
+                var httpClient = new HttpClient();
+                //ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12 | SecurityProtocolType.Tls11 | SecurityProtocolType.Tls;
 
-                RestAPI_REQ(client, handler);
+                httpClient.DefaultRequestHeaders.Accept.Clear();
+                httpClient.DefaultRequestHeaders.Accept.Add(
+                    new MediaTypeWithQualityHeaderValue("application/json"));
+                httpClient.BaseAddress = new Uri("http://localhost:" + Const.REST_API_SERVER_PORT + "/weatherforecast");
+
+                RestAPI_REQ(httpClient, handler);
             };
         }
         return action;
     }
 
-    async void RestAPI_REQ(HttpClient client, TcpHandler handler) {
-        HttpResponseMessage response = await client.GetAsync(client.BaseAddress);
+    async void RestAPI_REQ(HttpClient httpClient, TcpHandler handler) {
+        HttpResponseMessage response = await httpClient.GetAsync(httpClient.BaseAddress);
         if (response.IsSuccessStatusCode) {
             var info = await response.Content.ReadAsStringAsync();
             handler.SendPacket(new RestAPI_RES_S2C {

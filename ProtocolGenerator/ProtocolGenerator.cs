@@ -15,7 +15,7 @@ class ProtocolGenerator {
         readFilePath = Path.Combine(readFilePath, "IDL");
 
         string writeFilePath_Server = Path.Combine(rootFolder, "CSharpServer");
-        writeFilePath_Server = Path.Combine(writeFilePath_Server, "Protocol");
+        writeFilePath_Server = Path.Combine(writeFilePath_Server, "Network");
 
         string writeFilePath_Client = Path.Combine(rootFolder, "Client");
         writeFilePath_Client = Path.Combine(writeFilePath_Client, "Protocol");
@@ -108,7 +108,14 @@ class ProtocolGenerator {
                     foreach (var kv in member_type_field_list) {
                         sw.Write(TextConst.SPACE);
                         if (kv.Key == "string") {
-                            sw.Write("1 + Encoding.Default.GetByteCount(" + kv.Value + ")");
+                            string encodeSyntax = TextConst.BINARY_WRITER_ENCODING_GET_BYTE_COUNT + kv.Value + ")";
+                            sw.Write(TextConst.BINARY_WRITER_7BIT_ENCODING_PREFIX + encodeSyntax + ")");
+
+                            sw.Write(TextConst.SPACE);
+                            sw.Write(TextConst.PLUS);
+                            sw.Write(TextConst.SPACE);
+
+                            sw.Write(encodeSyntax);
                         } else {
                             sw.Write("sizeof(" + kv.Key + ")");
                         }

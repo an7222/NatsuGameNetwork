@@ -8,8 +8,8 @@ using System.Reflection.Metadata;
 using System.Text;
 using System.Threading;
 
-class ProtocolHandler : Singleton<ProtocolHandler>{
-    Dictionary<int, Action<IProtocol, TcpSessionHandler>> HandlePool = new Dictionary<int, Action<IProtocol, TcpSessionHandler>>();
+class ProtocolDispatcher : Singleton<ProtocolDispatcher>{
+    Dictionary<int, Action<IProtocol, TcpHandler>> HandlePool = new Dictionary<int, Action<IProtocol, TcpHandler>>();
     
     public void Register() {
         var baseType = typeof(IProtocol);
@@ -20,8 +20,8 @@ class ProtocolHandler : Singleton<ProtocolHandler>{
         }
     }
 
-    public void Protocol_Logic(IProtocol protocol, TcpSessionHandler handler) {
-        Action<IProtocol, TcpSessionHandler> action;
+    public void Protocol_Logic(IProtocol protocol, TcpHandler handler) {
+        Action<IProtocol, TcpHandler> action;
         if (HandlePool.TryGetValue(protocol.GetProtocol_ID(), out action)) {
             action(protocol, handler);
         } else {
@@ -29,11 +29,11 @@ class ProtocolHandler : Singleton<ProtocolHandler>{
         }
     }
 
-    Action<IProtocol, TcpSessionHandler> createAction(IProtocol dummyProtocol) {
-        Action<IProtocol, TcpSessionHandler> action = null;
+    Action<IProtocol, TcpHandler> createAction(IProtocol dummyProtocol) {
+        Action<IProtocol, TcpHandler> action = null;
 
         if(dummyProtocol is Login_RES_S2C) {
-            action = (IProtocol protocol, TcpSessionHandler handler) => {
+            action = (IProtocol protocol, TcpHandler handler) => {
                 var cast = protocol as Login_RES_S2C;
                 Console.WriteLine("Receive : [Login_RES_S2C]");
 
@@ -41,7 +41,7 @@ class ProtocolHandler : Singleton<ProtocolHandler>{
 
                 TcpClient tcpClient = new TcpClient("127.0.0.1", Const.BATTLE_SERVER_PORT);
 
-                Program.battleHandler = new TcpSessionHandler(tcpClient, cast.CHANNEL_ID);
+                Program.battleHandler = new TcpHandler(tcpClient, cast.CHANNEL_ID);
 
                 Program.battleHandler.SendPacket(new NewBattleUser_REQ_C2B {
                     USER_ID = 1,
@@ -53,7 +53,7 @@ class ProtocolHandler : Singleton<ProtocolHandler>{
             };
         }
         if (dummyProtocol is NewBattleUser_RES_C2B) {
-            action = (IProtocol protocol, TcpSessionHandler handler) => {
+            action = (IProtocol protocol, TcpHandler handler) => {
                 var cast = protocol as NewBattleUser_RES_C2B;
                 Console.WriteLine("Receive : [NewBattleUser_RES_C2B]");
 
@@ -64,22 +64,22 @@ class ProtocolHandler : Singleton<ProtocolHandler>{
                 Console.WriteLine("Battle Server Connected!");
             };
         } else if (dummyProtocol is MoveStart_B2C) {
-            action = (IProtocol protocol, TcpSessionHandler handler) => {
+            action = (IProtocol protocol, TcpHandler handler) => {
                 var cast = protocol as MoveStart_B2C;
                 Console.WriteLine("Receive : [MoveStart_B2C]");
             };
         } else if (dummyProtocol is MoveEnd_B2C) {
-            action = (IProtocol protocol, TcpSessionHandler handler) => {
+            action = (IProtocol protocol, TcpHandler handler) => {
                 var cast = protocol as MoveEnd_B2C;
                 Console.WriteLine("Receive : [MoveEnd_B2C]");
             };
         } else if (dummyProtocol is ChangePos_B2C) {
-            action = (IProtocol protocol, TcpSessionHandler handler) => {
+            action = (IProtocol protocol, TcpHandler handler) => {
                 var cast = protocol as ChangePos_B2C;
                 Console.WriteLine("Receive : [ChangePos_B2C]");
             };
         } else if (dummyProtocol is RestAPI_RES_S2C) {
-            action = (IProtocol protocol, TcpSessionHandler handler) => {
+            action = (IProtocol protocol, TcpHandler handler) => {
                 var cast = protocol as RestAPI_RES_S2C;
                 Console.WriteLine("Receive : [RestAPI_RES_S2C]");
 

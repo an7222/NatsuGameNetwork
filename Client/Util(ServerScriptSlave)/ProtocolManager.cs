@@ -15,6 +15,7 @@ interface IProtocol {
     public void Write(BinaryWriter bw);
 }
 
+
 class ProtocolManager : Singleton<ProtocolManager> {
     Dictionary<int, IProtocol> protocolPool = new Dictionary<int, IProtocol>();
     public void Register() {

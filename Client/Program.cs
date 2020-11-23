@@ -8,8 +8,8 @@ using System.IO;
 using System.Diagnostics;
 
 class Program {
-    public static TcpSessionHandler sessionHandler = null;
-    public static TcpSessionHandler battleHandler = null;
+    public static TcpHandler sessionHandler = null;
+    public static TcpHandler battleHandler = null;
 
     static void StartGame() {
         TcpClient tcpClient = new TcpClient("127.0.0.1", Const.SESSION_SERVER_PORT);
@@ -59,7 +59,7 @@ class Program {
         });
         consoleReadTask.Start();
 
-        sessionHandler = new TcpSessionHandler(tcpClient, 0);
+        sessionHandler = new TcpHandler(tcpClient, 0);
 
         sessionHandler.SendPacket(new Login_REQ_C2S {
             PID = DateTime.Now.Ticks.ToString(),
@@ -70,7 +70,7 @@ class Program {
 
     static void Main(String[] args) {
         ProtocolManager.GetInstance().Register();
-        ProtocolHandler.GetInstance().Register();
+        ProtocolDispatcher.GetInstance().Register();
         StartGame();
         bool gameRunning = true;
         while (gameRunning) {
