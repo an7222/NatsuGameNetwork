@@ -10,15 +10,13 @@ using System.Threading.Channels;
 using System.Threading.Tasks;
 
 class TcpHandler : TickBase {
-    byte[] headerBuffer;
-    byte[] bodyBuffer;
+    byte[] receiveBuffer;
     NetworkStream networkStream = null;
     public int channel_id = 0;
 
     public TcpHandler(TcpClient tcpClient, int channel_id) {
         this.networkStream = tcpClient.GetStream();
-        headerBuffer = new byte[Const.HEADER_BUFFER_SIZE];
-        bodyBuffer = new byte[Const.BODY_BUFFER_SIZE];
+        receiveBuffer = new byte[Const.RECEIVE_BUFFER_SIZE];
 
         this.channel_id = channel_id;
         ProcessReceive();
@@ -29,8 +27,8 @@ class TcpHandler : TickBase {
         while (true) {
             int headerBytesReceived = 0;
             try {
-                while (headerBytesReceived < Const.HEADER_BUFFER_SIZE) {
-                    headerBytesReceived += await networkStream.ReadAsync(headerBuffer, headerBytesReceived, headerBuffer.Length - headerBytesReceived).ConfigureAwait(false);
+                while (headerBytesReceived < Const.PACKET_HEADER_LENGTH) {
+                    headerBytesReceived += await networkStream.ReadAsync(receiveBuffer, headerBytesReceived, Const.PACKET_HEADER_LENGTH - headerBytesReceived).ConfigureAwait(false);
                 }
             } catch (Exception e) {
                 Console.WriteLine(e);
@@ -38,7 +36,7 @@ class TcpHandler : TickBase {
             }
 
 
-            int packetLength = BitConverter.ToInt32(headerBuffer);
+            int packetLength = BitConverter.ToInt32(receiveBuffer);
 
             if (packetLength <= 0) {
                 Console.WriteLine("No Packet");
@@ -46,22 +44,22 @@ class TcpHandler : TickBase {
             }
 
             bool bodyOverflow = false;
-            int bodyLength = packetLength - Const.HEADER_BUFFER_SIZE;
-            if (bodyLength > Const.BODY_BUFFER_SIZE) {
-                Array.Resize(ref bodyBuffer, bodyLength);
+            int bodyLength = packetLength - Const.PACKET_HEADER_LENGTH;
+            if (bodyLength > Const.RECEIVE_BUFFER_SIZE) {
+                Array.Resize(ref receiveBuffer, bodyLength);
                 bodyOverflow = true;
             }
             int dataBytesReceived = 0;
             try {
                 while (dataBytesReceived < bodyLength) {
-                    dataBytesReceived += await networkStream.ReadAsync(bodyBuffer, dataBytesReceived, bodyLength - dataBytesReceived).ConfigureAwait(false);
+                    dataBytesReceived += await networkStream.ReadAsync(receiveBuffer, dataBytesReceived, bodyLength - dataBytesReceived).ConfigureAwait(false);
                 }
             } catch (Exception e) {
                 Console.WriteLine(e);
                 return;
             }
 
-            using (var ms = new MemoryStream(bodyBuffer))
+            using (var ms = new MemoryStream(receiveBuffer))
             using (var br = new BinaryReader(ms)) {
                 int protocol_id = br.ReadInt32();
 
@@ -73,7 +71,7 @@ class TcpHandler : TickBase {
             }
 
             if (bodyOverflow) {
-                Array.Resize(ref bodyBuffer, Const.BODY_BUFFER_SIZE);
+                Array.Resize(ref receiveBuffer, Const.RECEIVE_BUFFER_SIZE);
             }
         }
     }
