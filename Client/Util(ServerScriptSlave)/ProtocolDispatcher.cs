@@ -20,7 +20,7 @@ class ProtocolDispatcher : Singleton<ProtocolDispatcher>{
         }
     }
 
-    public void Protocol_Logic(IProtocol protocol, TcpHandler handler) {
+    public void Dispatch(IProtocol protocol, TcpHandler handler) {
         Action<IProtocol, TcpHandler> action;
         if (HandlePool.TryGetValue(protocol.GetProtocol_ID(), out action)) {
             action(protocol, handler);
