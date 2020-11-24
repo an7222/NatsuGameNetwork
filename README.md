@@ -14,4 +14,3 @@ CppServer : IOCP 기반 C++ 서버 입니다. (미완성)
 1. DLL화를 통해 C++, C# 라이브러리 공유
 2. 운영툴(ASP.net Core Blazor)
 3. Pub/Sub(Go)
-4. Server Code Editor(TypeScript)
