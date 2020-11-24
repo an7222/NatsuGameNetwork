@@ -11,6 +11,6 @@ RestAPIServer : ASP.NET Core 기반 REST API 서버입니다. 기반 작업만 �
 CppServer : IOCP 기반 C++ 서버 입니다. (미완성)
 
 프로젝트 예정 목록
-1. DLL화를 통해 C++, C# 라이브러리 공유
+1. DLL화를 통해 C++, C# 로직 공유
 2. 운영툴(ASP.net Core Blazor)
 3. Pub/Sub(Go)
