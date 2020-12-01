@@ -9,10 +9,6 @@ class TickBase {
 
     protected Stopwatch sw = new Stopwatch();
 
-    public bool updateLock {
-        get; set;
-    }
-
     public virtual void Update() {
         Action cb;
         if (ActionQueue.TryDequeue(out cb)) {

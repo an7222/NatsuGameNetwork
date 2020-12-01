@@ -38,17 +38,9 @@ class ChannelController : TickBase {
 
     #region Channel Logic
     public override void Update() {
-        
-        foreach (var con in controllerList) {
-            if (con.updateLock)
-                continue;
-
-            con.updateLock = true;
-            Task.Factory.StartNew(() => {
-                con.Update();
-                con.updateLock = false;
-            });
-        };
+        Parallel.ForEach(controllerList, (con) => {
+            con.Update();
+        });
     }
 
     #endregion
