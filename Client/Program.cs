@@ -16,7 +16,7 @@ class Program {
 
         Console.WriteLine("Session Server Connected!");
 
-        Task consoleReadTask = new Task(() => {
+        Task.Factory.StartNew(() => {
             var sw = new Stopwatch();
             int frameLimit = 1000 / 60; // 1000ms / 60fps
 
@@ -57,7 +57,6 @@ class Program {
                 }
             }
         });
-        consoleReadTask.Start();
 
         sessionHandler = new TcpHandler(tcpClient, 0);
 

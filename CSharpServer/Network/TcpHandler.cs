@@ -84,14 +84,12 @@ class TcpHandler : TickBase {
 
     AutoResetEvent autoEvent = new AutoResetEvent(false);
     void ProcessSend() {
-        Task sendTask = new Task(() => {
+        Task.Factory.StartNew(() => {
             while (true) {
                 Update();
                 autoEvent.WaitOne();
             }
         });
-
-        sendTask.Start();
     }
 
     public void SendPacket(IProtocol protocol) {

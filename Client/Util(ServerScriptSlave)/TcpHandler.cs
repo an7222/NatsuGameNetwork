@@ -49,10 +49,10 @@ class TcpHandler : TickBase {
                 Array.Resize(ref receiveBuffer, bodyLength);
                 bodyOverflow = true;
             }
-            int dataBytesReceived = 0;
+            int bodyBytesReceived = 0;
             try {
-                while (dataBytesReceived < bodyLength) {
-                    dataBytesReceived += await networkStream.ReadAsync(receiveBuffer, dataBytesReceived, bodyLength - dataBytesReceived).ConfigureAwait(false);
+                while (bodyBytesReceived < bodyLength) {
+                    bodyBytesReceived += await networkStream.ReadAsync(receiveBuffer, bodyBytesReceived, bodyLength - bodyBytesReceived).ConfigureAwait(false);
                 }
             } catch (Exception e) {
                 Console.WriteLine(e);
@@ -78,14 +78,12 @@ class TcpHandler : TickBase {
 
     AutoResetEvent autoEvent = new AutoResetEvent(false);
     void ProcessSend() {
-        Task sendTask = new Task(() => {
+        Task.Factory.StartNew(() => {
             while (true) {
                 Update();
                 autoEvent.WaitOne();
             }
         });
-
-        sendTask.Start();
     }
 
     public void SendPacket(IProtocol protocol) {

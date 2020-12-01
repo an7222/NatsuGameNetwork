@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Threading;
+using System.Threading.Tasks;
 
 class Program {
 
@@ -16,7 +17,7 @@ class Program {
             sw.Restart();
 
             foreach (var channelController in BattleServer.GetInstance().GetChannelControllerPool()) {
-                ThreadHelper.RegisterWork(() => {
+                Task.Factory.StartNew(() => {
                     channelController.Update();
                 });
             }

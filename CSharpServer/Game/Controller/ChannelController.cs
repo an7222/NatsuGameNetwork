@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Numerics;
+using System.Threading.Tasks;
 using System.Text;
 using System.Threading;
 
@@ -37,12 +38,13 @@ class ChannelController : TickBase {
 
     #region Channel Logic
     public override void Update() {
+        
         foreach (var con in controllerList) {
             if (con.updateLock)
                 continue;
 
             con.updateLock = true;
-            ThreadHelper.RegisterWork(() => {
+            Task.Factory.StartNew(() => {
                 con.Update();
                 con.updateLock = false;
             });
