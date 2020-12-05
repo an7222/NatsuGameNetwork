@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using System.Text;
 
-class CommonUtil {
-	public static int get7BitEncodingLength(int value) {
+static class ExtensionMethod {
+	public static int get7BitEncodingLength(this int value) {
 		int length = 1;
 		while (value >= 128) {
 			length++;

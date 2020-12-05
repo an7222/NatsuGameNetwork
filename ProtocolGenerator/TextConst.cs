@@ -37,6 +37,6 @@ class TextConst {
     public const string BINARY_WRITE_DEFINE = TAB + PUBLIC + SPACE + "void Write(BinaryWriter bw)" + SPACE + BRACE_START;
     public const string BINARY_WRITER_INSTANCE_CALL = DOUBLE_TAB + "bw.";
 
-    public const string BINARY_WRITER_7BIT_ENCODING_PREFIX = "CommonUtil.get7BitEncodingLength(";
+    public const string BINARY_WRITER_7BIT_ENCODING_LENGTH = ".get7BitEncodingLength()";
     public const string BINARY_WRITER_ENCODING_GET_BYTE_COUNT = "Encoding.Default.GetByteCount(";
 }

@@ -9,7 +9,7 @@ class Field_Excel : IProtocol {
 	public int FIELD_ID;
 	public string FieldName;
 	public void SetPacketLength() {
-		PACKET_LENGTH = sizeof(int) + sizeof(int) + sizeof(int) + CommonUtil.get7BitEncodingLength(Encoding.Default.GetByteCount(FieldName)) + Encoding.Default.GetByteCount(FieldName);
+		PACKET_LENGTH = sizeof(int) + sizeof(int) + sizeof(int) + Encoding.Default.GetByteCount(FieldName).get7BitEncodingLength() + Encoding.Default.GetByteCount(FieldName);
 	}
 	public int GetPacketLength() {
 		return PACKET_LENGTH;

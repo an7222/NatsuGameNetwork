@@ -109,7 +109,7 @@ class ProtocolGenerator {
                         sw.Write(TextConst.SPACE);
                         if (kv.Key == "string") {
                             string encodeSyntax = TextConst.BINARY_WRITER_ENCODING_GET_BYTE_COUNT + kv.Value + ")";
-                            sw.Write(TextConst.BINARY_WRITER_7BIT_ENCODING_PREFIX + encodeSyntax + ")");
+                            sw.Write(encodeSyntax + TextConst.BINARY_WRITER_7BIT_ENCODING_LENGTH);
 
                             sw.Write(TextConst.SPACE);
                             sw.Write(TextConst.PLUS);
