@@ -2,7 +2,7 @@
 
 [![Hits](https://hits.seeyoufarm.com/api/count/incr/badge.svg?url=https%3A%2F%2Fgithub.com%2Fan7222%2FAntoriGameNetwork&count_bg=%2379C83D&title_bg=%23555555&icon=&icon_color=%23E7E7E7&title=hits&edge_flat=false)](https://hits.seeyoufarm.com)   
 
-CSharpServer : ThreadPool, Async/Await 형태의 C# 서버 입니다. 이 프로젝트의 메인입니다.
+CSharpServer : TPL, Async/Await를 활용한 C# 서버 입니다. 이 프로젝트의 메인입니다.
 
 ProtocolGenerator : ProtoBuf와 비슷한 기능(IDL 컴파일러)을 하는 프로토콜 생성기 입니다. C#은 잘 생성되고, C++은 작업중입니다. 지원 언어는 계속 추가 될 예정입니다.
 
