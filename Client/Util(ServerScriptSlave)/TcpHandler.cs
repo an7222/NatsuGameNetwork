@@ -78,7 +78,7 @@ class TcpHandler : TickBase {
 
     AutoResetEvent autoEvent = new AutoResetEvent(false);
     void ProcessSend() {
-        Task.Factory.StartNew(() => {
+        Task.Run(() => {
             while (true) {
                 Update();
                 autoEvent.WaitOne();

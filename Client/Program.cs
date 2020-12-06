@@ -16,7 +16,7 @@ class Program {
 
         Console.WriteLine("Session Server Connected!");
 
-        Task.Factory.StartNew(() => {
+        Task.Run(() => {
             var sw = new Stopwatch();
             int frameLimit = 1000 / 60; // 1000ms / 60fps
 
