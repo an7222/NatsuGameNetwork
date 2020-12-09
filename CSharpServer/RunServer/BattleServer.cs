@@ -10,7 +10,7 @@ using System.Threading;
 class BattleServer : Singleton<BattleServer>, IRealTimeServer {
     int SESSION_ID = 1;
     Dictionary<int, TcpHandler> connectedClientPool = new Dictionary<int, TcpHandler>();
-    Dictionary<int, ChannelController> channelControllerPool = new Dictionary<int, ChannelController>();
+    Dictionary<int, ZoneController> zoneControllerPool = new Dictionary<int, ZoneController>();
 
     public void Start() {
         var fieldDataList = new List<Field_Excel>();
@@ -25,8 +25,8 @@ class BattleServer : Singleton<BattleServer>, IRealTimeServer {
         //});
 
         for (int i = 0; i < fieldDataList.Count; ++i) {
-            ChannelController channelController = new ChannelController();
-            channelControllerPool.Add(fieldDataList[i].FIELD_ID, channelController);
+            ZoneController zoneController = new ZoneController();
+            zoneControllerPool.Add(fieldDataList[i].FIELD_ID, zoneController);
         }
 
         TcpListener listener = new TcpListener(IPAddress.Any, Const.BATTLE_SERVER_PORT);
@@ -59,9 +59,9 @@ class BattleServer : Singleton<BattleServer>, IRealTimeServer {
         if (client is TcpHandler_Battle) {
             var castClient = client as TcpHandler_Battle;
 
-            ChannelController channelCon;
-            if (channelControllerPool.TryGetValue(castClient.CHANNEL_ID, out channelCon)) {
-                channelCon.AddClient(castClient);
+            ZoneController zoneCon;
+            if (zoneControllerPool.TryGetValue(castClient.ZONE_ID, out zoneCon)) {
+                zoneCon.AddClient(castClient);
             }
         }
     }
@@ -71,26 +71,26 @@ class BattleServer : Singleton<BattleServer>, IRealTimeServer {
         if (connectedClientPool.TryGetValue(session_id, out client)) {
             if (client is TcpHandler_Battle) {
                 var castClient = client as TcpHandler_Battle;
-                ChannelController channelCon;
-                if (channelControllerPool.TryGetValue(castClient.CHANNEL_ID, out channelCon)) {
-                    channelCon.RemoveClient(castClient);
+                ZoneController zoneCon;
+                if (zoneControllerPool.TryGetValue(castClient.ZONE_ID, out zoneCon)) {
+                    zoneCon.RemoveClient(castClient);
                 }
             }
         }
         connectedClientPool.Remove(session_id);
     }
 
-    public void SendPacketChannel(IProtocol protocol, int channel_id) {
-        ChannelController channelCon;
+    public void SendPacketToZone(IProtocol protocol, int zone_id) {
+        ZoneController zoneCon;
 
-        if (channelControllerPool.TryGetValue(channel_id, out channelCon)) {
-            channelCon.SendPacketChannel(protocol);
+        if (zoneControllerPool.TryGetValue(zone_id, out zoneCon)) {
+            zoneCon.SendPacketToZone(protocol);
         } else {
             Console.WriteLine("No Field!");
         }
     }
 
-    public IEnumerable<ChannelController> GetChannelControllerPool() {
-        return channelControllerPool.Values;
+    public IEnumerable<ZoneController> GetZoneControllerPool() {
+        return zoneControllerPool.Values;
     }
 }

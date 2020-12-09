@@ -6,11 +6,11 @@ using System.Threading;
 
 abstract class CharacterController : TickBase {
     protected Vector2 startPoint;
-    protected ChannelController channelController;
+    protected ZoneController zoneController;
     public List<Character> characterList = new List<Character>();
 
-    public CharacterController(ChannelController cc, Vector2 startPoint) {
-        this.channelController = cc;
+    public CharacterController(ZoneController cc, Vector2 startPoint) {
+        this.zoneController = cc;
         this.startPoint = startPoint;
     }
 
@@ -55,7 +55,7 @@ abstract class CharacterController : TickBase {
 
         caster.isMoving = true;
 
-        channelController.SendPacketChannel(protocol);
+        zoneController.SendPacketToZone(protocol);
     }
 
     public void BroadCast_MoveEnd(Character caster) {
@@ -65,7 +65,7 @@ abstract class CharacterController : TickBase {
 
         caster.isMoving = false;
 
-        channelController.SendPacketChannel(protocol);
+        zoneController.SendPacketToZone(protocol);
     }
 
     public void BroadCast_RefreshPos(Character caster) {
@@ -75,7 +75,7 @@ abstract class CharacterController : TickBase {
             Pos_y = caster.pos.Y,
         };
 
-        channelController.SendPacketChannel(protocol);
+        zoneController.SendPacketToZone(protocol);
     }
 
     //public void BroadCast_AttackTo(Character caster, Character target) {

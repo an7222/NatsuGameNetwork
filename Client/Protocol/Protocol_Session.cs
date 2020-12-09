@@ -34,7 +34,7 @@ class Login_RES_S2C : IProtocol {
 	public long USER_ID;
 	public long ServerTimeUnix;
 	public string SessionToken;
-	public int CHANNEL_ID;
+	public int ZONE_ID;
 	public void SetPacketLength() {
 		PACKET_LENGTH = sizeof(int) + sizeof(int) + sizeof(long) + sizeof(long) + Encoding.Default.GetByteCount(SessionToken).get7BitEncodingLength() + Encoding.Default.GetByteCount(SessionToken) + sizeof(int);
 	}
@@ -48,7 +48,7 @@ class Login_RES_S2C : IProtocol {
 		USER_ID = br.ReadInt64();
 		ServerTimeUnix = br.ReadInt64();
 		SessionToken = br.ReadString();
-		CHANNEL_ID = br.ReadInt32();
+		ZONE_ID = br.ReadInt32();
 	}
 	public void Write(BinaryWriter bw) {
 		SetPacketLength();
@@ -57,7 +57,7 @@ class Login_RES_S2C : IProtocol {
 		bw.Write(USER_ID);
 		bw.Write(ServerTimeUnix);
 		bw.Write(SessionToken);
-		bw.Write(CHANNEL_ID);
+		bw.Write(ZONE_ID);
 	}
 }
 class Login_FIN_C2S : IProtocol {

@@ -6,7 +6,7 @@ using System.Text;
 class NPCController : CharacterController {
     Random r;
 
-    public NPCController(ChannelController cc, Vector2 startPoint) : base(cc, startPoint) {
+    public NPCController(ZoneController cc, Vector2 startPoint) : base(cc, startPoint) {
         r = new Random();
 
         CreateCharacter(startPoint);

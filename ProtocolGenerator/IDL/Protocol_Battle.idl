@@ -11,7 +11,7 @@ PACKET NewBattleUser_RES_C2B
 END
 
 PACKET NewBattleUser_FIN_C2B
-	int CHANNEL_ID	
+	int ZONE_ID	
 END
 
 PACKET MoveStart_C2B

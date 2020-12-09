@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using System.Text;
 using System.Threading;
 
-class ChannelController : TickBase {
+class ZoneController : TickBase {
     List<TcpHandler> clientList = new List<TcpHandler>();
     public int FIELD_ID = 0;
 
@@ -26,7 +26,7 @@ class ChannelController : TickBase {
     };
 
     #region Controller Initialize
-    public ChannelController() {
+    public ZoneController() {
         npcController = new NPCController(this, startPoint);
         controllerList.Add(npcController);
 
@@ -36,7 +36,7 @@ class ChannelController : TickBase {
 
     #endregion
 
-    #region Channel Logic
+    #region Zone Logic
     public override void Update() {
         Parallel.ForEach(controllerList, (con) => {
             con.Update();
@@ -63,7 +63,7 @@ class ChannelController : TickBase {
         client.PlayerCharacter = null;
     }
 
-    public void SendPacketChannel(IProtocol protocol) {
+    public void SendPacketToZone(IProtocol protocol) {
         foreach (var client in clientList) {
             client.SendPacket(protocol);
         }

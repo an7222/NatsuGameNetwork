@@ -43,8 +43,8 @@ partial class ProtocolDispatcher : Singleton<ProtocolDispatcher> {
 
                 var battleHandler = handler as TcpHandler_Battle;
 
-                Console.WriteLine("FIELD ID : " + cast.CHANNEL_ID);
-                battleHandler.CHANNEL_ID = cast.CHANNEL_ID;
+                Console.WriteLine("FIELD ID : " + cast.ZONE_ID);
+                battleHandler.ZONE_ID = cast.ZONE_ID;
                 BattleServer.GetInstance().AddClient(battleHandler);
             };
         } else if (dummyProtocol is MoveStart_C2B) {

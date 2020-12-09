@@ -4,7 +4,7 @@ using System.Net.Sockets;
 using System.Text;
 
 class TcpHandler_Battle : TcpHandler{
-    public int CHANNEL_ID {
+    public int ZONE_ID {
         get;set;
     }
     public PlayerCharacter PlayerCharacter {

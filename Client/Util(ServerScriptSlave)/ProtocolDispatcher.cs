@@ -41,7 +41,7 @@ class ProtocolDispatcher : Singleton<ProtocolDispatcher>{
 
                 TcpClient tcpClient = new TcpClient("127.0.0.1", Const.BATTLE_SERVER_PORT);
 
-                Program.battleHandler = new TcpHandler(tcpClient, cast.CHANNEL_ID);
+                Program.battleHandler = new TcpHandler(tcpClient, cast.ZONE_ID);
 
                 Program.battleHandler.SendPacket(new NewBattleUser_REQ_C2B {
                     USER_ID = 1,
@@ -58,7 +58,7 @@ class ProtocolDispatcher : Singleton<ProtocolDispatcher>{
                 Console.WriteLine("Receive : [NewBattleUser_RES_C2B]");
 
                 Program.battleHandler.SendPacket(new NewBattleUser_FIN_C2B {
-                    CHANNEL_ID = Program.battleHandler.channel_id,
+                    ZONE_ID = Program.battleHandler.zone_id,
                 });
 
                 Console.WriteLine("Battle Server Connected!");

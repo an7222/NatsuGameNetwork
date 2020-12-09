@@ -16,9 +16,9 @@ class Program {
         while (true) {
             sw.Restart();
 
-            foreach (var channelController in BattleServer.GetInstance().GetChannelControllerPool()) {
+            foreach (var zoneController in BattleServer.GetInstance().GetZoneControllerPool()) {
                 Task.Run(() => {
-                    channelController.Update();
+                    zoneController.Update();
                 });
             }
 

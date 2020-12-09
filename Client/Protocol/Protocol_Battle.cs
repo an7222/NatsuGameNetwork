@@ -68,7 +68,7 @@ class NewBattleUser_FIN_C2B : IProtocol {
 	public int PACKET_LENGTH = 0;
 	public int PROTOCOL_ID = 3;
 	//MEMBER
-	public int CHANNEL_ID;
+	public int ZONE_ID;
 	public void SetPacketLength() {
 		PACKET_LENGTH = sizeof(int) + sizeof(int) + sizeof(int);
 	}
@@ -79,13 +79,13 @@ class NewBattleUser_FIN_C2B : IProtocol {
 		return PROTOCOL_ID;
 	}
 	public void Read(BinaryReader br) {
-		CHANNEL_ID = br.ReadInt32();
+		ZONE_ID = br.ReadInt32();
 	}
 	public void Write(BinaryWriter bw) {
 		SetPacketLength();
 		bw.Write(PACKET_LENGTH);
 		bw.Write(PROTOCOL_ID);
-		bw.Write(CHANNEL_ID);
+		bw.Write(ZONE_ID);
 	}
 }
 class MoveStart_C2B : IProtocol {

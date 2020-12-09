@@ -6,19 +6,18 @@ using System.Net.Sockets;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading;
-using System.Threading.Channels;
 using System.Threading.Tasks;
 
 class TcpHandler : TickBase {
     byte[] receiveBuffer;
     NetworkStream networkStream = null;
-    public int channel_id = 0;
+    public int zone_id = 0;
 
-    public TcpHandler(TcpClient tcpClient, int channel_id) {
+    public TcpHandler(TcpClient tcpClient, int zone_id) {
         this.networkStream = tcpClient.GetStream();
         receiveBuffer = new byte[Const.RECEIVE_BUFFER_SIZE];
 
-        this.channel_id = channel_id;
+        this.zone_id = zone_id;
         ProcessReceive();
         ProcessSend();
     }
