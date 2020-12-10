@@ -6,10 +6,10 @@ using System.Text;
 using System.Threading;
 
 class ZoneController : TickBase {
-    List<TcpHandler> clientList = new List<TcpHandler>();
     public int ZONE_ID = 0;
     int OBJECT_ID = 0;
 
+    List<TcpHandler> clientList = new List<TcpHandler>();
     List<TickBase> controllerList = new List<TickBase>();
     public NPCController npcController {
         get;

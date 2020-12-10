@@ -12,7 +12,7 @@ class Program {
         BattleServer.GetInstance().Start();
 
         var sw = new Stopwatch();
-        int frameLimit = 1000 / 120; // 1000ms / 120fps
+        int frameLimit = 1000 / 30; // 1000ms / 30fps
         while (true) {
             sw.Restart();
 

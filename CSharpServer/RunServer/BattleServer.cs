@@ -14,17 +14,18 @@ class BattleServer : Singleton<BattleServer>, IRealTimeServer {
     public void Start() {
         var zoneDataList = new List<Zone_Excel>();
         //TODO : Read for DB or Excel
-        for(int i = 0; i < 10; ++i) {
+        for (int i = 1; i < 11; ++i) {
             zoneDataList.Add(new Zone_Excel {
-                ZONE_ID= i,
+                ZONE_ID = i,
                 ZONE_NAME = "임시 존",
             });
         }
 
-        for (int i = 0; i < zoneDataList.Count; ++i) {
+        foreach (var zoneInfo in zoneDataList) {
             ZoneController zoneController = new ZoneController();
-            if(false == zoneControllerPool.TryAdd(zoneDataList[i].ZONE_ID, zoneController)) {
-                Console.WriteLine($"Already Zone? : {i}");
+            zoneController.ZONE_ID = zoneInfo.ZONE_ID;
+            if (false == zoneControllerPool.TryAdd(zoneInfo.ZONE_ID, zoneController)) {
+                Console.WriteLine($"Already Zone? : {zoneInfo.ZONE_ID}");
             }
         }
 
