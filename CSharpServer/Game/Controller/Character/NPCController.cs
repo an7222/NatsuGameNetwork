@@ -9,7 +9,9 @@ class NPCController : CharacterController {
     public NPCController(ZoneController cc, Vector2 startPoint) : base(cc, startPoint) {
         r = new Random();
 
-        CreateCharacter(startPoint);
+        for(int i = 0; i < 100; ++i) {
+            CreateCharacter(startPoint);
+        }
     }
 
     public override void Update() {

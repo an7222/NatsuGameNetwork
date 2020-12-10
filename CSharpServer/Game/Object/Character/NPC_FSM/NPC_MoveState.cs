@@ -9,7 +9,6 @@ class NPC_MoveState : FSMState<NPC> {
         sw.Restart();
         npc.dir = (Direction)r.Next(0, 4);
         npc.isMoving = true;
-        Console.WriteLine("[Move] Enter");
     }
     public override void Update(NPC npc) {
         if (sw.Elapsed.TotalSeconds >= 5) {
@@ -22,6 +21,5 @@ class NPC_MoveState : FSMState<NPC> {
         if (sw.IsRunning) {
             sw.Stop();
         }
-        Console.WriteLine("[Move] Exit");
     }
 }

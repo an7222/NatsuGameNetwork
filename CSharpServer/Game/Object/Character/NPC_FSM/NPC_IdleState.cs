@@ -6,7 +6,6 @@ using System.Text;
 class NPC_IdleState : FSMState<NPC> {
     public override void Enter(NPC npc) {
         sw.Restart();
-        Console.WriteLine("[Idle] Enter");
     }
     public override void Update(NPC npc) {
         if(sw.Elapsed.TotalSeconds >= 5) {
@@ -17,6 +16,5 @@ class NPC_IdleState : FSMState<NPC> {
         if (sw.IsRunning) {
             sw.Stop();
         }
-        Console.WriteLine("[Idle] Exit");
     }
 }
