@@ -7,7 +7,8 @@ using System.Threading;
 
 class ZoneController : TickBase {
     List<TcpHandler> clientList = new List<TcpHandler>();
-    public int FIELD_ID = 0;
+    public int ZONE_ID = 0;
+    int OBJECT_ID = 0;
 
     List<TickBase> controllerList = new List<TickBase>();
     public NPCController npcController {
@@ -67,6 +68,10 @@ class ZoneController : TickBase {
         foreach (var client in clientList) {
             client.SendPacket(protocol);
         }
+    }
+
+    public int GetObjectID() {
+        return Interlocked.Increment(ref OBJECT_ID);
     }
 
     #endregion

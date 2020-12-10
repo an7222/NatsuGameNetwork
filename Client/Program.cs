@@ -17,9 +17,6 @@ class Program {
         Console.WriteLine("Session Server Connected!");
 
         Task.Run(() => {
-            var sw = new Stopwatch();
-            int frameLimit = 1000 / 60; // 1000ms / 60fps
-
             while (true) {
                 if (battleHandler == null)
                     continue;
@@ -49,12 +46,7 @@ class Program {
                     Console.WriteLine("Send : [RestAPI_REQ_C2S]");
                 }
 
-                sw.Stop();
-                var elapsed = (int)sw.ElapsedMilliseconds;
-                var sleepDuration = frameLimit - elapsed;
-                if (sleepDuration > 0) {
-                    Thread.Sleep(sleepDuration);
-                }
+
             }
         });
 
@@ -72,8 +64,16 @@ class Program {
         ProtocolDispatcher.GetInstance().Register();
         StartGame();
         bool gameRunning = true;
-        while (gameRunning) {
+        var sw = new Stopwatch();
 
+        while (gameRunning) {
+            int frameLimit = 1000 / 60; // 1000ms / 60fps
+            sw.Stop();
+            var elapsed = (int)sw.ElapsedMilliseconds;
+            var sleepDuration = frameLimit - elapsed;
+            if (sleepDuration > 0) {
+                Thread.Sleep(sleepDuration);
+            }
         }
     }
 }

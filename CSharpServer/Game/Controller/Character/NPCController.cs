@@ -33,6 +33,7 @@ class NPCController : CharacterController {
         NPC npc = new NPC(stat, startPoint, NpcFightType.FIGHT);
         FSM<NPC> FSM = new FSM<NPC>();
         npc.FSM = FSM;
+        npc.OBJECT_ID = zoneController.GetObjectID();
         FSM.Configure(npc, new NPC_IdleState());
 
         npc.CharacterController = this;

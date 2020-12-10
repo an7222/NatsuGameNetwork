@@ -43,7 +43,7 @@ partial class ProtocolDispatcher : Singleton<ProtocolDispatcher> {
 
                 var battleHandler = handler as TcpHandler_Battle;
 
-                Console.WriteLine("FIELD ID : " + cast.ZONE_ID);
+                Console.WriteLine("ZONE ID : " + cast.ZONE_ID);
                 battleHandler.ZONE_ID = cast.ZONE_ID;
                 BattleServer.GetInstance().AddClient(battleHandler);
             };
@@ -77,7 +77,7 @@ partial class ProtocolDispatcher : Singleton<ProtocolDispatcher> {
 
                 battleHandler.PlayerCharacter.CharacterController.BroadCast_MoveEnd(battleHandler.PlayerCharacter);
 
-                Console.WriteLine("SendField : [MoveEnd_B2C]");
+                Console.WriteLine("SendZone : [MoveEnd_B2C]");
             };
         }
         return action;

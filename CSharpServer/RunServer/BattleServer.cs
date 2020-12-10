@@ -12,20 +12,18 @@ class BattleServer : Singleton<BattleServer>, IRealTimeServer {
     ConcurrentDictionary<int, ZoneController> zoneControllerPool = new ConcurrentDictionary<int, ZoneController>();
 
     public void Start() {
-        var fieldDataList = new List<Field_Excel>();
+        var zoneDataList = new List<Zone_Excel>();
         //TODO : Read for DB or Excel
-        fieldDataList.Add(new Field_Excel {
-            FIELD_ID = 1,
-            FieldName = "안토리네 집",
-        });
-        fieldDataList.Add(new Field_Excel {
-            FIELD_ID = 2,
-            FieldName = "깃허브",
-        });
+        for(int i = 0; i < 10; ++i) {
+            zoneDataList.Add(new Zone_Excel {
+                ZONE_ID= i,
+                ZONE_NAME = "임시 존",
+            });
+        }
 
-        for (int i = 0; i < fieldDataList.Count; ++i) {
+        for (int i = 0; i < zoneDataList.Count; ++i) {
             ZoneController zoneController = new ZoneController();
-            if(false == zoneControllerPool.TryAdd(fieldDataList[i].FIELD_ID, zoneController)) {
+            if(false == zoneControllerPool.TryAdd(zoneDataList[i].ZONE_ID, zoneController)) {
                 Console.WriteLine($"Already Zone? : {i}");
             }
         }
@@ -82,7 +80,7 @@ class BattleServer : Singleton<BattleServer>, IRealTimeServer {
         if (zoneControllerPool.TryGetValue(zone_id, out var zoneCon)) {
             zoneCon.SendPacketToZone(protocol);
         } else {
-            Console.WriteLine("No Field!");
+            Console.WriteLine("No Zone!");
         }
     }
 

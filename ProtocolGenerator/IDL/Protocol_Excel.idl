@@ -1,4 +1,4 @@
-﻿PACKET Field_Excel
-	int FIELD_ID
-	string FieldName
+﻿PACKET Zone_Excel
+	int ZONE_ID
+	string ZONE_NAME
 END
