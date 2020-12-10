@@ -23,7 +23,7 @@ partial class ProtocolDispatcher : Singleton<ProtocolDispatcher> {
                     USER_ID = SessionServer.GetInstance().GetUniqueUserID(),
                     ServerTimeUnix = DateTime.Now.Ticks,
                     SessionToken = Guid.NewGuid().ToString(),
-                    ZONE_ID = r.Next(1, 2), //TODO read for RESTAPI
+                    ZONE_ID = r.Next(1, 3), //TODO read for RESTAPI
                 });
 
                 Console.WriteLine("Send : [Login_RES_S2C]");

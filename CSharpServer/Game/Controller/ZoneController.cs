@@ -38,9 +38,9 @@ class ZoneController : TickBase {
 
     #region Zone Logic
     public override void Update() {
-        Parallel.ForEach(controllerList, (con) => {
+        foreach(var con in controllerList){
             con.Update();
-        });
+        }
     }
 
     #endregion

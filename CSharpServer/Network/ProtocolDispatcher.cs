@@ -25,8 +25,7 @@ partial class ProtocolDispatcher : Singleton<ProtocolDispatcher> {
     }
 
     public void Dispatch(IProtocol protocol, TcpHandler handler) {
-        Action<IProtocol, TcpHandler> action;
-        if (HandlePool.TryGetValue(protocol.GetProtocol_ID(), out action)) {
+        if (HandlePool.TryGetValue(protocol.GetProtocol_ID(), out var action)) {
             action(protocol, handler);
         } else {
             Console.WriteLine("No Protocol ID");

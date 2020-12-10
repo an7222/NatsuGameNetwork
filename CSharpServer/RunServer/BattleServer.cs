@@ -3,14 +3,13 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Net;
 using System.Net.Sockets;
-using System.Security.Cryptography.X509Certificates;
-using System.Text;
 using System.Threading;
+using System.Collections.Concurrent;
 
 class BattleServer : Singleton<BattleServer>, IRealTimeServer {
     int SESSION_ID = 1;
-    Dictionary<int, TcpHandler> connectedClientPool = new Dictionary<int, TcpHandler>();
-    Dictionary<int, ZoneController> zoneControllerPool = new Dictionary<int, ZoneController>();
+    ConcurrentDictionary<int, TcpHandler> connectedClientPool = new ConcurrentDictionary<int, TcpHandler>();
+    ConcurrentDictionary<int, ZoneController> zoneControllerPool = new ConcurrentDictionary<int, ZoneController>();
 
     public void Start() {
         var fieldDataList = new List<Field_Excel>();
@@ -19,14 +18,16 @@ class BattleServer : Singleton<BattleServer>, IRealTimeServer {
             FIELD_ID = 1,
             FieldName = "안토리네 집",
         });
-        //fieldDataList.Add(new Field_Excel {
-        //    FIELD_ID = 2,
-        //    FieldName = "깃허브",
-        //});
+        fieldDataList.Add(new Field_Excel {
+            FIELD_ID = 2,
+            FieldName = "깃허브",
+        });
 
         for (int i = 0; i < fieldDataList.Count; ++i) {
             ZoneController zoneController = new ZoneController();
-            zoneControllerPool.Add(fieldDataList[i].FIELD_ID, zoneController);
+            if(false == zoneControllerPool.TryAdd(fieldDataList[i].FIELD_ID, zoneController)) {
+                Console.WriteLine($"Already Zone? : {i}");
+            }
         }
 
         TcpListener listener = new TcpListener(IPAddress.Any, Const.BATTLE_SERVER_PORT);
@@ -59,31 +60,26 @@ class BattleServer : Singleton<BattleServer>, IRealTimeServer {
         if (client is TcpHandler_Battle) {
             var castClient = client as TcpHandler_Battle;
 
-            ZoneController zoneCon;
-            if (zoneControllerPool.TryGetValue(castClient.ZONE_ID, out zoneCon)) {
+            if (zoneControllerPool.TryGetValue(castClient.ZONE_ID, out var zoneCon)) {
                 zoneCon.AddClient(castClient);
             }
         }
     }
 
     public void RemoveClient(int session_id) {
-        TcpHandler client;
-        if (connectedClientPool.TryGetValue(session_id, out client)) {
+        if (connectedClientPool.TryGetValue(session_id, out var client)) {
             if (client is TcpHandler_Battle) {
                 var castClient = client as TcpHandler_Battle;
-                ZoneController zoneCon;
-                if (zoneControllerPool.TryGetValue(castClient.ZONE_ID, out zoneCon)) {
+                if (zoneControllerPool.TryGetValue(castClient.ZONE_ID, out var zoneCon)) {
                     zoneCon.RemoveClient(castClient);
                 }
             }
         }
-        connectedClientPool.Remove(session_id);
+        connectedClientPool.TryRemove(session_id, out _);
     }
 
     public void SendPacketToZone(IProtocol protocol, int zone_id) {
-        ZoneController zoneCon;
-
-        if (zoneControllerPool.TryGetValue(zone_id, out zoneCon)) {
+        if (zoneControllerPool.TryGetValue(zone_id, out var zoneCon)) {
             zoneCon.SendPacketToZone(protocol);
         } else {
             Console.WriteLine("No Field!");

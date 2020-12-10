@@ -21,8 +21,7 @@ class ProtocolDispatcher : Singleton<ProtocolDispatcher>{
     }
 
     public void Dispatch(IProtocol protocol, TcpHandler handler) {
-        Action<IProtocol, TcpHandler> action;
-        if (HandlePool.TryGetValue(protocol.GetProtocol_ID(), out action)) {
+        if (HandlePool.TryGetValue(protocol.GetProtocol_ID(), out var action)) {
             action(protocol, handler);
         } else {
             Console.WriteLine("No Protocol ID");
@@ -76,7 +75,6 @@ class ProtocolDispatcher : Singleton<ProtocolDispatcher>{
         } else if (dummyProtocol is ChangePos_B2C) {
             action = (IProtocol protocol, TcpHandler handler) => {
                 var cast = protocol as ChangePos_B2C;
-                Console.WriteLine("Receive : [ChangePos_B2C]");
             };
         } else if (dummyProtocol is RestAPI_RES_S2C) {
             action = (IProtocol protocol, TcpHandler handler) => {

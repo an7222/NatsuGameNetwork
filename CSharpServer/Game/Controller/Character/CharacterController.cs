@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Numerics;
 using System.Text;
-using System.Threading;
+using System.Threading.Tasks;
 
 abstract class CharacterController : TickBase {
     protected Vector2 startPoint;
@@ -27,7 +27,9 @@ abstract class CharacterController : TickBase {
         }
 
         sw.Start();
-        foreach (var pc in characterList) {
+
+        #region move
+        Parallel.ForEach(characterList, (pc) => {
             if (pc.isMoving) {
                 if (pc.dir == Direction.Right) {
                     pc.SetPos(new Vector2(pc.pos.X + (elapsedTime / 1000) * pc.stat.SPEED, pc.pos.Y));
@@ -41,7 +43,32 @@ abstract class CharacterController : TickBase {
 
                 BroadCast_RefreshPos(pc);
             }
-        }
+        });
+
+        //Barrier Lock
+
+        #endregion
+
+
+
+
+
+        #region attack
+
+        #endregion
+
+        //Barrier Lock
+
+
+
+
+
+
+        #region status
+
+        #endregion
+
+        //Barrier Lock
     }
 
     public abstract Character CreateCharacter(Vector2 startPoint);
