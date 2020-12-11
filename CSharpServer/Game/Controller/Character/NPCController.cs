@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Numerics;
+using System.Threading.Tasks;
 using System.Text;
 
 class NPCController : CharacterController {
@@ -9,7 +10,7 @@ class NPCController : CharacterController {
     public NPCController(ZoneController cc, Vector2 startPoint) : base(cc, startPoint) {
         r = new Random();
 
-        for(int i = 0; i < 100; ++i) {
+        for(int i = 0; i < 5; ++i) {
             CreateCharacter(startPoint);
         }
     }
