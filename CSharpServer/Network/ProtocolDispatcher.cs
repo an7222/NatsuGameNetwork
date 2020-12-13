@@ -17,9 +17,7 @@ partial class ProtocolDispatcher : Singleton<ProtocolDispatcher> {
         foreach (var b in a) {
             IProtocol instance = (IProtocol)Activator.CreateInstance(b);
             Action<IProtocol, TcpHandler> action = createAction_session(instance);
-            if(action == null) {
-                action = createAction_battle(instance);
-            }
+            action ??= createAction_battle(instance);
             HandlePool.Add(instance.GetProtocol_ID(), action);
         }
     }
